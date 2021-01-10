@@ -1,4 +1,3 @@
-import com.adamratzman.spotify.models.Playlist
 import com.adamratzman.spotify.models.SimplePlaylist
 import com.adamratzman.spotify.models.Track
 import kotlinx.coroutines.*
@@ -17,17 +16,16 @@ class Machine(coroutineScope: CoroutineScope) {
                     is Screen.Setup.Tab.MyPlaylists -> State.Setup.TabState.MyPlaylists(tab.searchTerm, PlaylistSearchState.Loading)
                     is Screen.Setup.Tab.URL -> State.Setup.TabState.URL(tab.searchURL, PlaylistSearchState.Loading)
                 }
+                emit(State.Setup(screen.selectedPlaylists, screen.config, loadingTab))
                 try {
-                    val selectedPlaylists = screen.selectedPlaylistURIs.mapNotNull { spotifyRepository.getPlaylistByURI(it) }
-                    emit(State.Setup(selectedPlaylists, screen.config, loadingTab))
                     val loadedTab = when(screen.tab) {
                         is Screen.Setup.Tab.SpotifyPlaylists -> {
                             val playlists = if (screen.tab.searchTerm.isNotBlank()) spotifyRepository.searchPlaylists(screen.tab.searchTerm) else spotifyRepository.getFeaturedPlaylists()
-                            State.Setup.TabState.SpotifyPlaylists(screen.tab.searchTerm, PlaylistSearchState.Results(playlists))
+                            State.Setup.TabState.SpotifyPlaylists(screen.tab.searchTerm, PlaylistSearchState.Results(playlists.map { it to (it in screen.selectedPlaylists) }))
                         }
                         is Screen.Setup.Tab.MyPlaylists -> {
                             val playlists = spotifyRepository.getUserPlaylists()
-                            val results = playlists?.let { PlaylistSearchState.Results(it) } ?: PlaylistSearchState.RequiresLogin
+                            val results = playlists?.let { playlists -> PlaylistSearchState.Results(playlists.map { it to (it in screen.selectedPlaylists) }) } ?: PlaylistSearchState.RequiresLogin
                             State.Setup.TabState.MyPlaylists(screen.tab.searchTerm, results)
                         }
                         is Screen.Setup.Tab.URL -> {
@@ -35,11 +33,11 @@ class Machine(coroutineScope: CoroutineScope) {
                             if (playlist == null) {
                                 State.Setup.TabState.URL(screen.tab.searchURL, PlaylistSearchState.Error)
                             } else {
-                                State.Setup.TabState.URL(screen.tab.searchURL, PlaylistSearchState.Results(listOf(playlist)))
+                                State.Setup.TabState.URL(screen.tab.searchURL, PlaylistSearchState.Results(listOf(playlist to (playlist in screen.selectedPlaylists))))
                             }
                         }
                     }
-                    emit(State.Setup(selectedPlaylists, screen.config, loadedTab))
+                    emit(State.Setup(screen.selectedPlaylists, screen.config, loadedTab))
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

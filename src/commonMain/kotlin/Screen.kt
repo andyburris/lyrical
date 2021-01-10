@@ -4,7 +4,7 @@ import com.adamratzman.spotify.models.Track
 import kotlin.random.Random
 
 sealed class Screen {
-    data class Setup(val selectedPlaylistURIs: List<String> = emptyList(), val config: GameConfig = GameConfig(), val tab: Tab = Tab.SpotifyPlaylists("")) : Screen() {
+    data class Setup(val selectedPlaylists: List<SimplePlaylist> = emptyList(), val config: GameConfig = GameConfig(), val tab: Tab = Tab.SpotifyPlaylists("")) : Screen() {
         sealed class Tab {
             data class SpotifyPlaylists(val searchTerm: String) : Tab()
             data class MyPlaylists(val searchTerm: String) : Tab()
@@ -50,7 +50,7 @@ sealed class State {
             }
         }
 
-        override fun toScreen(): Screen.Setup = Screen.Setup(this.selectedPlaylists.map { it.uri.uri }, this.config, this.tabState.toTab())
+        override fun toScreen(): Screen.Setup = Screen.Setup(this.selectedPlaylists, this.config, this.tabState.toTab())
     }
     object Loading : State()
     sealed class GameState() : State() {
@@ -82,7 +82,7 @@ sealed class State {
 
 
 sealed class PlaylistSearchState {
-    data class Results(val playlists: List<SimplePlaylist>) : PlaylistSearchState()
+    data class Results(val playlists: List<Pair<SimplePlaylist, Boolean>>) : PlaylistSearchState()
     object RequiresLogin : PlaylistSearchState()
     object Loading : PlaylistSearchState()
     object Error : PlaylistSearchState()

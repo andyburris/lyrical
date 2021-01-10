@@ -32,7 +32,7 @@ fun RBuilder.flexbox(direction: FlexDirection = FlexDirection.row, justifyConten
 fun RBuilder.Screen(content: StyledDOMBuilder<DIV>.() -> Unit) {
     styledDiv {
         css {
-            width = 100.vw
+            width = 100.pct
             minHeight = 100.vh
             display = Display.flex
             flexDirection = FlexDirection.column

@@ -59,9 +59,16 @@ val findPlaylists = functionalComponent<FindPlaylistsProps> { props ->
             }
         }
         when(val tab = props.tab) {
-            is State.Setup.TabState.SpotifyPlaylists -> SpotifyPlaylists(tab, props.onAddPlaylist) { props.onUpdateTab.invoke(tab.toTab().copy(searchTerm = it)) }
-            is State.Setup.TabState.MyPlaylists -> MyPlaylists(tab, props.onAddPlaylist) { props.onUpdateTab.invoke(tab.toTab().copy(searchTerm = it)) }
-            is State.Setup.TabState.URL -> AddByURL(tab, props.onAddPlaylist) { props.onUpdateTab.invoke(tab.toTab().copy(searchURL = it)) }
+            is State.Setup.TabState.SpotifyPlaylists -> {
+                SearchBar("Search playlists", 512.px) { props.onUpdateTab.invoke(tab.toTab().copy(searchTerm = it)) }
+                PlaylistSearchResults(tab.searchState, props.onAddPlaylist)
+            }
+            is State.Setup.TabState.MyPlaylists -> {
+                MyPlaylists(tab, props.onAddPlaylist) { props.onUpdateTab.invoke(tab.toTab().copy(searchTerm = it)) }
+            }
+            is State.Setup.TabState.URL -> {
+                AddByURL(tab, props.onAddPlaylist) { props.onUpdateTab.invoke(tab.toTab().copy(searchURL = it)) }
+            }
         }
     }
 }
@@ -122,11 +129,6 @@ private fun RBuilder.SearchBar(placeholder: String, maxWidth: LinearDimension, o
     }
 }
 
-private fun RBuilder.SpotifyPlaylists(tab: State.Setup.TabState.SpotifyPlaylists, onAddPlaylist: (SimplePlaylist) -> Unit, onTermUpdate: (String) -> Unit) {
-    SearchBar("Search playlists", 512.px, onTermUpdate)
-    PlaylistSearchResults(tab.searchState, onAddPlaylist)
-}
-
 private fun RBuilder.MyPlaylists(tab: State.Setup.TabState.MyPlaylists, onAddPlaylist: (SimplePlaylist) -> Unit, onTermUpdate: (String) -> Unit) {
     SearchBar("Filter playlists", 512.px, onTermUpdate)
     PlaylistSearchResults(tab.searchState, onAddPlaylist) {
@@ -144,7 +146,7 @@ private fun RBuilder.PlaylistSearchResults(searchState: PlaylistSearchState, onA
         is PlaylistSearchState.Results -> {
             flexbox(justifyContent = JustifyContent.start, gap = 32.px, wrap = FlexWrap.wrap) {
                 searchState.playlists.forEach {
-                    PlaylistItem(it) { onAddPlaylist.invoke(it) }
+                    PlaylistItem(it.first, it.second) { onAddPlaylist.invoke(it.first) }
                 }
             }
         }

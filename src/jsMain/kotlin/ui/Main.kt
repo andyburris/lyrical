@@ -100,7 +100,7 @@ val stack = functionalComponent<RProps> {
             machine += Action.OpenScreen(if (screen.isLastAnswer) screen.end() else screen.nextQuestion())
         }
         is State.GameState.End -> EndScreen(currentState) {
-            machine += Action.OpenScreen(Screen.Setup(currentState.data.sourcePlaylists.map { it.id }, currentState.data.config))
+            machine += Action.OpenScreen(Screen.Setup(currentState.data.sourcePlaylists, currentState.data.config))
         }
     }
 }
