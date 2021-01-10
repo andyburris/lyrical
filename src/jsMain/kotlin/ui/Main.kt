@@ -84,7 +84,7 @@ val stack = functionalComponent<RProps> {
         is State.Setup -> SetupScreen(
             currentState,
             onUpdateSetup = {
-                println("updated setup screen = $it")
+                //println("updated setup screen = $it")
                 machine += Action.UpdateScreen(updatedScreen = it)
             },
             onPlayGame = { playlistURIs, config ->

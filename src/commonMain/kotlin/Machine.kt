@@ -1,3 +1,4 @@
+import com.adamratzman.spotify.models.Playlist
 import com.adamratzman.spotify.models.SimplePlaylist
 import com.adamratzman.spotify.models.Track
 import kotlinx.coroutines.*
@@ -8,7 +9,7 @@ class Machine(coroutineScope: CoroutineScope) {
     private val geniusRepository = GeniusRepository(geniusAPIKey)
     private val navigation = MutableStateFlow<Screen>(Screen.Setup())
     val screen: StateFlow<State> = navigation.transform<Screen, State> { screen ->
-        println("transforming screen = $screen")
+        //println("transforming screen = $screen")
         when(screen) {
             is Screen.Setup -> {
                 val loadingTab = when(val tab = screen.tab) {
@@ -56,38 +57,44 @@ class Machine(coroutineScope: CoroutineScope) {
             is Action.OpenScreen -> navigation.value = action.screen
             is Action.UpdateScreen -> {
                 navigation.value = action.updatedScreen
-                println("updated navigation.value to ${navigation.value}")
+                //println("updated navigation.value to ${navigation.value}")
             }
             is Action.StartGame -> {
                 navigation.value = Screen.Loading
                 println("Loading tracks")
                 CoroutineScope(Dispatchers.Default).launch {
-                    val randomTracks = action.playlistURIs.getRandomSongs(action.config)
-                    println("Loading lyrics")
+                    val playlists = action.playlistURIs.mapNotNull { spotifyRepository.getPlaylistByURI(it) }
+                    val randomTracks = playlists.getRandomSongs(action.config)
+                    println("randomTracks = ${randomTracks.map { it.first.name }}, Loading lyrics")
                     val tracksWithLyrics = randomTracks.mapNotNull { (track, playlist) ->
                         val lyrics = geniusRepository.getLyrics(track.name, track.artists.map { it.name }) ?: return@mapNotNull null
                         val filteredLyrics = lyrics.lines().filter { !it.startsWith("[") }.distinct()
                         TrackWithLyrics(track, filteredLyrics, playlist.uri.uri)
                     }
-                    val game = Game(tracksWithLyrics.toQuestions(), action.config, randomTracks.map { it.second }.distinct())
+                    val game = Game(tracksWithLyrics.toQuestions(), action.config, playlists)
                     navigation.value = Screen.GameScreen.Question(0, game)
                 }
             }
         }
     }
 
-    private suspend fun List<String>.getRandomSongs(config: GameConfig): List<Pair<Track, SimplePlaylist>> {
-        val playlists = this.mapNotNull { spotifyRepository.getPlaylistByURI(it) }
+    private suspend fun List<SimplePlaylist>.getRandomSongs(config: GameConfig): List<Pair<Track, SimplePlaylist>> {
+        println("getting random songs, config = $config")
         return if (config.distributePlaylistsEvenly) {
             val amountOfSongsPerPlaylist = config.amountOfSongs.distributeInto(this.size)
-            val playlistTracks: List<List<Track>> = this.map { spotifyRepository.getPlaylistTracks(it) }
+            val playlistTracks: List<List<Track>> = this.map { spotifyRepository.getPlaylistTracks(it.uri.uri) }
             val allTracks = mutableListOf<Pair<Track, SimplePlaylist>>()
             playlistTracks.forEachIndexed { index, tracks ->
-                allTracks += (tracks - allTracks.map { it.first }).shuffled().take(amountOfSongsPerPlaylist[index]).map { Pair(it, playlists[index]) }
+                allTracks += (tracks - allTracks.map { it.first }).shuffled().take(amountOfSongsPerPlaylist[index]).map { Pair(it, this[index]) }
             }
             allTracks.shuffled()
         } else {
-            this.flatMapIndexed { index: Int, uri: String ->  spotifyRepository.getPlaylistTracks(uri).map { Pair(it, playlists[index]) }.distinct().shuffled().take(config.amountOfSongs) }
+            this.flatMapIndexed { index: Int, playlist: SimplePlaylist ->
+                    spotifyRepository.getPlaylistTracks(playlist.uri.uri).map { Pair(it, this[index]) }
+                }
+                .distinctBy { it.first }
+                .shuffled()
+                .take(config.amountOfSongs)
         }
     }
 }

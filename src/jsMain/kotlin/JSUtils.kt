@@ -2,6 +2,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.css.*
 import kotlinx.html.DIV
+import kotlinx.html.INPUT
+import kotlinx.html.js.onChangeFunction
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.Event
@@ -14,6 +16,13 @@ import styled.styledDiv
 
 val Event.targetInputValue: String
     get() = (target as? HTMLInputElement)?.value ?: (target as? HTMLTextAreaElement)?.value ?: ""
+
+fun INPUT.onTextChanged(block: (String) -> Unit) {
+    onChangeFunction = {
+        val value = it.targetInputValue
+        block.invoke(value)
+    }
+}
 
 fun RBuilder.flexbox(direction: FlexDirection = FlexDirection.row, justifyContent: JustifyContent = JustifyContent.inherit, alignItems: Align = Align.inherit, gap: LinearDimension = 0.px, wrap: FlexWrap = FlexWrap.inherit, content: StyledDOMBuilder<DIV>.() -> Unit) {
     styledDiv {

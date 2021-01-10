@@ -4,7 +4,7 @@ import com.adamratzman.spotify.models.Track
 import com.adamratzman.spotify.spotifyAppApi
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
-
+import kotlin.time.seconds
 
 
 private val answerFormatRegex = Regex("( \\(.*\\))+|(-.*)|( \\[.*])")
@@ -13,7 +13,7 @@ fun String.formatAnswer(): String = this.toLowerCase().replace(answerFormatRegex
 @OptIn(ExperimentalTime::class)
 data class GameConfig(
     val amountOfSongs: Int = 10,
-    val timer: Duration? = null,
+    val timer: Duration = 0.seconds,
     val showSourcePlaylist: Boolean = false,
     val distributePlaylistsEvenly: Boolean = true
 )

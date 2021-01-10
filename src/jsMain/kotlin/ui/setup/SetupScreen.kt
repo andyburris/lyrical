@@ -31,7 +31,7 @@ val setup = functionalComponent<SetupProps> { props ->
             gap = Gap("64px")
             justifyContent = JustifyContent.start
         }
-        AppHeader {
+        AppHeader(props.state.selectedPlaylists.isNotEmpty() && props.state.config.amountOfSongs > 0) {
             props.onPlayGame.invoke(props.state.selectedPlaylists.map { it.uri.uri }, props.state.config)
         }
         flexbox(direction = FlexDirection.column, gap = 48.px) {
@@ -60,8 +60,8 @@ val setup = functionalComponent<SetupProps> { props ->
             val (optionsOpen, setOptionsOpen) = useState(false)
             SectionHeader(Icon.List, "Options", optionsOpen) { setOptionsOpen(!optionsOpen) }
             if (optionsOpen) {
-                flexbox(gap = 16.px) {
-
+                Options(props.state.config) {
+                    props.onUpdateSetup.invoke(props.state.toScreen().copy(config = it))
                 }
             }
         }
@@ -80,7 +80,7 @@ val setup = functionalComponent<SetupProps> { props ->
     }
 }
 
-private fun RBuilder.AppHeader(onPlayGameClick: () -> Unit) {
+private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Unit) {
     flexbox(justifyContent = JustifyContent.spaceBetween, alignItems = Align.center) {
         flexbox(alignItems = Align.center, gap = 32.px) {
             styledImg(src = "/assets/LyricalIcon.svg") {
@@ -89,7 +89,13 @@ private fun RBuilder.AppHeader(onPlayGameClick: () -> Unit) {
             styledH1 { +"Lyrical" }
         }
         styledButton {
+            css {
+                backgroundColor = theme.primary.withAlpha(if (canStartGame) 1.0 else 0.25)
+                cursor = if (canStartGame) Cursor.pointer else Cursor.default
+                color = if (canStartGame) theme.onBackground else theme.onBackgroundSecondary
+            }
             attrs {
+                disabled = !canStartGame
                 onClickFunction = {
                     onPlayGameClick.invoke()
                 }
