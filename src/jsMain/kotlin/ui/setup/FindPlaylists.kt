@@ -13,6 +13,8 @@ import react.RProps
 import react.child
 import react.dom.button
 import react.dom.h1
+import react.dom.h2
+import react.dom.p
 import react.functionalComponent
 import styled.css
 import styled.styledDiv
@@ -22,53 +24,39 @@ import targetInputValue
 import ui.common.Icon
 import ui.theme
 
-fun RBuilder.FindPlaylists(tab: State.Setup.TabState, onUpdateTab: (tab: Screen.Setup.Tab) -> Unit, onAddPlaylist: (SimplePlaylist) -> Unit) = child(findPlaylists) {
+fun RBuilder.FindPlaylists(addPlaylistState: State.Setup.AddPlaylistState, onUpdateSearch: (term: String) -> Unit, onAddPlaylist: (SimplePlaylist) -> Unit) = child(findPlaylists) {
     attrs {
-        this.tab = tab
+        this.addPlaylistState = addPlaylistState
+        this.onUpdateSearch = onUpdateSearch
         this.onAddPlaylist = onAddPlaylist
-        this.onUpdateTab = onUpdateTab
     }
 }
 
 external interface FindPlaylistsProps : RProps {
-    var tab: State.Setup.TabState
+    var addPlaylistState: State.Setup.AddPlaylistState
+    var onUpdateSearch: (term: String) -> Unit
     var onAddPlaylist: (SimplePlaylist) -> Unit
-    var onUpdateTab: (tab: Screen.Setup.Tab) -> Unit
 }
 
 val findPlaylists = functionalComponent<FindPlaylistsProps> { props ->
-    flexbox(direction = FlexDirection.column, gap = 32.px) {
-        flexbox(justifyContent = JustifyContent.start, alignItems = Align.start, gap = 32.px) {
-            Tab("Spotify Playlists", props.tab is State.Setup.TabState.SpotifyPlaylists) {
-                if (props.tab !is State.Setup.TabState.SpotifyPlaylists) {
-                    println("switching to SpotifyPlaylists tab")
-                    props.onUpdateTab.invoke(Screen.Setup.Tab.SpotifyPlaylists("") )
-                }
-            }
-            Tab("My Playlists", props.tab is State.Setup.TabState.MyPlaylists) {
-                if (props.tab !is State.Setup.TabState.MyPlaylists) {
-                    println("switching to MyPlaylists tab")
-                    props.onUpdateTab.invoke(Screen.Setup.Tab.MyPlaylists("") )
-                }
-            }
-            Tab("Add By URL", props.tab is State.Setup.TabState.URL) {
-                if (props.tab !is State.Setup.TabState.URL) {
-                    println("switching to URL tab")
-                    props.onUpdateTab.invoke(Screen.Setup.Tab.URL("") )
-                }
-            }
+    flexbox(direction = FlexDirection.column, gap = 64.px) {
+/*        styledP {
+            css { color = theme.onBackground }
+            +"ADD PLAYLISTS"
+        }*/
+        flexbox(direction = FlexDirection.column, gap = 32.px) {
+            h2 { +"Add Playlists" }
+            SearchBar("Search by name or URL", 100.pct) { props.onUpdateSearch.invoke(it) }
         }
-        when(val tab = props.tab) {
-            is State.Setup.TabState.SpotifyPlaylists -> {
-                SearchBar("Search playlists", 512.px) { props.onUpdateTab.invoke(tab.toTab().copy(searchTerm = it)) }
-                PlaylistSearchResults(tab.searchState, props.onAddPlaylist)
-            }
-            is State.Setup.TabState.MyPlaylists -> {
-                MyPlaylists(tab, props.onAddPlaylist) { props.onUpdateTab.invoke(tab.toTab().copy(searchTerm = it)) }
-            }
-            is State.Setup.TabState.URL -> {
-                AddByURL(tab, props.onAddPlaylist) { props.onUpdateTab.invoke(tab.toTab().copy(searchURL = it)) }
-            }
+
+        flexbox(direction = FlexDirection.column, gap = 32.px) {
+            p { +"SPOTIFY PLAYLISTS" }
+            PlaylistSearchResults(props.addPlaylistState.spotifySearchState, props.onAddPlaylist)
+        }
+
+        flexbox(direction = FlexDirection.column, gap = 32.px) {
+            p { +"MY PLAYLISTS" }
+            PlaylistSearchResults(props.addPlaylistState.myPlaylistSearchState, props.onAddPlaylist)
         }
     }
 }
@@ -127,18 +115,6 @@ private fun RBuilder.SearchBar(placeholder: String, maxWidth: LinearDimension, o
             }
         }
     }
-}
-
-private fun RBuilder.MyPlaylists(tab: State.Setup.TabState.MyPlaylists, onAddPlaylist: (SimplePlaylist) -> Unit, onTermUpdate: (String) -> Unit) {
-    SearchBar("Filter playlists", 512.px, onTermUpdate)
-    PlaylistSearchResults(tab.searchState, onAddPlaylist) {
-        authenticateUser()
-    }
-}
-
-private fun RBuilder.AddByURL(tab: State.Setup.TabState.URL, onAddPlaylist: (SimplePlaylist) -> Unit, onURLUpdate: (String) -> Unit) {
-    SearchBar("Playlist URL", 100.pct, onURLUpdate)
-    PlaylistSearchResults(tab.searchState, onAddPlaylist)
 }
 
 private fun RBuilder.PlaylistSearchResults(searchState: PlaylistSearchState, onAddPlaylist: (SimplePlaylist) -> Unit, onLoginWithSpotify: () -> Unit = {}) {

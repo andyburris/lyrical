@@ -1,7 +1,7 @@
-package ui
+package ui.game
 
 import Game
-import Screen
+import UserAnswer
 import kotlinx.css.*
 import kotlinx.html.InputType
 import kotlinx.html.js.*
@@ -12,8 +12,9 @@ import react.dom.p
 import styled.*
 import targetInputValue
 import ui.common.Icon
+import ui.theme
 
-fun RBuilder.QuestionScreen(data: State.GameState.Question, onAnswer: (Screen.GameScreen.Answer) -> Unit) = child(question) {
+fun RBuilder.QuestionScreen(data: State.GameState.Question, onAnswer: (GameAction.AnswerQuestion) -> Unit) = child(question) {
     attrs {
         this.screen = data
         this.onAnswer = onAnswer
@@ -21,7 +22,7 @@ fun RBuilder.QuestionScreen(data: State.GameState.Question, onAnswer: (Screen.Ga
 }
 external interface QuestionProps : RProps {
     var screen: State.GameState.Question
-    var onAnswer: (Screen.GameScreen.Answer) -> Unit
+    var onAnswer: (GameAction.AnswerQuestion) -> Unit
 }
 val question = functionalComponent<QuestionProps> { props ->
     val (answer, setAnswer) = useState("")
@@ -103,7 +104,7 @@ val question = functionalComponent<QuestionProps> { props ->
                             if (it.asDynamic().key == "Enter" && answer.isNotBlank()) {
                                 console.log("hit")
                                 val points = 1.0 - (if (showingArtist) 0.5 else 0.0) - (if (showingNextLine) 0.25 else 0.0)
-                                props.onAnswer.invoke(props.screen.toScreen().answer(answer, points))
+                                props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Answer(answer, points)))
                             }
                         }
                     }
@@ -128,14 +129,11 @@ val question = functionalComponent<QuestionProps> { props ->
                     attrs {
                         onMouseOverFunction = { setHovering(true) }
                         onMouseOutFunction = { setHovering(false) }
-                    }
-                    styledImg(src = "/assets/icons/Skip.svg") {
-                        attrs {
-                            onClickFunction = {
-                                props.onAnswer.invoke(props.screen.toScreen().skip())
-                            }
+                        onClickFunction = {
+                            props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Skipped))
                         }
                     }
+                    styledImg(src = "/assets/icons/Skip.svg") {}
                     if (hovering) {
                         p {
                             +"-1 Points"
@@ -147,7 +145,7 @@ val question = functionalComponent<QuestionProps> { props ->
                     attrs {
                         onClickFunction = {
                             val points = 1.0 - (if (showingArtist) 0.5 else 0.0) - (if (showingNextLine) 0.25 else 0.0)
-                            props.onAnswer.invoke(props.screen.toScreen().answer(answer, points))
+                            props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Answer(answer, points)))
                         }
                     }
                 }

@@ -22,22 +22,6 @@ actual suspend fun GeniusRepository.scrapeLyrics(songURL: String): String?  {
     return (lyricsDiv as Element).innerHTML.replace(unnecessaryScrapingRegex, "").replace("&amp;", "&").split("<br>").filter { it.isNotBlank() }.map { it.trim() }.joinToString("\n")
 }
 
-suspend fun XMLHttpRequest.get(url: String): Document = suspendCoroutine { c ->
-    this.onload = { statusHandler(this, c) }
-    this.open("GET", url)
-    this.send()
-}
-
-private val parser = DOMParser()
-fun statusHandler(xhr: XMLHttpRequest, coroutineContext: Continuation<Document>) {
-    if (xhr.readyState == XMLHttpRequest.DONE) {
-        if (xhr.status / 100 == 2) {
-            coroutineContext.resume(parser.parseFromString(xhr.responseText, "text/html"))
-        } else {
-            coroutineContext.resumeWithException(RuntimeException("HTTP error: ${xhr.status}"))
-        }
-    }
-}
 
 actual suspend fun SpotifyRepository.userAPI(): SpotifyClientApi? {
     val accessToken = localStorage["access_token"] ?: return null
@@ -46,21 +30,7 @@ actual suspend fun SpotifyRepository.userAPI(): SpotifyClientApi? {
     return spotifyImplicitGrantApi(clientID, token)
 }
 
-fun authenticateUser() {
-    val redirectURL = "http:%2F%2Flocalhost:8080%2Fsetup"
-    window.location.href = "https://accounts.spotify.com/authorize?client_id=$clientID&redirect_uri=$redirectURL&scope=playlist-read-private&response_type=token"
-}
+/*
+actual fun getKeys(): Keys {
 
-fun SpotifyRepository.setUserAPI(clientApi: SpotifyClientApi) {
-    //apiBacking = CompletableDeferred(clientApi)
-}
-
-fun SpotifyRepository.saveAuthentication(token: String, expiresIn: String) {
-    localStorage["access_token"] = token
-    localStorage["access_token_expires_in"] = expiresIn
-}
-
-fun SpotifyRepository.logout() {
-    localStorage.removeItem("access_token")
-    localStorage.removeItem("access_token_expires_in")
-}
+}*/

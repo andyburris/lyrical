@@ -1,29 +1,24 @@
 package ui.setup
 
-import GameConfig
 import Screen
-import Size
-import com.adamratzman.spotify.models.SimplePlaylist
+import SetupAction
 import flexbox
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
 import react.*
-import size
 import styled.*
 import ui.common.Icon
 import ui.theme
 
-fun RBuilder.SetupScreen(state: State.Setup, onUpdateSetup: (Screen.Setup) -> Unit, onPlayGame: (playlistURIs: List<String>, config: GameConfig) -> Unit) = child(setup) {
+fun RBuilder.SetupScreen(state: State.Setup, onUpdateSetup: (SetupAction) -> Unit) = child(setup) {
     attrs {
         this.state = state
         this.onUpdateSetup = onUpdateSetup
-        this.onPlayGame = onPlayGame
     }
 }
 external interface SetupProps : RProps {
     var state: State.Setup
-    var onPlayGame: (playlistURIs: List<String>, config: GameConfig) -> Unit
-    var onUpdateSetup: (Screen.Setup) -> Unit
+    var onUpdateSetup: (SetupAction) -> Unit
 }
 val setup = functionalComponent<SetupProps> { props ->
     Screen {
@@ -32,7 +27,7 @@ val setup = functionalComponent<SetupProps> { props ->
             justifyContent = JustifyContent.start
         }
         AppHeader(props.state.selectedPlaylists.isNotEmpty() && props.state.config.amountOfSongs > 0) {
-            props.onPlayGame.invoke(props.state.selectedPlaylists.map { it.uri.uri }, props.state.config)
+            props.onUpdateSetup.invoke(SetupAction.StartGame(props.state.selectedPlaylists.map { it.uri.uri }, props.state.config))
         }
         flexbox(direction = FlexDirection.column, gap = 48.px) {
             css {
@@ -49,8 +44,7 @@ val setup = functionalComponent<SetupProps> { props ->
                     flexbox(gap = 32.px, wrap = FlexWrap.wrap, justifyContent = JustifyContent.start) {
                         props.state.selectedPlaylists.forEach {
                             PlaylistItem(it, false) {
-                                val screen = props.state.toScreen()
-                                props.onUpdateSetup.invoke(screen.copy(selectedPlaylists = screen.selectedPlaylists - it))
+                                props.onUpdateSetup.invoke(SetupAction.RemovePlaylist(it))
                             }
                         }
                     }
@@ -61,20 +55,18 @@ val setup = functionalComponent<SetupProps> { props ->
             SectionHeader(Icon.List, "Options", optionsOpen) { setOptionsOpen(!optionsOpen) }
             if (optionsOpen) {
                 Options(props.state.config) {
-                    props.onUpdateSetup.invoke(props.state.toScreen().copy(config = it))
+                    props.onUpdateSetup.invoke(SetupAction.UpdateConfig(it))
                 }
             }
         }
 
         FindPlaylists(
-            props.state.tabState,
-            onUpdateTab = {
-                val screen = props.state.toScreen()
-                props.onUpdateSetup.invoke(screen.copy(tab = it))
+            props.state.addPlaylistState,
+            onUpdateSearch = {
+                props.onUpdateSetup.invoke(SetupAction.UpdateSearch(it))
             },
             onAddPlaylist = {
-                val screen = props.state.toScreen()
-                props.onUpdateSetup.invoke(screen.copy(selectedPlaylists = (screen.selectedPlaylists + it).distinct()))
+                props.onUpdateSetup.invoke(SetupAction.AddPlaylist(it))
             }
         )
     }

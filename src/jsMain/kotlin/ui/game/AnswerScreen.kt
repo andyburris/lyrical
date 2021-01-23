@@ -1,4 +1,4 @@
-package ui
+package ui.game
 
 import com.adamratzman.spotify.models.Track
 import kotlinx.css.*
@@ -9,6 +9,7 @@ import react.functionalComponent
 import styled.*
 import react.child
 import react.dom.*
+import ui.theme
 
 fun RBuilder.AnswerScreen(state: State.GameState.Answer, onNextScreen: () -> Unit) = child(answerScreen) {
     attrs {
@@ -56,14 +57,14 @@ val answerScreen = functionalComponent<AnswerProps> { props ->
             }
             when (val answer = props.state.answer) {
                 is GameAnswer.Correct -> {
-                    SongItem(props.state.track)
+                    SongItem(props.state.track.track)
                 }
                 is GameAnswer.Incorrect -> {
                     YourAnswer(answer.answer)
-                    CorrectAnswer(props.state.track)
+                    CorrectAnswer(props.state.track.track)
                 }
                 is GameAnswer.Skipped -> {
-                    CorrectAnswer(props.state.track)
+                    CorrectAnswer(props.state.track.track)
                 }
             }
         }

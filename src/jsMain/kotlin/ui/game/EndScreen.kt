@@ -1,4 +1,4 @@
-package ui
+package ui.game
 
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
@@ -11,6 +11,7 @@ import react.functionalComponent
 import styled.css
 import styled.styledDiv
 import styled.styledP
+import ui.theme
 
 fun RBuilder.EndScreen(state: State.GameState.End, onRestart: () -> Unit) = child(endScreen) {
     attrs {

@@ -37,7 +37,7 @@ val optionsComponent = functionalComponent<OptionsProps> { props ->
 }
 
 private fun RBuilder.NumberPickerItem(label: String, default: Int, current: Int, onChange: (Int) -> Unit) {
-    val (currentText, setCurrentText) = useState("")
+    val (currentText, setCurrentText) = useState(if (current == default) "" else current.toString())
     flexbox(justifyContent = JustifyContent.spaceBetween) {
         styledP {
             css { color = theme.onBackground }

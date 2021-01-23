@@ -4,7 +4,7 @@ import com.adamratzman.spotify.models.Track
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-class Machine(coroutineScope: CoroutineScope) {
+/*class Machine(coroutineScope: CoroutineScope) {
     private val spotifyRepository = SpotifyRepository(clientID, clientSecret)
     private val geniusRepository = GeniusRepository(geniusAPIKey)
     private val navigation = MutableStateFlow<Screen>(Screen.Setup())
@@ -64,12 +64,12 @@ class Machine(coroutineScope: CoroutineScope) {
                 println("Loading tracks")
                 CoroutineScope(Dispatchers.Default).launch {
                     val playlists = action.playlistURIs.mapNotNull { spotifyRepository.getPlaylistByURI(it) }
-                    val randomTracks = playlists.getRandomSongs(action.config)
-                    println("randomTracks = ${randomTracks.map { it.first.name }}, Loading lyrics")
-                    val tracksWithLyrics = randomTracks.mapNotNull { (track, playlist) ->
-                        val lyrics = geniusRepository.getLyrics(track.name, track.artists.map { it.name }) ?: return@mapNotNull null
+                    val randomTracks = playlists.getRandomSongs(spotifyRepository, action.config)
+                    println("randomTracks = ${randomTracks.map { it.track.name }}, Loading lyrics")
+                    val tracksWithLyrics = randomTracks.mapNotNull { sourcedTrack ->
+                        val lyrics = geniusRepository.getLyrics(sourcedTrack.track.name, sourcedTrack.track.artists.map { it.name }) ?: return@mapNotNull null
                         val filteredLyrics = lyrics.lines().filter { !it.startsWith("[") }.distinct()
-                        TrackWithLyrics(track, filteredLyrics, playlist.uri.uri)
+                        TrackWithLyrics(sourcedTrack, filteredLyrics)
                     }
                     val game = Game(tracksWithLyrics.toQuestions(), action.config, playlists)
                     navigation.value = Screen.GameScreen.Question(0, game)
@@ -78,24 +78,27 @@ class Machine(coroutineScope: CoroutineScope) {
         }
     }
 
-    private suspend fun List<SimplePlaylist>.getRandomSongs(config: GameConfig): List<Pair<Track, SimplePlaylist>> {
-        println("getting random songs, config = $config")
-        return if (config.distributePlaylistsEvenly) {
-            val amountOfSongsPerPlaylist = config.amountOfSongs.distributeInto(this.size)
-            val playlistTracks: List<List<Track>> = this.map { spotifyRepository.getPlaylistTracks(it.uri.uri) }
-            val allTracks = mutableListOf<Pair<Track, SimplePlaylist>>()
-            playlistTracks.forEachIndexed { index, tracks ->
-                allTracks += (tracks - allTracks.map { it.first }).shuffled().take(amountOfSongsPerPlaylist[index]).map { Pair(it, this[index]) }
-            }
-            allTracks.shuffled()
-        } else {
-            this.flatMapIndexed { index: Int, playlist: SimplePlaylist ->
-                    spotifyRepository.getPlaylistTracks(playlist.uri.uri).map { Pair(it, this[index]) }
-                }
-                .distinctBy { it.first }
-                .shuffled()
-                .take(config.amountOfSongs)
+
+}*/
+
+
+suspend fun List<SimplePlaylist>.getRandomSongs(spotifyRepository: SpotifyRepository, config: GameConfig): List<SourcedTrack> {
+    println("getting random songs, config = $config")
+    return if (config.distributePlaylistsEvenly) {
+        val amountOfSongsPerPlaylist = config.amountOfSongs.distributeInto(this.size)
+        val playlistTracks: List<List<Track>> = this.map { spotifyRepository.getPlaylistTracks(it.uri.uri) }
+        val allTracks = mutableListOf<SourcedTrack>()
+        playlistTracks.forEachIndexed { index, tracks ->
+            allTracks += (tracks - allTracks.map { it.track }).shuffled().take(amountOfSongsPerPlaylist[index]).map { SourcedTrack(it, this[index]) }
         }
+        allTracks.shuffled()
+    } else {
+        this.flatMapIndexed { index: Int, playlist: SimplePlaylist ->
+            spotifyRepository.getPlaylistTracks(playlist.uri.uri).map { SourcedTrack(it, this[index]) }
+        }
+            .distinctBy { it.track }
+            .shuffled()
+            .take(config.amountOfSongs)
     }
 }
 

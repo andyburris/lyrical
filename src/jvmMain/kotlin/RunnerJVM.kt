@@ -45,7 +45,7 @@ fun main() {
                     reader.readUntil {
                         when(it) {
                             ">artist" -> {
-                                println("- ${state.question.trackWithLyrics.track.artists.first().name}")
+                                println("- ${state.question.trackWithLyrics.sourcedTrack.artists.first().name}")
                                 potentialPoints -= 0.5
                                 false
                             }

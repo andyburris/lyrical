@@ -1,18 +1,18 @@
 package ui
 
-import Machine
+import BrowserState
 import collectAsState
-import com.adamratzman.spotify.utils.Language
 import kotlinx.browser.document
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.css.*
 import react.*
 import react.dom.*
+import react.router.dom.*
 import styled.*
+import ui.game.AnswerScreen
+import ui.game.EndScreen
+import ui.game.QuestionScreen
+import ui.loading.LoadingScreen
 import ui.setup.SetupScreen
 
 data class Theme(
@@ -24,6 +24,7 @@ data class Theme(
     val onPrimary: Color = Color("#FFFFFF"),
     val overlay: Color = Color("rgba(0, 0, 0, .12)"),
 )
+
 val theme = Theme()
 
 val styles = CSSBuilder().apply {
@@ -78,29 +79,72 @@ fun main() {
 }
 
 val stack = functionalComponent<RProps> {
-    val (machine, _) = useState(Machine(GlobalScope))
-    val (currentState, setState) = machine.screen.collectAsState()
-    when (currentState) {
-        is State.Setup -> SetupScreen(
-            currentState,
-            onUpdateSetup = {
-                //println("updated setup screen = $it")
-                machine += Action.UpdateScreen(updatedScreen = it)
-            },
-            onPlayGame = { playlistURIs, config ->
-                machine += Action.StartGame(playlistURIs, config)
+    val (browserState, _) = useState(BrowserState(GlobalScope))
+    val setupScreen = browserState.currentSetupScreen.collectAsState()
+    val gameState = browserState.currentGame.collectAsState()
+    val loadingScreen = browserState.currentLoadingScreen.collectAsState()
+    val questionScreen = browserState.currentQuestionScreen.collectAsState()
+    val answerScreen = browserState.currentAnswerScreen.collectAsState()
+    val endScreen = browserState.currentEndScreen.collectAsState()
+
+    hashRouter {
+        switch {
+            route("/setup") {
+                SetupScreen(setupScreen) { browserState.handleAction(it) }
             }
-        )
-        State.Loading -> LoadingScreen()
-        is State.GameState.Question -> QuestionScreen(currentState) { answerScreen ->
-            machine += Action.OpenScreen(answerScreen)
+            route<RProps>("/game") { props ->
+                when (gameState) {
+                    GameState.Unstarted -> props.history.replace("/setup")
+                    is GameState.Loading -> if (props.location.pathname != "/game/loading") props.history.replace("/game/loading")
+                    is GameState.Playing -> {
+                        when {
+                            gameState.screen == GameScreen.Question && props.location.pathname != "/game/question" -> props.history.replace("/game/question")
+                            gameState.screen == GameScreen.Answer && props.location.pathname != "/game/answer" -> props.history.replace("/game/answer")
+                            gameState.screen == GameScreen.End && props.location.pathname != "/game/end" -> props.history.replace("/game/end")
+                        }
+                    }
+                }
+                switch {
+                    route("/game/loading") {
+                        when (loadingScreen) {
+                            null -> emptyContent()
+                            else -> LoadingScreen(loadingScreen)
+                        }
+
+                    }
+                    route("/game/question") {
+                        when (questionScreen) {
+                            null -> emptyContent()
+                            else -> QuestionScreen(questionScreen) { browserState.handleAction(it) }
+                        }
+                    }
+                    route("/game/answer") {
+                        when (answerScreen) {
+                            null -> emptyContent()
+                            else -> AnswerScreen(answerScreen) { browserState.handleAction(GameAction.NextQuestion) }
+                        }
+                    }
+                    route("/game/end") {
+                        when (endScreen) {
+                            null -> emptyContent()
+                            else -> EndScreen(endScreen) { props.history.replace("/setup") }
+                        }
+                    }
+                }
+            }
         }
-        is State.GameState.Answer -> AnswerScreen(currentState) {
-            val screen = currentState.toScreen()
-            machine += Action.OpenScreen(if (screen.isLastAnswer) screen.end() else screen.nextQuestion())
+        redirect("/", "/setup")
+    }
+}
+
+private fun RBuilder.emptyContent() = div { }
+
+private fun RBuilder.redirectIf(condition: Boolean, history: RouteResultHistory, path: String, content: RBuilder.() -> ReactElement): ReactElement {
+    return when (condition) {
+        true -> {
+            history.replace(path)
+            emptyContent()
         }
-        is State.GameState.End -> EndScreen(currentState) {
-            machine += Action.OpenScreen(Screen.Setup(currentState.data.sourcePlaylists, currentState.data.config))
-        }
+        else -> content()
     }
 }
