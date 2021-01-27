@@ -1,7 +1,10 @@
 package ui.game
 
 import Game
+import Screen
 import UserAnswer
+import com.adamratzman.spotify.models.SimplePlaylist
+import flexbox
 import kotlinx.css.*
 import kotlinx.html.InputType
 import kotlinx.html.js.*
@@ -9,37 +12,36 @@ import react.*
 import react.dom.button
 import react.dom.div
 import react.dom.p
+import react.dom.span
+import size
 import styled.*
 import targetInputValue
 import ui.common.Icon
 import ui.theme
 
-fun RBuilder.QuestionScreen(data: State.GameState.Question, onAnswer: (GameAction.AnswerQuestion) -> Unit) = child(question) {
-    attrs {
-        this.screen = data
-        this.onAnswer = onAnswer
+fun RBuilder.QuestionScreen(data: State.GameState.Question, onAnswer: (GameAction.AnswerQuestion) -> Unit) =
+    child(question) {
+        attrs {
+            this.screen = data
+            this.onAnswer = onAnswer
+        }
     }
-}
+
 external interface QuestionProps : RProps {
     var screen: State.GameState.Question
     var onAnswer: (GameAction.AnswerQuestion) -> Unit
 }
+
 val question = functionalComponent<QuestionProps> { props ->
     val (answer, setAnswer) = useState("")
     val (showingNextLine, setShowingNextLine) = useState(false)
     val (showingArtist, setShowingArtist) = useState(false)
-    styledDiv {
-        css {
-            width = 100.vw
-            height = 100.vh
-            display = Display.flex
-            flexDirection = FlexDirection.column
-            justifyContent = JustifyContent.center
-            alignItems = Align.center
-            padding(vertical = 128.px, horizontal = 196.px)
-            boxSizing = BoxSizing.borderBox
-            gap = Gap("64px")
-        }
+    Screen {
+        css { gap = Gap("96px") }
+        flexbox(direction = FlexDirection.column, gap = 32.px) {
+            if (props.screen.data.config.showSourcePlaylist) {
+                PlaylistSource(props.screen.playlist)
+            }
             styledDiv {
                 css {
                     width = 100.pct
@@ -62,14 +64,8 @@ val question = functionalComponent<QuestionProps> { props ->
                         +"- ${props.screen.artist}"
                     }
                 }
-                styledDiv {
-                    css {
-                        display = Display.flex
-                        flexDirection = FlexDirection.row
-                        justifyContent = JustifyContent.end
-                        marginTop = 16.px
-                        gap = Gap("8px")
-                    }
+                flexbox(justifyContent = JustifyContent.end, gap = 8.px) {
+                    css { marginTop = 8.px }
                     if (!showingNextLine) {
                         chip("+ Next Line") { setShowingNextLine(true) }
                     }
@@ -91,6 +87,7 @@ val question = functionalComponent<QuestionProps> { props ->
                         fontFamily = "YoungSerif"
                         fontWeight = FontWeight.w700
                         fontSize = 64.px
+                        width = 100.pct
                     }
                     attrs {
                         placeholder = "Song Name"
@@ -110,48 +107,48 @@ val question = functionalComponent<QuestionProps> { props ->
                     }
                 }
             }
-            styledDiv {
-                css {
-                    display = Display.flex
-                    flexDirection = FlexDirection.row
-                    justifyContent = JustifyContent.center
-                    gap = Gap("16px")
-                }
-                styledButton {
-                    val (hovering, setHovering) = useState(false)
-                    css {
-                        padding(16.px)
-                        display = Display.flex
-                        justifyContent = JustifyContent.center
-                        alignItems = Align.center
-                        backgroundColor = theme.onBackgroundSecondary
-                    }
-                    attrs {
-                        onMouseOverFunction = { setHovering(true) }
-                        onMouseOutFunction = { setHovering(false) }
-                        onClickFunction = {
-                            props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Skipped))
-                        }
-                    }
-                    styledImg(src = "/assets/icons/Skip.svg") {}
-                    if (hovering) {
-                        p {
-                            +"-1 Points"
-                        }
-                    }
-                }
-                button {
-                    +"Answer".toUpperCase()
-                    attrs {
-                        onClickFunction = {
-                            val points = 1.0 - (if (showingArtist) 0.5 else 0.0) - (if (showingNextLine) 0.25 else 0.0)
-                            props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Answer(answer, points)))
-                        }
-                    }
-                }
-                GameState(props.screen.questionNumber, props.screen.data, Pair(theme.primary, theme.onBackgroundSecondary))
+        }
+        styledDiv {
+            css {
+                display = Display.flex
+                flexDirection = FlexDirection.row
+                justifyContent = JustifyContent.center
+                gap = Gap("16px")
             }
-
+            styledButton {
+                val (hovering, setHovering) = useState(false)
+                css {
+                    padding(16.px)
+                    display = Display.flex
+                    justifyContent = JustifyContent.center
+                    alignItems = Align.center
+                    backgroundColor = theme.onBackgroundSecondary
+                }
+                attrs {
+                    onMouseOverFunction = { setHovering(true) }
+                    onMouseOutFunction = { setHovering(false) }
+                    onClickFunction = {
+                        props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Skipped))
+                    }
+                }
+                styledImg(src = "/assets/icons/Skip.svg") {}
+                if (hovering) {
+                    p {
+                        +"-1 Points"
+                    }
+                }
+            }
+            button {
+                +"Answer".toUpperCase()
+                attrs {
+                    onClickFunction = {
+                        val points = 1.0 - (if (showingArtist) 0.5 else 0.0) - (if (showingNextLine) 0.25 else 0.0)
+                        props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Answer(answer, points)))
+                    }
+                }
+            }
+            GameState(props.screen.questionNumber, props.screen.data, Pair(theme.primary, theme.onBackgroundSecondary))
+        }
     }
 }
 
@@ -162,11 +159,13 @@ fun RBuilder.chip(text: String, icon: Icon? = null, onClick: (() -> Unit)? = nul
         this.onClick = onClick
     }
 }
+
 external interface ChipProps : RProps {
     var icon: Icon?
     var text: String
     var onClick: (() -> Unit)?
 }
+
 val chip = functionalComponent<ChipProps> { props ->
     styledDiv {
         css {
@@ -174,12 +173,12 @@ val chip = functionalComponent<ChipProps> { props ->
             borderRadius = 32.px
             padding(vertical = 4.px, horizontal = 12.px)
             color = theme.onBackground
-            if(props.onClick != null) {
+            if (props.onClick != null) {
                 cursor = Cursor.pointer
             }
         }
         attrs {
-            if(props.onClick != null) {
+            if (props.onClick != null) {
                 onClickFunction = {
                     props.onClick?.invoke()
                 }
@@ -192,7 +191,7 @@ val chip = functionalComponent<ChipProps> { props ->
 }
 
 fun RBuilder.icon(icon: Icon) {
-    when(icon) {
+    when (icon) {
         Icon.Add -> TODO()
         Icon.Skip -> TODO()
     }
@@ -206,7 +205,25 @@ fun RBuilder.GameState(questionNumber: Int, game: Game, colors: Pair<Color, Colo
         }
         styledP {
             css { color = colors.second }
-            +"${+game.points } pts"
+            +"${+game.points} pts"
+        }
+    }
+}
+
+fun RBuilder.PlaylistSource(playlist: SimplePlaylist) {
+    flexbox(gap = 16.px, justifyContent = JustifyContent.start, alignItems = Align.center) {
+        styledImg(src = playlist.images.firstOrNull()?.url ?: "/assets/PlaylistPlaceholder.svg") {
+            css { size(32.px) }
+        }
+        p {
+            styledSpan {
+                css { color = theme.onBackgroundPlaceholder }
+                + "from "
+            }
+            styledSpan {
+                css { color = theme.onBackground }
+                + playlist.name
+            }
         }
     }
 }

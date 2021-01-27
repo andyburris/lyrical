@@ -1,27 +1,17 @@
-import com.adamratzman.spotify.SpotifyClientApi
+import com.adamratzman.spotify.SpotifyImplicitGrantApi
+import com.adamratzman.spotify.models.Token
+import com.adamratzman.spotify.spotifyImplicitGrantApi
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import kotlinx.css.*
-import kotlinx.html.DIV
-import kotlinx.html.INPUT
-import kotlinx.html.js.onChangeFunction
-import kotlinx.serialization.json.Json
 import org.w3c.dom.*
-import org.w3c.dom.events.Event
 import org.w3c.dom.parsing.DOMParser
 import org.w3c.xhr.XMLHttpRequest
-import react.RBuilder
-import react.useEffectWithCleanup
-import react.useState
-import styled.StyledDOMBuilder
-import styled.css
-import styled.styledDiv
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.random.Random
 
 suspend fun XMLHttpRequest.get(url: String): Document = suspendCoroutine { c ->
     this.onload = { statusHandler(this, c) }
@@ -41,20 +31,38 @@ fun statusHandler(xhr: XMLHttpRequest, coroutineContext: Continuation<Document>)
 }
 
 fun authenticateUser() {
-    val redirectURL = "http:%2F%2Flocalhost:8080%2Fsetup"
-    window.location.href = "https://accounts.spotify.com/authorize?client_id=$clientID&redirect_uri=$redirectURL&scope=playlist-read-private&response_type=token"
+    localStorage["authState"] = Random.nextInt().toString()
+    val redirectURL = "http:%2F%2Flocalhost:8080%2F%23%2Fauth"
+    window.location.href = "https://accounts.spotify.com/authorize?client_id=$clientID&redirect_uri=$redirectURL&scope=playlist-read-private&response_type=token&state=${localStorage["authState"]}"
 }
 
-fun SpotifyRepository.setUserAPI(clientApi: SpotifyClientApi) {
-    //apiBacking = CompletableDeferred(clientApi)
+fun authenticateUserResponse(token: String, type: String, expiresIn: String, state: String) {
+    println("authenticating response, state = $state, saved state = ${localStorage["authState"]}")
+    if (state == localStorage["authState"]) {
+        localStorage.removeItem("authState")
+        localStorage["access_token"] = token
+        localStorage["access_token_type"] = type
+        localStorage["access_token_expires_in"] = expiresIn
+        println("saved authentication")
+    }
 }
 
-fun SpotifyRepository.saveAuthentication(token: String, expiresIn: String) {
-    localStorage["access_token"] = token
-    localStorage["access_token_expires_in"] = expiresIn
+fun getClientAPIIfLoggedIn(): SpotifyImplicitGrantApi? {
+    println("checking for user login")
+    val accessToken = localStorage["access_token"] ?: return null
+    val tokenType = localStorage["access_token_type"] ?: return null
+    val expiresIn = localStorage["access_token_expires_in"] ?: return null
+    val token = Token(accessToken, tokenType, expiresIn.toInt())
+    println("logged in, checking if valid token")
+    return try { spotifyImplicitGrantApi(clientID, token) } catch (e: Exception) { return null }
 }
 
-fun SpotifyRepository.logout() {
+fun SpotifyRepository.setUserAPI(clientApi: SpotifyImplicitGrantApi) {
+    apiBacking = CompletableDeferred(clientApi)
+}
+
+
+fun logout() {
     localStorage.removeItem("access_token")
     localStorage.removeItem("access_token_expires_in")
 }

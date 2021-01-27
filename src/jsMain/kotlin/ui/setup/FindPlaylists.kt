@@ -2,27 +2,21 @@ package ui.setup
 
 import PlaylistSearchState
 import authenticateUser
-import com.adamratzman.spotify.models.Playlist
 import com.adamratzman.spotify.models.SimplePlaylist
 import flexbox
 import kotlinx.css.*
-import kotlinx.html.js.onChangeFunction
-import kotlinx.html.js.onClickFunction
-import react.RBuilder
-import react.RProps
-import react.child
-import react.dom.button
-import react.dom.h1
-import react.dom.h2
-import react.dom.p
-import react.functionalComponent
-import styled.css
-import styled.styledDiv
-import styled.styledInput
-import styled.styledP
+import kotlinx.css.properties.TextDecoration
+import kotlinx.css.properties.TextDecorationLine
+import kotlinx.html.js.*
+import logout
+import org.w3c.dom.HTMLElement
+import react.*
+import react.dom.*
+import styled.*
 import targetInputValue
 import ui.common.Icon
 import ui.theme
+import useOnOutsideClick
 
 fun RBuilder.FindPlaylists(addPlaylistState: State.Setup.AddPlaylistState, onUpdateSearch: (term: String) -> Unit, onAddPlaylist: (SimplePlaylist) -> Unit) = child(findPlaylists) {
     attrs {
@@ -39,71 +33,78 @@ external interface FindPlaylistsProps : RProps {
 }
 
 val findPlaylists = functionalComponent<FindPlaylistsProps> { props ->
-    flexbox(direction = FlexDirection.column, gap = 64.px) {
-/*        styledP {
-            css { color = theme.onBackground }
-            +"ADD PLAYLISTS"
-        }*/
-        flexbox(direction = FlexDirection.column, gap = 32.px) {
-            h2 { +"Add Playlists" }
-            SearchBar("Search by name or URL", 100.pct) { props.onUpdateSearch.invoke(it) }
-        }
+    flexbox(direction = FlexDirection.column, gap = 32.px) {
+        h2 { +"Add Playlists" }
 
-        flexbox(direction = FlexDirection.column, gap = 32.px) {
-            p { +"SPOTIFY PLAYLISTS" }
-            PlaylistSearchResults(props.addPlaylistState.spotifySearchState, props.onAddPlaylist)
-        }
-
-        flexbox(direction = FlexDirection.column, gap = 32.px) {
-            p { +"MY PLAYLISTS" }
-            PlaylistSearchResults(props.addPlaylistState.myPlaylistSearchState, props.onAddPlaylist)
-        }
-    }
-}
-
-private fun RBuilder.Tab(title: String, selected: Boolean, onClick: () -> Unit) {
-    flexbox(direction = FlexDirection.column, gap = 8.px, alignItems = Align.stretch) {
-        css { cursor = Cursor.pointer }
-        styledP {
+        val (selected, setSelected) = useState(false)
+        val ref = useRef<HTMLElement?>(null)
+        flexbox(direction = FlexDirection.column, gap = 48.px) {
             css {
-                color = if (selected) theme.onBackground else theme.onBackgroundSecondary
+                backgroundColor = theme.overlay
+                borderRadius = if (selected) 16.px else 32.px
+                padding(horizontal = if (selected) 48.px else 24.px, vertical = if (selected) 48.px else 18.px)
             }
-            +title.toUpperCase()
-        }
-        if (selected) {
-            styledDiv {
-                css {
-                    height = 4.px
-                    backgroundColor = theme.primary
+            SearchBar("Search by name or URL", 100.pct, onFocus = { setSelected(true) }) { props.onUpdateSearch.invoke(it) }
+            if (selected) {
+                flexbox(direction = FlexDirection.column, gap = 32.px) {
+                    p { +"SPOTIFY PLAYLISTS" }
+                    PlaylistSearchResults(
+                        searchState = props.addPlaylistState.spotifySearchState,
+                        onAddPlaylist = props.onAddPlaylist,
+                        onLoginWithSpotify = { authenticateUser() }
+                    )
+                }
+
+                flexbox(direction = FlexDirection.column, gap = 32.px) {
+                    p {
+                        +"MY PLAYLISTS "
+                        if (props.addPlaylistState.myPlaylistSearchState !is PlaylistSearchState.RequiresLogin) {
+                            styledSpan {
+                                css {
+                                    color = theme.onBackgroundPlaceholder
+                                    hover {
+                                        textDecoration = TextDecoration(lines = setOf(TextDecorationLine.underline))
+                                    }
+                                }
+                                +"(Logout)"
+                                attrs.onClickFunction = {
+                                    logout()
+                                }
+                            }
+                        }
+                    }
+                    PlaylistSearchResults(
+                        searchState = props.addPlaylistState.myPlaylistSearchState,
+                        onAddPlaylist = props.onAddPlaylist,
+                        onLoginWithSpotify = { authenticateUser() }
+                    )
                 }
             }
-        }
-        attrs {
-            onClickFunction = {
-                onClick.invoke()
+            attrs["ref"] = ref
+            useOnOutsideClick(ref) {
+                println("clicked outside")
+                if (selected) setSelected(false)
             }
         }
     }
 }
 
-private fun RBuilder.SearchBar(placeholder: String, maxWidth: LinearDimension, onTermUpdate: (String) -> Unit) {
+private fun RBuilder.SearchBar(placeholder: String, maxWidth: LinearDimension, onFocus: () -> Unit, onTermUpdate: (String) -> Unit) {
     flexbox(alignItems = Align.center, justifyContent = JustifyContent.start) {
         css {
             this.maxWidth = maxWidth
-            backgroundColor = theme.onBackground
-            borderRadius = 32.px
-            padding(horizontal = 16.px)
         }
-        Icon(Icon.Search, colorFilter = "brightness(0) saturate(100%) invert(10%) sepia(58%) saturate(0%) hue-rotate(230deg) brightness(98%) contrast(77%)")
+        Icon(Icon.Search)
         styledInput {
             css {
-                padding(vertical = 18.px, horizontal = 16.px)
+                padding(horizontal = 16.px)
                 fontFamily = "Inter"
                 fontSize = 24.px
                 fontWeight = FontWeight.w700
                 border = "none"
                 width = 100.pct
                 backgroundColor = Color.transparent
+                color = theme.onBackground
             }
 
             attrs {
@@ -112,6 +113,7 @@ private fun RBuilder.SearchBar(placeholder: String, maxWidth: LinearDimension, o
                     val value = it.targetInputValue
                     onTermUpdate(value)
                 }
+                this.onFocusFunction = { println("focused"); onFocus.invoke() }
             }
         }
     }
@@ -121,8 +123,12 @@ private fun RBuilder.PlaylistSearchResults(searchState: PlaylistSearchState, onA
     when(searchState) {
         is PlaylistSearchState.Results -> {
             flexbox(justifyContent = JustifyContent.start, gap = 32.px, wrap = FlexWrap.wrap) {
-                searchState.playlists.forEach {
-                    PlaylistItem(it.first, it.second) { onAddPlaylist.invoke(it.first) }
+                searchState.playlists.forEach { (playlist, checked) ->
+                    div {
+                        PlaylistItem(playlist, checked) {
+                            onAddPlaylist.invoke(playlist)
+                        }
+                    }
                 }
             }
         }

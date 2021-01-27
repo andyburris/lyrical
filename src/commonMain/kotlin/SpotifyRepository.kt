@@ -11,8 +11,8 @@ fun String.playlistURIFromURL() = this.removePrefix("https://open.spotify.com/pl
 
 
 class SpotifyRepository(val clientID: String, private val clientSecret: String) {
-    var apiBacking: Deferred<SpotifyAppApi>? = null
-    private suspend fun api(): SpotifyAppApi {
+    var apiBacking: Deferred<SpotifyApi<*, *>>? = null
+    private suspend fun api(): SpotifyApi<*, *> {
         if (apiBacking == null){
             apiBacking = coroutineScope {
                 async {

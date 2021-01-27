@@ -41,7 +41,7 @@ kotlin {
                 implementation(kotlin("stdlib-common"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
                 implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
-                implementation("com.adamratzman:spotify-api-kotlin-core:3.4.01")
+                implementation("com.adamratzman:spotify-api-kotlin-core:3.5.02")
                 implementation("io.ktor:ktor-client-core:1.5.0")
                 implementation("io.ktor:ktor-client-serialization:1.5.0")
 
@@ -62,6 +62,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-js"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.4.2")
 
                 //React, React DOM + Wrappers (chapter 3)
                 implementation("org.jetbrains:kotlin-react:16.13.1-pre.110-kotlin-1.4.0")
@@ -75,6 +76,8 @@ kotlin {
                 implementation(npm("styled-components", "~5.2.0"))
                 //implementation(npm("react-is", "~16.8.0"))
                 implementation(npm("inline-style-prefixer", "~6.0.0"))
+                
+                //implementation(npm("@wellyshen/use-web-animations", "~0.6.1", generateExternals = true))
             }
         }
     }

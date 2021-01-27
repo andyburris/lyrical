@@ -5,6 +5,8 @@ import com.adamratzman.spotify.models.SimplePlaylist
 import flexbox
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.js.onMouseDownFunction
+import org.w3c.dom.events.Event
 import react.RBuilder
 import react.RProps
 import react.child
@@ -41,21 +43,25 @@ val playlistItem = functionalComponent<PlaylistProps> { props ->
             }
             styledImg(src = props.playlist.images.firstOrNull()?.url ?: "/assets/PlaylistPlaceholder.svg") {
                 css {
+                    borderRadius = 4.px
                     size(128.px)
                 }
-                attrs.onClickFunction = {
-                    props.onClick.invoke()
-                }
+
             }
             if (props.selected) {
                 flexbox(justifyContent = JustifyContent.center, alignItems = Align.center) {
                     css {
                         position = Position.absolute
+                        borderRadius = 4.px
                         size(128.px)
                         backgroundColor = Color.black.withAlpha(0.7)
                     }
                     Icon(Icon.Check, size = Size(64.px))
                 }
+            }
+            attrs.onClickFunction = {
+                println("playlist item clicked")
+                props.onClick.invoke()
             }
         }
         flexbox(FlexDirection.column) {

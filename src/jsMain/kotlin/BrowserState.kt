@@ -1,18 +1,15 @@
 import com.adamratzman.spotify.models.SimplePlaylist
-import kotlinx.browser.localStorage
 import kotlinx.browser.window
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import org.w3c.dom.get
-import org.w3c.dom.set
 
 class BrowserState(coroutineScope: CoroutineScope) {
 
-    private val spotifyRepository = SpotifyRepository(clientID, clientSecret)
+    private val spotifyRepository = SpotifyRepository(clientID, clientSecret).also { repo ->
+        val loggedInAPI = getClientAPIIfLoggedIn()
+        println("loggedInAPI = $loggedInAPI")
+        loggedInAPI?.let { repo.setUserAPI(it) }
+    }
     private val geniusRepository = GeniusRepository(geniusAPIKey)
 
     private val backingConfig: MutableStateFlow<GameConfig> = MutableStateFlow(savedConfig)
@@ -31,7 +28,11 @@ class BrowserState(coroutineScope: CoroutineScope) {
         }
         cachedPlaylists.value = (cachedPlaylists.value + playlists).distinct()
         val selectedPlaylists = playlists.map { it to (it.uri.uri in uris) }
-        emit(State.Setup.AddPlaylistState(term, PlaylistSearchState.Results(selectedPlaylists), PlaylistSearchState.RequiresLogin))
+        val userPlaylistSearchState = when(val api = spotifyRepository.userAPI()) {
+            null -> PlaylistSearchState.RequiresLogin
+            else -> PlaylistSearchState.Results(api.playlists.getClientPlaylists().getAllItemsNotNull().map { it to (it.uri.uri in uris) })
+        }
+        emit(State.Setup.AddPlaylistState(term, PlaylistSearchState.Results(selectedPlaylists), userPlaylistSearchState))
     }.stateIn(coroutineScope, SharingStarted.Lazily, State.Setup.AddPlaylistState("", PlaylistSearchState.Error, PlaylistSearchState.RequiresLogin))
 
     val currentSetupScreen = combine(backingConfig, backingPlaylistURIs, addPlaylistState) { config, playlistURIs, addPlaylistState ->
@@ -93,7 +94,7 @@ class BrowserState(coroutineScope: CoroutineScope) {
                 is GameState.Playing -> gameState.copy(screen = if (gameState.game.isEnded) GameScreen.End else GameScreen.Question)
             }
             is SetupAction.AddPlaylist -> {
-                backingPlaylistURIs.value += action.playlist.uri.uri
+                backingPlaylistURIs.value = (backingPlaylistURIs.value + action.playlist.uri.uri).distinct()
                 savedPlaylistURIs = backingPlaylistURIs.value.map { it }
             }
             is SetupAction.RemovePlaylist -> {
@@ -116,14 +117,16 @@ class BrowserState(coroutineScope: CoroutineScope) {
                     println("randomTracks = ${randomTracks.map { it.track.name }}, Loading lyrics")
                     backingGame.value = GameState.Loading(LoadingState.LoadingLyrics(0, action.config.amountOfSongs))
                     var amountLoaded = 0
-                    val tracksWithLyrics = randomTracks.mapNotNull { sourcedTrack ->
-                        val lyrics = geniusRepository.getLyrics(sourcedTrack.track.name, sourcedTrack.track.artists.map { it.name }) ?: return@mapNotNull null
-                        val filteredLyrics = lyrics.lines().filter { !it.startsWith("[") }.distinct()
-                        amountLoaded++
-                        backingGame.value = GameState.Loading(LoadingState.LoadingLyrics(amountLoaded, action.config.amountOfSongs))
-                        TrackWithLyrics(sourcedTrack, filteredLyrics)
+                    val tracksWithLyrics = randomTracks.map { sourcedTrack ->
+                        CoroutineScope(Dispatchers.Default).async {
+                            val lyrics = geniusRepository.getLyrics(sourcedTrack.track.name, sourcedTrack.track.artists.map { it.name }) ?: return@async null
+                            val filteredLyrics = lyrics.lines().filter { !it.startsWith("[") }.distinct()
+                            amountLoaded++
+                            backingGame.value = GameState.Loading(LoadingState.LoadingLyrics(amountLoaded, action.config.amountOfSongs))
+                            TrackWithLyrics(sourcedTrack, filteredLyrics)
+                        }
                     }
-                    val game = Game(tracksWithLyrics.toQuestions(), action.config)
+                    val game = Game(tracksWithLyrics.awaitAll().filterNotNull().toQuestions(), action.config)
                     println("first question = ${game.questions.first()}")
                     backingGame.value = GameState.Playing(game, GameScreen.Question)
                 }

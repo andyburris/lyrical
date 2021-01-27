@@ -1,6 +1,7 @@
 package ui
 
 import BrowserState
+import authenticateUserResponse
 import collectAsState
 import kotlinx.browser.document
 import kotlinx.coroutines.GlobalScope
@@ -68,8 +69,6 @@ val styles = CSSBuilder().apply {
     }
 }
 
-private val playlistURI = "spotify:playlist:07DnxA8uWkBU10h3fubaqd"
-private val tristanPlaylist = "spotify:playlist:5TjcPSTcEyuCkpyZrZpVZQ"
 fun main() {
     println("is this even updating?")
     injectGlobal(styles.toString())
@@ -89,6 +88,17 @@ val stack = functionalComponent<RProps> {
 
     hashRouter {
         switch {
+            route<RProps>("/:access_token(access_token=.*)") { props ->
+                println("auth, hash = ${props.location.pathname}")
+                val parameters = props.location.pathname.split("&").map { it.takeLastWhile { it != '=' } }
+                println("parameters = $parameters")
+                if (parameters.size >= 4) {
+                    val (token, tokenType, expiresIn, state) = parameters
+                    authenticateUserResponse(token, tokenType, expiresIn, state)
+                }
+                props.history.replace("/setup")
+                emptyContent()
+            }
             route("/setup") {
                 SetupScreen(setupScreen) { browserState.handleAction(it) }
             }

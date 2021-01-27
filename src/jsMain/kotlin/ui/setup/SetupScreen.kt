@@ -43,7 +43,7 @@ val setup = functionalComponent<SetupProps> { props ->
                 if (playlistsOpen) {
                     flexbox(gap = 32.px, wrap = FlexWrap.wrap, justifyContent = JustifyContent.start) {
                         props.state.selectedPlaylists.forEach {
-                            PlaylistItem(it, false) {
+                            PlaylistItem(it, true) {
                                 props.onUpdateSetup.invoke(SetupAction.RemovePlaylist(it))
                             }
                         }

@@ -1,3 +1,4 @@
+import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.StateFlow
@@ -7,8 +8,10 @@ import kotlinx.css.*
 import kotlinx.html.DIV
 import kotlinx.html.INPUT
 import kotlinx.html.js.onChangeFunction
+import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLTextAreaElement
+import org.w3c.dom.Node
 import org.w3c.dom.events.Event
 import react.*
 import styled.StyledDOMBuilder
@@ -88,3 +91,21 @@ fun <T> StateFlow<T>.collectAsState(): T {
 }
 
 
+/**
+ * Hook that alerts clicks outside of the passed ref
+ */
+fun RBuilder.useOnOutsideClick(ref: RMutableRef<HTMLElement?>, onClick: () -> Unit) {
+    useEffectWithCleanup {
+        fun handleClickOutside(event: Event) {
+            val current = ref.current ?: return
+            if (!current.contains(event.target as HTMLElement)) {
+                onClick.invoke()
+            }
+        }
+
+        document.addEventListener("click", ::handleClickOutside)
+        return@useEffectWithCleanup {
+            document.removeEventListener("click", ::handleClickOutside)
+        }
+    }
+}
