@@ -110,7 +110,7 @@ class BrowserState(coroutineScope: CoroutineScope) {
         when (action) {
             is GameAction.AnswerQuestion -> backingGame.value = when (val gameState = backingGame.value) {
                 GameState.Unstarted, is GameState.Loading -> throw Error("Can't answer when gameState = $gameState")
-                is GameState.Playing -> gameState.copy(game = gameState.game.withAnswer(action.answer), GameScreen.Answer)
+                is GameState.Playing -> gameState.copy(game = gameState.game.withNextAnswer(action.answer), GameScreen.Answer)
             }
             is GameAction.NextQuestion -> backingGame.value = when (val gameState = backingGame.value) {
                 GameState.Unstarted, is GameState.Loading -> throw Error("Can't move to next question when gameState = $gameState")

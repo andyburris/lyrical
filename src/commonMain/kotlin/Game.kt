@@ -14,7 +14,7 @@ import kotlin.time.seconds
 
 data class Game(val questions: List<GameQuestion>, val config: GameConfig) {
     val points get() = questions.map { it.answer }.filterIsInstance<GameAnswer.Correct>().sumByDouble { it.points }
-    fun withAnswer(answer: UserAnswer): Game {
+    fun withNextAnswer(answer: UserAnswer): Game {
         val questionNumber = questions.indexOfFirst { it.answer is GameAnswer.Unanswered }
         return this.copy(
             questions = questions.replace(questionNumber) { it.withAnswer(answer) }

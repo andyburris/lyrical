@@ -29,4 +29,5 @@ actual suspend fun GeniusRepository.scrapeLyrics(songURL: String): String? {
     }
 }
 
-actual suspend fun SpotifyRepository.userAPI(): SpotifyClientApi? = null
+actual var savedConfig: GameConfig = GameConfig()
+actual var savedPlaylistURIs: List<String> = emptyList()
