@@ -38,6 +38,7 @@ val loading = functionalComponent<LoadingProps> { props ->
                 +"Loading..."
             }
             flexbox(FlexDirection.column, gap = 16.px) {
+                css { width = 100.pct }
                 when (val state = props.loadingState) {
                     LoadingState.LoadingSongs -> {
                         indeterminateProgressBar()

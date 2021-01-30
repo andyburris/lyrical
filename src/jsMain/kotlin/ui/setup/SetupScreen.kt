@@ -2,6 +2,8 @@ package ui.setup
 
 import Screen
 import SetupAction
+import flexColumn
+import flexRow
 import flexbox
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
@@ -27,53 +29,38 @@ val setup = functionalComponent<SetupProps> { props ->
             justifyContent = JustifyContent.start
         }
         AppHeader(props.state.selectedPlaylists.isNotEmpty() && props.state.config.amountOfSongs > 0) {
-            props.onUpdateSetup.invoke(SetupAction.StartGame(props.state.selectedPlaylists.map { it.uri.uri }, props.state.config))
+            props.onUpdateSetup.invoke(SetupAction.StartGame(props.state.selectedPlaylists, props.state.config))
         }
-        flexbox(direction = FlexDirection.column, gap = 48.px) {
+        flexbox(gap = 64.px) {
             css {
-                padding(48.px)
-                backgroundColor = theme.overlay
-                borderRadius = 16.px
-                boxSizing = BoxSizing.borderBox
-            }
-
-            val (playlistsOpen, setPlaylistsOpen) = useState(false)
-            flexbox(FlexDirection.column, gap = 32.px) {
-                SectionHeader(Icon.Library, "${props.state.selectedPlaylists.size} Playlists Selected", playlistsOpen) { setPlaylistsOpen(!playlistsOpen) }
-                if (playlistsOpen) {
-                    flexbox(gap = 32.px, wrap = FlexWrap.wrap, justifyContent = JustifyContent.start) {
-                        props.state.selectedPlaylists.forEach {
-                            PlaylistItem(it, true) {
-                                props.onUpdateSetup.invoke(SetupAction.RemovePlaylist(it))
-                            }
-                        }
-                    }
+                onVerticalLayout {
+                    flexDirection = FlexDirection.column
                 }
             }
-
-            val (optionsOpen, setOptionsOpen) = useState(false)
-            SectionHeader(Icon.List, "Options", optionsOpen) { setOptionsOpen(!optionsOpen) }
-            if (optionsOpen) {
-                Options(props.state.config) {
-                    props.onUpdateSetup.invoke(SetupAction.UpdateConfig(it))
-                }
-            }
+            Sidebar(props.state, props.onUpdateSetup)
+            FindPlaylists(
+                props.state.addPlaylistState,
+                onAction = { props.onUpdateSetup.invoke(it) }
+            )
         }
+    }
+}
 
-        FindPlaylists(
-            props.state.addPlaylistState,
-            onUpdateSearch = {
-                props.onUpdateSetup.invoke(SetupAction.UpdateSearch(it))
-            },
-            onAddPlaylist = {
-                props.onUpdateSetup.invoke(SetupAction.AddPlaylist(it))
-            }
-        )
+private fun CSSBuilder.onVerticalLayout(block: CSSBuilder.() -> Unit) {
+    media("screen and (max-width: 1152px)") {
+        block()
+    }
+}
+
+private fun CSSBuilder.onHorizontalLayout(block: CSSBuilder.() -> Unit) {
+    media("not screen and (max-width: 1152px)") {
+        block()
     }
 }
 
 private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Unit) {
     flexbox(justifyContent = JustifyContent.spaceBetween, alignItems = Align.center) {
+        css { width = 100.pct }
         flexbox(alignItems = Align.center, gap = 32.px) {
             styledImg(src = "/assets/LyricalIcon.svg") {
                 css { width = 72.px; height = 72.px }
@@ -97,10 +84,68 @@ private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Uni
     }
 }
 
-private fun RBuilder.SectionHeader(icon: Icon, title: String, open: Boolean, onToggle: () -> Unit) {
+private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupAction) -> Unit) {
+    flexbox(FlexDirection.column, gap = 32.px) {
+        css {
+            onHorizontalLayout {
+                width = 30.pct
+                minWidth = 400.px
+                position = Position.sticky
+                alignSelf = Align.flexStart
+                top = 0.px
+                marginTop = (-64).px
+                paddingTop = 64.px
+            }
+            onVerticalLayout {
+                width = 100.pct
+            }
+        }
+        flexColumn(gap = 32.px) {
+            css {
+                padding(32.px)
+                borderRadius = 16.px
+                backgroundColor = theme.primary
+                width = 100.pct
+                boxSizing = BoxSizing.borderBox
+            }
+            val (playlistsOpen, setPlaylistsOpen) = useState(true)
+            SectionHeader("${setupState.selectedPlaylists.size} Playlists Selected", playlistsOpen) { setPlaylistsOpen(!playlistsOpen) }
+            if (playlistsOpen) {
+                flexColumn(gap = 16.px) {
+                    css { width = 100.pct }
+                    setupState.selectedPlaylists.forEach {
+                        HorizontalPlaylistItem(it, true) {
+                            onUpdateSetup.invoke(SetupAction.RemovePlaylist(it))
+                        }
+                    }
+                }
+            }
+        }
+
+        flexColumn(gap = 32.px) {
+            css {
+                padding(all = 32.px)
+                backgroundColor = theme.backgroundDark
+                borderRadius = 16.px
+                width = 100.pct
+                boxSizing = BoxSizing.borderBox
+            }
+            val (optionsOpen, setOptionsOpen) = useState(false)
+            SectionHeader("Options", optionsOpen, Icon.List) { setOptionsOpen(!optionsOpen) }
+            if (optionsOpen) {
+                Options(setupState.config) {
+                    onUpdateSetup.invoke(SetupAction.UpdateConfig(it))
+                }
+            }
+        }
+    }
+}
+
+private fun RBuilder.SectionHeader(title: String, open: Boolean, icon: Icon? = null, onToggle: () -> Unit) {
     flexbox(justifyContent = JustifyContent.spaceBetween, alignItems = Align.center) {
+        css { width = 100.pct }
         flexbox(alignItems = Align.center, gap = 16.px) {
-            Icon(icon)
+            icon?.let { Icon(it) }
             styledP {
                 css { color = theme.onBackground }
                 +title

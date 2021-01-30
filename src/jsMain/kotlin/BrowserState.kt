@@ -1,15 +1,15 @@
 import com.adamratzman.spotify.models.SimplePlaylist
+import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import org.w3c.dom.get
+import org.w3c.dom.set
+import kotlin.random.Random
 
 class BrowserState(coroutineScope: CoroutineScope) {
 
-    private val spotifyRepository = SpotifyRepository(clientID, clientSecret).also { repo ->
-        val loggedInAPI = getClientAPIIfLoggedIn()
-        println("loggedInAPI = $loggedInAPI")
-        loggedInAPI?.let { repo.setUserAPI(it) }
-    }
+    private val spotifyRepository = MutableStateFlow(getClientAPIIfLoggedIn{ handleAction(it) }?.let { SpotifyRepository.LoggedIn(it) } ?: SpotifyRepository.LoggedOut)
     private val geniusRepository = GeniusRepository(geniusAPIKey)
 
     private val backingConfig: MutableStateFlow<GameConfig> = MutableStateFlow(savedConfig)
@@ -19,27 +19,50 @@ class BrowserState(coroutineScope: CoroutineScope) {
     private val backingGame: MutableStateFlow<GameState> = MutableStateFlow(GameState.Unstarted)
     val currentGame = backingGame.asStateFlow()
 
-    private val addPlaylistState = combineTransform(backingSearchTerm, backingPlaylistURIs) { term, uris ->
-        println("transforming term = $term, uris = $uris")
-        emit(State.Setup.AddPlaylistState(term, PlaylistSearchState.Loading, PlaylistSearchState.RequiresLogin))
+    private val selectedPlaylists = combine(spotifyRepository, backingPlaylistURIs, cachedPlaylists) { repository, playlistURIs, cachedPlaylists ->
+        if (repository !is SpotifyRepository.LoggedIn) return@combine null
+        playlistURIs.mapNotNull { uri ->
+            cachedPlaylists.find { it.uri.uri == uri } ?: repository.getPlaylistByURI(uri)
+        }
+    }
+
+    private val searchedPlaylists = combineTransform(spotifyRepository, backingSearchTerm) { repository, term ->
+        if (repository !is SpotifyRepository.LoggedIn) return@combineTransform
+        println("transforming term = $term")
         val playlists = when {
-            term.isNotBlank() -> (spotifyRepository.searchPlaylists(term) + spotifyRepository.getPlaylistByURL(term)).filterNotNull()
-            else -> spotifyRepository.getFeaturedPlaylists()
+            term.isNotBlank() -> (repository.searchPlaylists(term) + repository.getPlaylistByURL(term)).filterNotNull()
+            else -> repository.getFeaturedPlaylists()
         }
         cachedPlaylists.value = (cachedPlaylists.value + playlists).distinct()
-        val selectedPlaylists = playlists.map { it to (it.uri.uri in uris) }
-        val userPlaylistSearchState = when(val api = spotifyRepository.userAPI()) {
-            null -> PlaylistSearchState.RequiresLogin
-            else -> PlaylistSearchState.Results(api.playlists.getClientPlaylists().getAllItemsNotNull().map { it to (it.uri.uri in uris) })
-        }
-        emit(State.Setup.AddPlaylistState(term, PlaylistSearchState.Results(selectedPlaylists), userPlaylistSearchState))
-    }.stateIn(coroutineScope, SharingStarted.Lazily, State.Setup.AddPlaylistState("", PlaylistSearchState.Error, PlaylistSearchState.RequiresLogin))
+        emit(playlists)
+    }.stateIn(coroutineScope, SharingStarted.Lazily, null)
 
-    val currentSetupScreen = combine(backingConfig, backingPlaylistURIs, addPlaylistState) { config, playlistURIs, addPlaylistState ->
-        val playlists = playlistURIs.mapNotNull { id ->
-            cachedPlaylists.value.find { it.uri.uri == id } ?: spotifyRepository.getPlaylistByURI(id)
+    private val filteredUserPlaylists = combineTransform(spotifyRepository, backingSearchTerm) { repository, term ->
+        if (repository !is SpotifyRepository.LoggedIn) return@combineTransform
+        val playlists = repository.getUserPlaylists().filter { term in it.name }
+        cachedPlaylists.value = (cachedPlaylists.value + playlists).distinct()
+        emit(playlists)
+    }.stateIn(coroutineScope, SharingStarted.Lazily, null)
+
+    private val addPlaylistState = combineTransform(spotifyRepository, backingSearchTerm, searchedPlaylists, filteredUserPlaylists, backingPlaylistURIs) { repository, term, searchedPlaylists, userPlaylists, uris ->
+        if (repository !is SpotifyRepository.LoggedIn) return@combineTransform
+        val searchedResults = when(searchedPlaylists) {
+            null -> PlaylistSearchState.Loading
+            else -> PlaylistSearchState.Results(searchedPlaylists.map { it to (it.uri.uri in uris) })
         }
-        State.Setup(selectedPlaylists = playlists, config, addPlaylistState)
+        val userResults = when (userPlaylists) {
+            null -> PlaylistSearchState.Loading
+            else -> PlaylistSearchState.Results(userPlaylists.map { it to (it.uri.uri in uris) })
+        }
+        emit(State.Setup.AddPlaylistState(term, searchedResults, userResults))
+    }.stateIn(coroutineScope, SharingStarted.Lazily, State.Setup.AddPlaylistState("", PlaylistSearchState.Loading, PlaylistSearchState.Loading))
+
+    val currentSetupScreen = combine(spotifyRepository, backingConfig, selectedPlaylists, addPlaylistState) { spotifyRepository, config, selectedPlaylists, addPlaylistState ->
+        when {
+            spotifyRepository is SpotifyRepository.LoggedOut || selectedPlaylists == null -> null
+            spotifyRepository is SpotifyRepository.LoggedIn -> State.Setup(selectedPlaylists = selectedPlaylists, config, addPlaylistState)
+            else -> null
+        }
     }.stateIn(coroutineScope, SharingStarted.Lazily, State.Setup(emptyList(), backingConfig.value, addPlaylistState.value))
 
     val currentLoadingScreen = currentGame.map { gameState ->
@@ -112,9 +135,9 @@ class BrowserState(coroutineScope: CoroutineScope) {
                 backingGame.value = GameState.Loading(LoadingState.LoadingSongs)
                 window.location.href = "http://localhost:8080/#/game/loading"
                 CoroutineScope(Dispatchers.Default).launch {
-                    val playlists = action.playlistURIs.mapNotNull { spotifyRepository.getPlaylistByURI(it) }
-                    val randomTracks = playlists.getRandomSongs(spotifyRepository, action.config)
-                    println("randomTracks = ${randomTracks.map { it.track.name }}, Loading lyrics")
+                    val spotifyRepository = spotifyRepository.value
+                    if (spotifyRepository !is SpotifyRepository.LoggedIn) return@launch
+                    val randomTracks = action.playlists.getRandomSongs(spotifyRepository, action.config)
                     backingGame.value = GameState.Loading(LoadingState.LoadingLyrics(0, action.config.amountOfSongs))
                     var amountLoaded = 0
                     val tracksWithLyrics = randomTracks.map { sourcedTrack ->
@@ -127,8 +150,23 @@ class BrowserState(coroutineScope: CoroutineScope) {
                         }
                     }
                     val game = Game(tracksWithLyrics.awaitAll().filterNotNull().toQuestions(), action.config)
-                    println("first question = ${game.questions.first()}")
                     backingGame.value = GameState.Playing(game, GameScreen.Question)
+                }
+            }
+            is Action.Authenticate -> {
+                localStorage["authState"] = Random.nextInt().toString()
+                val redirectURL = "http:%2F%2Flocalhost:8080%2F%23%2Fauth"
+                window.location.href = "https://accounts.spotify.com/authorize?client_id=$clientID&redirect_uri=$redirectURL&scope=playlist-read-private&response_type=token&state=${localStorage["authState"]}"
+            }
+            is Action.CheckAuthentication -> {
+                println("authenticating response, state = $action.state, saved state = ${localStorage["authState"]}")
+                if (action.state == localStorage["authState"]) {
+                    localStorage.removeItem("authState")
+                    localStorage["access_token"] = action.token
+                    localStorage["access_token_type"] = action.type
+                    localStorage["access_token_expires_in"] = action.expiresIn.toString()
+                    println("saved authentication")
+                    spotifyRepository.value = getClientAPIIfLoggedIn { handleAction(it) }?.let { SpotifyRepository.LoggedIn(it) } ?: SpotifyRepository.LoggedOut
                 }
             }
         }

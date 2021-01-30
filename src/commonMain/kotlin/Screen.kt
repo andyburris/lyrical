@@ -70,7 +70,7 @@ sealed class State {
 
 sealed class PlaylistSearchState {
     data class Results(val playlists: List<Pair<SimplePlaylist, Boolean>>) : PlaylistSearchState()
-    object RequiresLogin : PlaylistSearchState()
+    //object RequiresLogin : PlaylistSearchState()
     object Loading : PlaylistSearchState()
     object Error : PlaylistSearchState()
 }

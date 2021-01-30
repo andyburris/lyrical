@@ -34,7 +34,7 @@ fun INPUT.onTextChanged(block: (String) -> Unit) {
     }
 }
 
-fun RBuilder.flexbox(direction: FlexDirection = FlexDirection.row, justifyContent: JustifyContent = JustifyContent.inherit, alignItems: Align = Align.inherit, gap: LinearDimension = 0.px, wrap: FlexWrap = FlexWrap.inherit, content: StyledDOMBuilder<DIV>.() -> Unit) {
+fun RBuilder.flexbox(direction: FlexDirection = FlexDirection.row, justifyContent: JustifyContent = JustifyContent.start, alignItems: Align = Align.start, gap: LinearDimension = 0.px, wrap: FlexWrap = FlexWrap.inherit, content: StyledDOMBuilder<DIV>.() -> Unit) {
     styledDiv {
         css {
             display = Display.flex
@@ -48,19 +48,24 @@ fun RBuilder.flexbox(direction: FlexDirection = FlexDirection.row, justifyConten
     }
 }
 
+fun RBuilder.flexColumn(justifyContent: JustifyContent = JustifyContent.start, alignItems: Align = Align.start, gap: LinearDimension = 0.px, wrap: FlexWrap = FlexWrap.inherit, content: StyledDOMBuilder<DIV>.() -> Unit) = flexbox(FlexDirection.column, justifyContent, alignItems, gap, wrap, content)
+fun RBuilder.flexRow(justifyContent: JustifyContent = JustifyContent.start, alignItems: Align = Align.start, gap: LinearDimension = 0.px, wrap: FlexWrap = FlexWrap.inherit, content: StyledDOMBuilder<DIV>.() -> Unit) = flexbox(FlexDirection.row, justifyContent, alignItems, gap, wrap, content)
+
 fun RBuilder.Screen(content: StyledDOMBuilder<DIV>.() -> Unit) {
-    styledDiv {
+    flexColumn(justifyContent = JustifyContent.center, alignItems = Align.center) {
         css {
             width = 100.pct
             minHeight = 100.vh
-            display = Display.flex
-            flexDirection = FlexDirection.column
-            alignItems = Align.stretch
-            justifyContent = JustifyContent.center
-            padding(vertical = 128.px, horizontal = 196.px)
+            padding(all = 64.px)
             boxSizing = BoxSizing.borderBox
         }
-        content.invoke(this)
+        flexColumn(alignItems = Align.stretch) {
+            css {
+                width = 100.pct
+                maxWidth = 1200.px
+            }
+            content.invoke(this)
+        }
     }
 }
 

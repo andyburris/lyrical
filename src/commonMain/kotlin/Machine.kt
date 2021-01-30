@@ -82,7 +82,7 @@ import kotlinx.coroutines.flow.*
 }*/
 
 
-suspend fun List<SimplePlaylist>.getRandomSongs(spotifyRepository: SpotifyRepository, config: GameConfig): List<SourcedTrack> {
+suspend fun List<SimplePlaylist>.getRandomSongs(spotifyRepository: SpotifyRepository.LoggedIn, config: GameConfig): List<SourcedTrack> {
     println("getting random songs, config = $config")
     return if (config.distributePlaylistsEvenly) {
         val amountOfSongsPerPlaylist = config.amountOfSongs.distributeInto(this.size)

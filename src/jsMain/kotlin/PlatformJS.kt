@@ -22,14 +22,6 @@ actual suspend fun GeniusRepository.scrapeLyrics(songURL: String): String?  {
     return (lyricsDiv as Element).innerHTML.replace(unnecessaryScrapingRegex, "").replace("&amp;", "&").split("<br>").filter { it.isNotBlank() }.map { it.trim() }.joinToString("\n")
 }
 
-
-actual suspend fun SpotifyRepository.userAPI(): SpotifyClientApi? {
-    val accessToken = localStorage["access_token"] ?: return null
-    val expiresIn = localStorage["access_token_expires_in"]?.toIntOrNull() ?: return null
-    val token = Token(accessToken, "Bearer", expiresIn)
-    return spotifyImplicitGrantApi(clientID, token)
-}
-
 /*
 actual fun getKeys(): Keys {
 

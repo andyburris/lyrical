@@ -9,35 +9,23 @@ import kotlinx.coroutines.coroutineScope
 
 fun String.playlistURIFromURL() = this.removePrefix("https://open.spotify.com/playlist/").takeWhile { it != '?' }
 
-
-class SpotifyRepository(val clientID: String, private val clientSecret: String) {
-    var apiBacking: Deferred<SpotifyApi<*, *>>? = null
-    private suspend fun api(): SpotifyApi<*, *> {
-        if (apiBacking == null){
-            apiBacking = coroutineScope {
-                async {
-                    spotifyAppApi(clientID, clientSecret).build()
-                }
-            }
+sealed class SpotifyRepository {
+    data class LoggedIn(val api: SpotifyClientApi) : SpotifyRepository() {
+        suspend fun getPlaylistTracks(playlistURI: String): List<Track> {
+            val playlistTracks = api.playlists.getPlaylistTracks(playlistURI)
+            return playlistTracks
+                .getAllItemsNotNull()
+                .map { it.track }
+                .filterIsInstance<Track>()
         }
-        return apiBacking!!.await()
+        suspend fun getFeaturedPlaylists(): List<SimplePlaylist> = api.browse.getFeaturedPlaylists().playlists.items
+        suspend fun searchPlaylists(query: String): List<SimplePlaylist> = api.search.search(query, SearchApi.SearchType.PLAYLIST).playlists?.items ?: emptyList()
+        suspend fun getPlaylistByURL(url: String): SimplePlaylist? = getPlaylistByURI(url.playlistURIFromURL())
+        suspend fun getUserPlaylists(): List<SimplePlaylist> = api.playlists.getClientPlaylists().getAllItems().filterNotNull()
+        suspend fun getPlaylistByURI(uri: String): SimplePlaylist? = api.playlists.getPlaylist(uri)?.toSimplePlaylist()
     }
-
-    suspend fun getPlaylistTracks(playlistURI: String): List<Track> {
-        val playlistTracks = api().playlists.getPlaylistTracks(playlistURI)
-        return playlistTracks
-            .getAllItemsNotNull()
-            .map { it.track }
-            .filterIsInstance<Track>()
-    }
-    suspend fun getFeaturedPlaylists(): List<SimplePlaylist> = api().browse.getFeaturedPlaylists().playlists.items
-    suspend fun searchPlaylists(query: String): List<SimplePlaylist> = api().search.search(query, SearchApi.SearchType.PLAYLIST).playlists?.items ?: emptyList()
-    suspend fun getPlaylistByURL(url: String): SimplePlaylist? = getPlaylistByURI(url.playlistURIFromURL())
-    suspend fun getUserPlaylists(): List<SimplePlaylist>? = (api() as? SpotifyClientApi)?.run { playlists.getClientPlaylists().getAllItems().filterNotNull() }
-    suspend fun getPlaylistByURI(uri: String): SimplePlaylist? = api().playlists.getPlaylist(uri)?.toSimplePlaylist()
+    object LoggedOut : SpotifyRepository()
 }
-
-expect suspend fun SpotifyRepository.userAPI(): SpotifyClientApi?
 
 private fun Playlist.toSimplePlaylist() = SimplePlaylist(
     externalUrlsString = externalUrls.map { it.name to it.url }.toMap(),

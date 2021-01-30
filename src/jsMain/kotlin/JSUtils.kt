@@ -30,35 +30,23 @@ fun statusHandler(xhr: XMLHttpRequest, coroutineContext: Continuation<Document>)
     }
 }
 
-fun authenticateUser() {
-    localStorage["authState"] = Random.nextInt().toString()
-    val redirectURL = "http:%2F%2Flocalhost:8080%2F%23%2Fauth"
-    window.location.href = "https://accounts.spotify.com/authorize?client_id=$clientID&redirect_uri=$redirectURL&scope=playlist-read-private&response_type=token&state=${localStorage["authState"]}"
-}
-
-fun authenticateUserResponse(token: String, type: String, expiresIn: String, state: String) {
-    println("authenticating response, state = $state, saved state = ${localStorage["authState"]}")
-    if (state == localStorage["authState"]) {
-        localStorage.removeItem("authState")
-        localStorage["access_token"] = token
-        localStorage["access_token_type"] = type
-        localStorage["access_token_expires_in"] = expiresIn
-        println("saved authentication")
-    }
-}
-
-fun getClientAPIIfLoggedIn(): SpotifyImplicitGrantApi? {
+fun getClientAPIIfLoggedIn(onAuthentication: (Action.Authenticate) -> Unit): SpotifyImplicitGrantApi? {
     println("checking for user login")
     val accessToken = localStorage["access_token"] ?: return null
     val tokenType = localStorage["access_token_type"] ?: return null
     val expiresIn = localStorage["access_token_expires_in"] ?: return null
     val token = Token(accessToken, tokenType, expiresIn.toInt())
     println("logged in, checking if valid token")
-    return try { spotifyImplicitGrantApi(clientID, token) } catch (e: Exception) { return null }
-}
-
-fun SpotifyRepository.setUserAPI(clientApi: SpotifyImplicitGrantApi) {
-    apiBacking = CompletableDeferred(clientApi)
+    return try {
+        val api = spotifyImplicitGrantApi(clientID, token)
+        println("created implicitGrantApi")
+        CoroutineScope(Dispatchers.Default).launch {
+            if (!api.isTokenValid().isValid) onAuthentication.invoke(Action.Authenticate(Random.nextInt().toString()))
+        }
+        api
+    } catch (e: Exception) {
+        return null
+    }
 }
 
 

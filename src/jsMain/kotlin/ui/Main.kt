@@ -1,7 +1,6 @@
 package ui
 
 import BrowserState
-import authenticateUserResponse
 import collectAsState
 import kotlinx.browser.document
 import kotlinx.coroutines.GlobalScope
@@ -13,17 +12,21 @@ import styled.*
 import ui.game.AnswerScreen
 import ui.game.EndScreen
 import ui.game.QuestionScreen
+import ui.landing.LandingScreen
 import ui.loading.LoadingScreen
 import ui.setup.SetupScreen
 
 data class Theme(
     val background: Color = Color("#333333"),
+    val backgroundDark: Color = Color("#2D2D2D"),
+    val backgroundCard: Color = Color("#545454"),
     val onBackground: Color = Color("#FFFFFF"),
     val onBackgroundSecondary: Color = Color("rgba(255, 255, 255, .5)"),
     val onBackgroundPlaceholder: Color = Color("rgba(255, 255, 255, .12)"),
     val primary: Color = Color("#1DB954"),
     val onPrimary: Color = Color("#FFFFFF"),
     val overlay: Color = Color("rgba(0, 0, 0, .12)"),
+    val darkOverlay: Color = Color("rgba(0, 0, 0, .70)"),
 )
 
 val theme = Theme()
@@ -67,6 +70,9 @@ val styles = CSSBuilder().apply {
         margin(0.px)
         padding(0.px)
     }
+    input {
+        outline = Outline.none
+    }
 }
 
 fun main() {
@@ -94,17 +100,20 @@ val stack = functionalComponent<RProps> {
                 println("parameters = $parameters")
                 if (parameters.size >= 4) {
                     val (token, tokenType, expiresIn, state) = parameters
-                    authenticateUserResponse(token, tokenType, expiresIn, state)
+                    browserState.handleAction(Action.CheckAuthentication(token, tokenType, expiresIn.toInt(), state))
                 }
-                props.history.replace("/setup")
+                props.history.replace("/")
                 emptyContent()
             }
-            route("/setup") {
-                SetupScreen(setupScreen) { browserState.handleAction(it) }
+            route("/", exact = true) {
+                when(setupScreen) {
+                    null -> LandingScreen() { browserState.handleAction(it) }
+                    else -> SetupScreen(setupScreen) { browserState.handleAction(it) }
+                }
             }
             route<RProps>("/game") { props ->
                 when (gameState) {
-                    GameState.Unstarted -> props.history.replace("/setup")
+                    GameState.Unstarted -> props.history.replace("/")
                     is GameState.Loading -> if (props.location.pathname != "/game/loading") props.history.replace("/game/loading")
                     is GameState.Playing -> {
                         when {
@@ -137,24 +146,13 @@ val stack = functionalComponent<RProps> {
                     route("/game/end") {
                         when (endScreen) {
                             null -> emptyContent()
-                            else -> EndScreen(endScreen) { props.history.replace("/setup") }
+                            else -> EndScreen(endScreen) { props.history.replace("/") }
                         }
                     }
                 }
             }
         }
-        redirect("/", "/setup")
     }
 }
 
 private fun RBuilder.emptyContent() = div { }
-
-private fun RBuilder.redirectIf(condition: Boolean, history: RouteResultHistory, path: String, content: RBuilder.() -> ReactElement): ReactElement {
-    return when (condition) {
-        true -> {
-            history.replace(path)
-            emptyContent()
-        }
-        else -> content()
-    }
-}
