@@ -133,7 +133,8 @@ class BrowserState(coroutineScope: CoroutineScope) {
             }
             is SetupAction.StartGame -> {
                 backingGame.value = GameState.Loading(LoadingState.LoadingSongs)
-                window.location.href = "http://localhost:8080/#/game/loading"
+                //window.location.href = "http://localhost:8080/#/game/loading"
+                window.location.href = "https://lyricalgame.netlify.app/#/game/loading"
                 CoroutineScope(Dispatchers.Default).launch {
                     val spotifyRepository = spotifyRepository.value
                     if (spotifyRepository !is SpotifyRepository.LoggedIn) return@launch
