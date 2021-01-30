@@ -2,7 +2,6 @@ import com.adamratzman.spotify.SpotifyImplicitGrantApi
 import com.adamratzman.spotify.models.Token
 import com.adamratzman.spotify.spotifyImplicitGrantApi
 import kotlinx.browser.localStorage
-import kotlinx.browser.window
 import kotlinx.coroutines.*
 import org.w3c.dom.*
 import org.w3c.dom.parsing.DOMParser
@@ -38,7 +37,7 @@ fun getClientAPIIfLoggedIn(onAuthentication: (Action.Authenticate) -> Unit): Spo
     val token = Token(accessToken, tokenType, expiresIn.toInt())
     println("logged in, checking if valid token")
     return try {
-        val api = spotifyImplicitGrantApi(clientID, token)
+        val api = spotifyImplicitGrantApi(spotifyClientID, token)
         println("created implicitGrantApi")
         CoroutineScope(Dispatchers.Default).launch {
             if (!api.isTokenValid().isValid) onAuthentication.invoke(Action.Authenticate(Random.nextInt().toString()))

@@ -156,7 +156,7 @@ class BrowserState(coroutineScope: CoroutineScope) {
             is Action.Authenticate -> {
                 localStorage["authState"] = Random.nextInt().toString()
                 val redirectURL = "http:%2F%2Flocalhost:8080%2F%23%2Fauth"
-                window.location.href = "https://accounts.spotify.com/authorize?client_id=$clientID&redirect_uri=$redirectURL&scope=playlist-read-private&response_type=token&state=${localStorage["authState"]}"
+                window.location.href = "https://accounts.spotify.com/authorize?client_id=$spotifyClientID&redirect_uri=$redirectURL&scope=playlist-read-private&response_type=token&state=${localStorage["authState"]}"
             }
             is Action.CheckAuthentication -> {
                 println("authenticating response, state = $action.state, saved state = ${localStorage["authState"]}")
