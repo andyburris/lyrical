@@ -15,7 +15,7 @@ data class LyricsRepository(val httpClient: HttpClient = HttpClient {
     suspend fun getLyricsFor(tracks: List<SourcedTrack>): List<TrackWithLyrics> {
         println("getting lyrics for $tracks")
         //val url = "http://localhost:5050/lyrics"
-        val url = "http://lyricalgame.herokuapp.com/lyrics"
+        val url = "https://lyricalgame.herokuapp.com/lyrics"
         val responses = httpClient.get<List<LyricResponse>>(url) {
             header("lyricRequests", tracks.map { LyricRequest(it.track.name, it.track.artists.map { it.name }, it.track.uri.uri) }.encodeToString())
         }
