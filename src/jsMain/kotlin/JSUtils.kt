@@ -14,7 +14,9 @@ import kotlin.random.Random
 
 suspend fun XMLHttpRequest.get(url: String): Document = suspendCoroutine { c ->
     this.onload = { statusHandler(this, c) }
-    this.open("GET", url)
+    val corsAnywhereURL = "https://cors-anywhere.herokuapp.com/$url"
+    this.open("GET", corsAnywhereURL)
+    //this.setRequestHeader("Allow-Origin", "http://localhost:8080")
     this.send()
 }
 

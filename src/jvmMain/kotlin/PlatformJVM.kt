@@ -1,6 +1,4 @@
-import com.adamratzman.spotify.SpotifyClientApi
 import it.skrape.core.fetcher.HttpFetcher
-import it.skrape.core.fetcher.Request
 import it.skrape.core.htmlDocument
 import it.skrape.extract
 import it.skrape.selects.DocElement

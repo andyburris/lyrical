@@ -43,9 +43,9 @@ sealed class State {
         abstract val data: Game
         data class Question(val questionNumber: Int, override val data: Game) : GameState() {
             val question: GameQuestion get() = data.questions[questionNumber]
-            private val randomLine: Int = Random.nextInt(question.trackWithLyrics.lyrics.size - 1)
-            val lyric get() = question.trackWithLyrics.lyrics[randomLine]
-            val nextLyric get() = question.trackWithLyrics.lyrics[randomLine + 1]
+            private val randomLine: Int = Random.nextInt(question.trackWithLyrics.lyricState.lyrics.size - 1)
+            val lyric get() = question.trackWithLyrics.lyricState.lyrics[randomLine]
+            val nextLyric get() = question.trackWithLyrics.lyricState.lyrics[randomLine + 1]
             val artist get() = question.trackWithLyrics.sourcedTrack.track.artists.first().name
             val playlist get() = question.trackWithLyrics.sourcedTrack.sourcePlaylist
             //override fun toScreen(): Screen.GameScreen.Question = Screen.GameScreen.Question(data.questions.indexOf(question), data)

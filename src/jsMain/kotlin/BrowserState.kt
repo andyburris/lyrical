@@ -10,7 +10,7 @@ import kotlin.random.Random
 class BrowserState(coroutineScope: CoroutineScope) {
 
     private val spotifyRepository = MutableStateFlow(getClientAPIIfLoggedIn{ handleAction(it) }?.let { SpotifyRepository.LoggedIn(it) } ?: SpotifyRepository.LoggedOut)
-    private val geniusRepository = GeniusRepository(geniusAPIKey)
+    private val lyricsRepository = LyricsRepository()
 
     private val backingConfig: MutableStateFlow<GameConfig> = MutableStateFlow(savedConfig)
     private val backingPlaylistURIs: MutableStateFlow<List<String>> = MutableStateFlow(savedPlaylistURIs)
@@ -133,31 +133,23 @@ class BrowserState(coroutineScope: CoroutineScope) {
             }
             is SetupAction.StartGame -> {
                 backingGame.value = GameState.Loading(LoadingState.LoadingSongs)
-                //window.location.href = "http://localhost:8080/#/game/loading"
-                window.location.href = "https://lyricalgame.netlify.app/#/game/loading"
+                window.location.href = "http://localhost:8080/#/game/loading"
+                //window.location.href = "https://lyricalgame.netlify.app/#/game/loading"
                 CoroutineScope(Dispatchers.Default).launch {
                     val spotifyRepository = spotifyRepository.value
                     if (spotifyRepository !is SpotifyRepository.LoggedIn) return@launch
                     val randomTracks = action.playlists.getRandomSongs(spotifyRepository, action.config)
                     backingGame.value = GameState.Loading(LoadingState.LoadingLyrics(0, action.config.amountOfSongs))
-                    var amountLoaded = 0
-                    val tracksWithLyrics = randomTracks.map { sourcedTrack ->
-                        CoroutineScope(Dispatchers.Default).async {
-                            val lyrics = geniusRepository.getLyrics(sourcedTrack.track.name, sourcedTrack.track.artists.map { it.name }) ?: return@async null
-                            val filteredLyrics = lyrics.lines().filter { !it.startsWith("[") }.distinct()
-                            amountLoaded++
-                            backingGame.value = GameState.Loading(LoadingState.LoadingLyrics(amountLoaded, action.config.amountOfSongs))
-                            TrackWithLyrics(sourcedTrack, filteredLyrics)
-                        }
-                    }
-                    val game = Game(tracksWithLyrics.awaitAll().filterNotNull().toQuestions(), action.config)
+                    //var amountLoaded = 0
+                    val tracksWithLyrics = lyricsRepository.getLyricsFor(randomTracks)
+                    val game = Game(tracksWithLyrics.toQuestions(), action.config)
                     backingGame.value = GameState.Playing(game, GameScreen.Question)
                 }
             }
             is Action.Authenticate -> {
                 localStorage["authState"] = Random.nextInt().toString()
-                val redirectURL = "https:%2F%2Flyricalgame.netlify.app%2F%23%2Fauth"
-                //val redirectURL = "http:%2F%2Flocalhost:8080%2F%23%2Fauth"
+                //val redirectURL = "https:%2F%2Flyricalgame.netlify.app%2F%23%2Fauth"
+                val redirectURL = "http:%2F%2Flocalhost:8080%2F%23%2Fauth"
                 window.location.href = "https://accounts.spotify.com/authorize?client_id=$spotifyClientID&redirect_uri=$redirectURL&scope=playlist-read-private&response_type=token&state=${localStorage["authState"]}"
             }
             is Action.CheckAuthentication -> {

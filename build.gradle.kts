@@ -16,7 +16,11 @@ repositories {
 
 kotlin {
 
-    jvm()
+    jvm {
+        this.compilations {
+
+        }
+    }
     js(LEGACY) {
         browser {
             binaries.executable()
@@ -56,6 +60,10 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation("it.skrape:skrape-it:1.0.0-alpha7")
+                implementation("io.ktor:ktor-server-core:1.5.0")
+                implementation("io.ktor:ktor-serialization:1.5.0")
+                implementation("io.ktor:ktor-server-netty:1.5.0")
+                implementation("ch.qos.logback:logback-classic:1.2.3")
             }
         }
 
@@ -81,4 +89,8 @@ kotlin {
             }
         }
     }
+}
+
+task("stage") {
+    dependsOn("jvmMainClasses")
 }

@@ -56,17 +56,17 @@ sealed class UserAnswer {
 @OptIn(ExperimentalTime::class)
 data class GameConfig(
     val amountOfSongs: Int = 10,
-    @Serializable(with = DurationAsDoubleSerializer::class) val timer: Duration = 0.seconds,
+    val timer: Int = 0,
     val showSourcePlaylist: Boolean = false,
     val distributePlaylistsEvenly: Boolean = true
 )
 
-@OptIn(ExperimentalTime::class)
+/*@OptIn(ExperimentalTime::class)
 object DurationAsDoubleSerializer : KSerializer<Duration> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Duration", PrimitiveKind.DOUBLE)
     override fun deserialize(decoder: Decoder): Duration = decoder.decodeDouble().milliseconds
     override fun serialize(encoder: Encoder, value: Duration) = encoder.encodeDouble(value.inMilliseconds)
-}
+}*/
 
 private val answerFormatRegex = Regex("( \\(.*\\))+|( -.*)|( \\[.*])|(feat.*)|(ft.*)")
 
@@ -74,6 +74,12 @@ fun String.formatAnswer(): String = this.toLowerCase().replace(answerFormatRegex
 
 data class SourcedTrack(val track: Track, val sourcePlaylist: SimplePlaylist)
 
-data class TrackWithLyrics(val sourcedTrack: SourcedTrack, val lyrics: List<String>)
+@Serializable
+sealed class LyricsState {
+    @Serializable object NotAvailable : LyricsState()
+    @Serializable data class Available(val lyrics: List<String>) : LyricsState()
+}
+
+data class TrackWithLyrics(val sourcedTrack: SourcedTrack, val lyricState: LyricsState.Available)
 
 fun List<TrackWithLyrics>.toQuestions() = this.map { GameQuestion(it) }
