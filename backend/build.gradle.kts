@@ -27,3 +27,7 @@ dependencies {
 application {
     mainClass.set("ServerKt")
 }
+
+task("stage") {
+    dependsOn("installDist")
+}

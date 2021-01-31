@@ -53,7 +53,3 @@ kotlin {
         }
     }
 }
-
-task("stage") {
-    dependsOn("jvmMainClasses")
-}
