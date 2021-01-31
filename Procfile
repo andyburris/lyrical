@@ -1,1 +1,1 @@
-web: build/install/kotlinserver/bin/kotlinserver
+web: backend/build/install/backend/bin/backend
