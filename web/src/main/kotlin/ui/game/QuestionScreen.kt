@@ -63,7 +63,7 @@ val question = functionalComponent<QuestionProps> { props ->
                         +"- ${props.screen.artist}"
                     }
                 }
-                flexbox(justifyContent = JustifyContent.end, gap = 8.px) {
+                flexbox(justifyContent = JustifyContent.flexEnd, gap = 8.px) {
                     css { marginTop = 8.px }
                     if (!showingNextLine) {
                         chip("+ Next Line") { setShowingNextLine(true) }
@@ -84,7 +84,6 @@ val question = functionalComponent<QuestionProps> { props ->
                         border = "none"
                         color = theme.onBackground
                         fontFamily = "YoungSerif"
-                        fontWeight = FontWeight.w700
                         fontSize = 64.px
                         width = 100.pct
                     }

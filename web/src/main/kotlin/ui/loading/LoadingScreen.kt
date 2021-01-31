@@ -37,14 +37,13 @@ val loading = functionalComponent<LoadingProps> { props ->
             }
             flexbox(FlexDirection.column, gap = 16.px) {
                 css { width = 100.pct }
+                indeterminateProgressBar()
                 when (val state = props.loadingState) {
                     LoadingState.LoadingSongs -> {
-                        indeterminateProgressBar()
                         p { +"LOADING SONGS" }
                     }
                     is LoadingState.LoadingLyrics -> {
-                        determinateProgressBar(state)
-                        p { +"LOADING LYRICS (${state.amountLoaded}/${state.numberOfSongs})" }
+                        p { +"LOADING LYRICS" }
                     }
                 }
             }

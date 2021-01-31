@@ -81,7 +81,7 @@ private fun RBuilder.NumberPickerItem(label: String, default: Int, current: Int,
 
 private fun RBuilder.SwitchItem(label: String, current: Boolean, onChange: (Boolean) -> Unit) {
     PickerItem(label) {
-        flexbox(justifyContent = if (current) JustifyContent.end else JustifyContent.start, alignItems = Align.center) {
+        flexbox(justifyContent = if (current) JustifyContent.flexEnd else JustifyContent.start, alignItems = Align.center) {
             css {
                 width = 40.px
                 padding(all = 4.px)

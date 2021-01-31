@@ -32,6 +32,10 @@ data class Theme(
 val theme = Theme()
 
 val styles = CSSBuilder().apply {
+    fontFace {
+        fontFamily = "YoungSerif"
+        put("src", "url('assets/fonts/YoungSerif.otf')")
+    }
     body {
         margin(0.px)
         padding(0.px)
@@ -50,6 +54,7 @@ val styles = CSSBuilder().apply {
     }
     h1 {
         fontFamily = "YoungSerif"
+        fontWeight = FontWeight.w500
         color = theme.onBackground
         fontSize = 64.px
         margin(0.px)
@@ -57,6 +62,7 @@ val styles = CSSBuilder().apply {
     }
     h2 {
         fontFamily = "YoungSerif"
+        fontWeight = FontWeight.w500
         color = theme.onBackground
         fontSize = 48.px
         margin(0.px)
