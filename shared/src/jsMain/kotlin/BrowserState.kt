@@ -116,6 +116,7 @@ class BrowserState(coroutineScope: CoroutineScope) {
                 GameState.Unstarted, is GameState.Loading -> throw Error("Can't move to next question when gameState = $gameState")
                 is GameState.Playing -> gameState.copy(screen = if (gameState.game.isEnded) GameScreen.End else GameScreen.Question)
             }
+            is GameAction.RestartGame -> backingGame.value = GameState.Unstarted
             is SetupAction.AddPlaylist -> {
                 backingPlaylistURIs.value = (backingPlaylistURIs.value + action.playlist.uri.uri).distinct()
                 savedPlaylistURIs = backingPlaylistURIs.value.map { it }

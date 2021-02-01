@@ -11,6 +11,7 @@ sealed class Action {
 sealed class GameAction : Action() {
     data class AnswerQuestion(val answer: UserAnswer) : GameAction()
     object NextQuestion : GameAction()
+    object RestartGame : GameAction()
 }
 
 sealed class SetupAction : Action() {

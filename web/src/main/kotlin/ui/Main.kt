@@ -154,7 +154,7 @@ val stack = functionalComponent<RProps> {
                     route("/game/end") {
                         when (endScreen) {
                             null -> emptyContent()
-                            else -> EndScreen(endScreen) { props.history.replace("/") }
+                            else -> EndScreen(endScreen) { browserState.handleAction(GameAction.RestartGame) }
                         }
                     }
                 }
