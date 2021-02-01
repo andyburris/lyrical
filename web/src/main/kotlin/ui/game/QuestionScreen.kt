@@ -226,9 +226,19 @@ fun RBuilder.PlaylistSource(playlist: SimplePlaylist) {
     }
 }
 
-private fun RBuilder.HoverTooltip(text: String, content: StyledDOMBuilder<DIV>.() -> Unit) {
+private fun RBuilder.HoverTooltip(text: String, content: StyledDOMBuilder<DIV>.() -> Unit) = child(hoverTooltip) {
+    attrs {
+        this.text = text
+        this.content = content
+    }
+}
+interface HoverProps : RProps {
+    var text: String
+    var content: StyledDOMBuilder<DIV>.() -> Unit
+}
+private val hoverTooltip = functionalComponent<HoverProps> { props ->
     flexColumn(alignItems = Align.center) {
-        content()
+        props.content.invoke(this)
         val (hovering, setHovering) = useState(false)
         if (hovering) {
             flexColumn(alignItems = Align.center) {
@@ -243,7 +253,7 @@ private fun RBuilder.HoverTooltip(text: String, content: StyledDOMBuilder<DIV>.(
                         borderRadius = 8.px
                         width = LinearDimension.maxContent
                     }
-                    +text
+                    +props.text
                 }
             }
         }

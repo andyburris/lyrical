@@ -104,3 +104,23 @@ fun Int.distributeInto(amount: Int): List<Int> {
     val remainder = this % amount
     return (0 until this).mapIndexed { index, i -> if (index < remainder) base + 1 else base }
 }
+
+enum class Difficulty { Easy, Medium, Hard }
+fun List<String>.randomLyricIndex(difficulty: Difficulty): Int {
+    val byFrequency = this.dropLast(1).withIndex().groupBy { it.value }
+    println("byFrequency = $byFrequency")
+
+    val selectedLyric = when (difficulty) {
+        Difficulty.Easy -> byFrequency.filter { it.value.size > 1 && it.key.wordCount() > 4 }
+        Difficulty.Medium -> byFrequency.filter { it.key.wordCount() > 4 }
+        Difficulty.Hard -> byFrequency.filter { it.value.size == 1 && it.key.wordCount() > 3 }
+    }.toList().random().second.random()
+
+    println("selectedLyric = $selectedLyric")
+    return selectedLyric.index
+}
+
+fun String.wordCount() = this.fold(Pair(false, 0)) { (lastWasWhitespace, accWords), char ->
+    val newAcc = accWords + if (char.isWhitespace() && !lastWasWhitespace) 1 else 0
+    Pair(char.isWhitespace(), newAcc)
+}.second

@@ -112,7 +112,7 @@ val stack = functionalComponent<RProps> {
                 props.history.replace("/")
                 emptyContent()
             }
-            route("/", exact = true) {
+            route<RProps>("/", exact = true) { props ->
                 when(setupScreen) {
                     null -> LandingScreen() { browserState.handleAction(it) }
                     else -> SetupScreen(setupScreen) { browserState.handleAction(it) }

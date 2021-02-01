@@ -51,7 +51,8 @@ data class GameConfig(
     val amountOfSongs: Int = 10,
     val timer: Int = 0,
     val showSourcePlaylist: Boolean = false,
-    val distributePlaylistsEvenly: Boolean = true
+    val distributePlaylistsEvenly: Boolean = true,
+    val difficulty: Difficulty = Difficulty.Medium
 )
 
 /*@OptIn(ExperimentalTime::class)
