@@ -95,6 +95,7 @@ val question = functionalComponent<QuestionProps> { props ->
                         width = 100.pct
                     }
                     attrs {
+                        autoFocus = true
                         placeholder = "Song Name"
                         onChangeFunction = {
                             val value = it.targetInputValue
