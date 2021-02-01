@@ -17,13 +17,18 @@ data class LyricsRepository(val httpClient: HttpClient = HttpClient {
         //val url = "http://localhost:5050/lyrics"
         val url = "https://lyricalgame.herokuapp.com/lyrics"
         val responses = httpClient.get<List<LyricResponse>>(url) {
-            header("lyricRequests", tracks.map { LyricRequest(it.track.name, it.track.artists.map { it.name }, it.track.uri.uri) }.encodeToString())
+            header("lyricRequests", tracks.map { LyricRequest(it.track.name, it.track.artists.map { it.name.filterHeader() }, it.track.uri.uri) }.encodeToString())
         }
         return responses.mapNotNull { lyricResponse ->
             if (lyricResponse.lyrics == null) return@mapNotNull null
             TrackWithLyrics(tracks.first { it.track.uri.uri == lyricResponse.trackURI }, LyricsState.Available(lyricResponse.lyrics.filter { !it.startsWith('[') }))
         }
     }
+
+    /**
+     * Filters song names to only characters that can be sent in a header
+     */
+    private fun String.filterHeader() = this.filter { it in '0'..'9' || it in 'a'..'z' || it in 'A'..'Z' || it in listOf('!', '#', '$', '%', '&', '\'', '*', '+', '-', '.', '^', '`', '|', '~') }
 }
 
 @Serializable
