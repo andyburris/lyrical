@@ -133,8 +133,8 @@ class BrowserState(coroutineScope: CoroutineScope) {
             }
             is SetupAction.StartGame -> {
                 backingGame.value = GameState.Loading(LoadingState.LoadingSongs)
-                //window.location.href = "http://localhost:8080/#/game/loading"
-                window.location.href = "https://lyricalgame.netlify.app/#/game/loading"
+                window.location.href = "http://localhost:8080/#/game/loading"
+                //window.location.href = "https://lyricalgame.netlify.app/#/game/loading"
                 CoroutineScope(Dispatchers.Default).launch {
                     val spotifyRepository = spotifyRepository.value
                     if (spotifyRepository !is SpotifyRepository.LoggedIn) return@launch
@@ -148,8 +148,8 @@ class BrowserState(coroutineScope: CoroutineScope) {
             }
             is Action.Authenticate -> {
                 localStorage["authState"] = Random.nextInt().toString()
-                //val redirectURL = "http:%2F%2Flocalhost:8080%2F%23%2Fauth"
-                val redirectURL = "https:%2F%2Flyricalgame.netlify.app%2F%23%2Fauth"
+                val redirectURL = "http:%2F%2Flocalhost:8080%2F%23%2Fauth"
+                //val redirectURL = "https:%2F%2Flyricalgame.netlify.app%2F%23%2Fauth"
                 window.location.href = "https://accounts.spotify.com/authorize?client_id=$spotifyClientID&redirect_uri=$redirectURL&scope=playlist-read-private&response_type=token&state=${localStorage["authState"]}"
             }
             is Action.CheckAuthentication -> {

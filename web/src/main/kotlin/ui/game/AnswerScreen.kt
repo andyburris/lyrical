@@ -86,7 +86,11 @@ val answerScreen = functionalComponent<AnswerProps> { props ->
                         props.onNextScreen.invoke()
                     }
                 }
-                +"Next Question".toUpperCase()
+                when(props.state.questionNumber == props.state.data.questions.size - 1) {
+                    false -> +"Next Question".toUpperCase()
+                    true -> +"End Game".toUpperCase()
+                }
+
             }
 
             GameState(props.state.questionNumber, props.state.data, Pair(theme.onBackgroundSecondary, theme.onBackground))
