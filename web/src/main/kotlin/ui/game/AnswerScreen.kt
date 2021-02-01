@@ -2,13 +2,15 @@ package ui.game
 
 import com.adamratzman.spotify.models.Track
 import imageUrl
+import kotlinx.browser.window
 import kotlinx.css.*
+import kotlinx.html.contentEditable
 import kotlinx.html.js.onClickFunction
-import react.RBuilder
-import react.RProps
-import react.functionalComponent
+import kotlinx.html.js.onKeyUpFunction
+import kotlinx.html.tabIndex
+import org.w3c.dom.HTMLElement
+import react.*
 import styled.*
-import react.child
 import react.dom.*
 import ui.theme
 
@@ -25,6 +27,17 @@ external interface AnswerProps : RProps {
 }
 
 val answerScreen = functionalComponent<AnswerProps> { props ->
+    useEffectWithCleanup {
+        window.onkeypress = {
+            when (it.key) {
+                "Enter" -> props.onNextScreen.invoke()
+            }
+        }
+        {
+           window.onkeypress = null
+        }
+    }
+
     styledDiv {
         css {
             width = 100.pct
