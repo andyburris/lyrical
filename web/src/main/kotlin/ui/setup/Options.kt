@@ -30,7 +30,7 @@ val optionsComponent = functionalComponent<OptionsProps> { props ->
     flexColumn(gap = 16.px) {
         css { width = 100.pct }
         NumberPickerItem("Number of songs", 10, props.options.amountOfSongs) { props.onUpdate.invoke(props.options.copy(amountOfSongs = it)) }
-        NumberPickerItem("Timer", 0, props.options.timer) { props.onUpdate.invoke(props.options.copy(timer = it)) }
+        //NumberPickerItem("Timer", 0, props.options.timer) { props.onUpdate.invoke(props.options.copy(timer = it)) }
         SwitchItem("Show source playlist", props.options.showSourcePlaylist) { props.onUpdate.invoke(props.options.copy(showSourcePlaylist = it)) }
         SwitchItem("Split playlists evenly", props.options.distributePlaylistsEvenly) { props.onUpdate.invoke(props.options.copy(distributePlaylistsEvenly = it)) }
     }

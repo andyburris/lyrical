@@ -113,6 +113,7 @@ val stack = functionalComponent<RProps> {
                 emptyContent()
             }
             route<RProps>("/", exact = true) { props ->
+                if (gameState !is GameState.Unstarted) props.history.replace("/game")
                 when(setupScreen) {
                     null -> LandingScreen() { browserState.handleAction(it) }
                     else -> SetupScreen(setupScreen) { browserState.handleAction(it) }
