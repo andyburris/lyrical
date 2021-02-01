@@ -4,8 +4,10 @@ import Game
 import Screen
 import UserAnswer
 import com.adamratzman.spotify.models.SimplePlaylist
+import flexColumn
 import flexbox
 import kotlinx.css.*
+import kotlinx.html.DIV
 import kotlinx.html.InputType
 import kotlinx.html.js.*
 import react.*
@@ -66,10 +68,14 @@ val question = functionalComponent<QuestionProps> { props ->
                 flexbox(justifyContent = JustifyContent.flexEnd, gap = 8.px) {
                     css { marginTop = 8.px }
                     if (!showingNextLine) {
-                        chip("+ Next Line") { setShowingNextLine(true) }
+                        HoverTooltip("-0.25 points") {
+                            chip("+ Next Line") { setShowingNextLine(true) }
+                        }
                     }
                     if (!showingArtist) {
-                        chip("+ Show Artist") { setShowingArtist(true) }
+                        HoverTooltip("-0.5 points") {
+                            chip("+ Show Artist") { setShowingArtist(true) }
+                        }
                     }
                 }
                 styledP {
@@ -112,29 +118,25 @@ val question = functionalComponent<QuestionProps> { props ->
                 justifyContent = JustifyContent.center
                 gap = Gap("16px")
             }
-            styledButton {
-                val (hovering, setHovering) = useState(false)
-                css {
-                    padding(16.px)
-                    display = Display.flex
-                    justifyContent = JustifyContent.center
-                    alignItems = Align.center
-                    backgroundColor = theme.onBackgroundSecondary
-                }
-                attrs {
-                    onMouseOverFunction = { setHovering(true) }
-                    onMouseOutFunction = { setHovering(false) }
-                    onClickFunction = {
-                        props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Skipped))
+            HoverTooltip("-1 Points") {
+                styledButton {
+                    css {
+                        padding(16.px)
+                        display = Display.flex
+                        justifyContent = JustifyContent.center
+                        alignItems = Align.center
+                        backgroundColor = theme.onBackgroundSecondary
+                        size(64.px)
                     }
-                }
-                styledImg(src = "/assets/icons/Skip.svg") {}
-                if (hovering) {
-                    p {
-                        +"-1 Points"
+                    attrs {
+                        onClickFunction = {
+                            props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Skipped))
+                        }
                     }
+                    Icon(Icon.Skip)
                 }
             }
+
             button {
                 +"Answer".toUpperCase()
                 attrs {
@@ -220,6 +222,34 @@ fun RBuilder.PlaylistSource(playlist: SimplePlaylist) {
                 css { color = theme.onBackground }
                 + playlist.name
             }
+        }
+    }
+}
+
+private fun RBuilder.HoverTooltip(text: String, content: StyledDOMBuilder<DIV>.() -> Unit) {
+    flexColumn(alignItems = Align.center) {
+        content()
+        val (hovering, setHovering) = useState(false)
+        if (hovering) {
+            flexColumn(alignItems = Align.center) {
+                css {
+                    size(0.px)
+                }
+                styledP {
+                    css {
+                        backgroundColor = theme.backgroundCard
+                        marginTop = 8.px
+                        padding(8.px)
+                        borderRadius = 8.px
+                        width = LinearDimension.maxContent
+                    }
+                    +text
+                }
+            }
+        }
+        attrs {
+            onMouseOverFunction = { setHovering(true) }
+            onMouseOutFunction = { setHovering(false) }
         }
     }
 }
