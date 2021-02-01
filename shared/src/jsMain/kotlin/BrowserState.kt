@@ -8,8 +8,7 @@ import org.w3c.dom.set
 import kotlin.random.Random
 
 class BrowserState(coroutineScope: CoroutineScope) {
-
-    private val spotifyRepository = MutableStateFlow(getClientAPIIfLoggedIn{ handleAction(it) }?.let { SpotifyRepository.LoggedIn(it) } ?: SpotifyRepository.LoggedOut)
+    private val spotifyRepository = MutableStateFlow(getClientAPIIfLoggedIn { handleAction(it) }?.let { SpotifyRepository.LoggedIn(it) } ?: SpotifyRepository.LoggedOut)
     private val lyricsRepository = LyricsRepository()
 
     private val backingConfig: MutableStateFlow<GameConfig> = MutableStateFlow(savedConfig)

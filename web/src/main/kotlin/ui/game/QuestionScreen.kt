@@ -18,6 +18,7 @@ import size
 import styled.*
 import targetInputValue
 import ui.common.Icon
+import ui.common.Chip
 import ui.theme
 
 fun RBuilder.QuestionScreen(data: State.GameState.Question, onAnswer: (GameAction.AnswerQuestion) -> Unit) =
@@ -69,12 +70,12 @@ val question = functionalComponent<QuestionProps> { props ->
                     css { marginTop = 8.px }
                     if (!showingNextLine) {
                         HoverTooltip("-0.25 points") {
-                            chip("+ Next Line") { setShowingNextLine(true) }
+                            Chip("+ Next Line") { setShowingNextLine(true) }
                         }
                     }
                     if (!showingArtist) {
                         HoverTooltip("-0.5 points") {
-                            chip("+ Show Artist") { setShowingArtist(true) }
+                            Chip("+ Show Artist") { setShowingArtist(true) }
                         }
                     }
                 }
@@ -150,50 +151,7 @@ val question = functionalComponent<QuestionProps> { props ->
     }
 }
 
-fun RBuilder.chip(text: String, icon: Icon? = null, onClick: (() -> Unit)? = null) = child(chip) {
-    attrs {
-        this.text = text
-        this.icon = icon
-        this.onClick = onClick
-    }
-}
 
-external interface ChipProps : RProps {
-    var icon: Icon?
-    var text: String
-    var onClick: (() -> Unit)?
-}
-
-val chip = functionalComponent<ChipProps> { props ->
-    styledDiv {
-        css {
-            backgroundColor = theme.onBackgroundPlaceholder
-            borderRadius = 32.px
-            padding(vertical = 4.px, horizontal = 12.px)
-            color = theme.onBackground
-            if (props.onClick != null) {
-                cursor = Cursor.pointer
-            }
-        }
-        attrs {
-            if (props.onClick != null) {
-                onClickFunction = {
-                    props.onClick?.invoke()
-                }
-            }
-        }
-        p {
-            +props.text
-        }
-    }
-}
-
-fun RBuilder.icon(icon: Icon) {
-    when (icon) {
-        Icon.Add -> TODO()
-        Icon.Skip -> TODO()
-    }
-}
 
 fun RBuilder.GameState(questionNumber: Int, game: Game, colors: Pair<Color, Color>) {
     div {

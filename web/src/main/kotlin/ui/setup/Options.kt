@@ -2,6 +2,7 @@ package ui.setup
 
 import GameConfig
 import flexColumn
+import flexRow
 import flexbox
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
@@ -12,6 +13,7 @@ import styled.css
 import styled.styledDiv
 import styled.styledInput
 import styled.styledP
+import ui.common.Chip
 import ui.theme
 import kotlin.time.ExperimentalTime
 
@@ -33,6 +35,7 @@ val optionsComponent = functionalComponent<OptionsProps> { props ->
         //NumberPickerItem("Timer", 0, props.options.timer) { props.onUpdate.invoke(props.options.copy(timer = it)) }
         SwitchItem("Show source playlist", props.options.showSourcePlaylist) { props.onUpdate.invoke(props.options.copy(showSourcePlaylist = it)) }
         SwitchItem("Split playlists evenly", props.options.distributePlaylistsEvenly) { props.onUpdate.invoke(props.options.copy(distributePlaylistsEvenly = it)) }
+        ChipItem("Difficulty", listOf(Difficulty.Easy, Difficulty.Medium, Difficulty.Hard), stringify = { it.name.toUpperCase() }, selected = props.options.difficulty) { props.onUpdate.invoke(props.options.copy(difficulty = it)) }
     }
 }
 
@@ -59,7 +62,7 @@ private fun RBuilder.NumberPickerItem(label: String, default: Int, current: Int,
                 borderRadius = 4.px
                 width = 48.px
                 height = 30.px
-                backgroundColor = theme.background
+                backgroundColor = theme.backgroundCard
                 textAlign = TextAlign.center
                 fontFamily = "Inter"
                 fontWeight = FontWeight.w700
@@ -85,13 +88,13 @@ private fun RBuilder.SwitchItem(label: String, current: Boolean, onChange: (Bool
             css {
                 width = 40.px
                 padding(all = 4.px)
-                backgroundColor = theme.onBackgroundPlaceholder
+                backgroundColor = if (current) theme.primary else theme.backgroundCard
                 borderRadius = 20.px
             }
             styledDiv {
                 css {
                     size(20.px)
-                    backgroundColor = if (current) theme.primary else theme.onBackgroundSecondary
+                    backgroundColor = if (current) theme.onPrimary else theme.onBackgroundPlaceholder
                     borderRadius = 16.px
                 }
             }
@@ -99,6 +102,16 @@ private fun RBuilder.SwitchItem(label: String, current: Boolean, onChange: (Bool
                 onClickFunction = {
                     onChange.invoke(!current)
                 }
+            }
+        }
+    }
+}
+
+private fun <T> RBuilder.ChipItem(label: String, items: List<T>, selected: T, stringify: (T) -> String = { it.toString() }, onChange: (T) -> Unit) {
+    PickerItem(label) {
+        flexRow(gap = 4.px) {
+            items.forEach {
+                Chip(stringify(it), backgroundColor = if (it == selected) theme.primary else theme.backgroundCard, textColor = if (it == selected) theme.onPrimary else theme.onBackgroundSecondary, fontSize = 12.px) { onChange.invoke(it) }
             }
         }
     }

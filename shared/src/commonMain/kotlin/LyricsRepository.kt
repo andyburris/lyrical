@@ -30,7 +30,7 @@ data class LyricsRepository(val httpClient: HttpClient = HttpClient {
     /**
      * Filters song names to only characters that can be sent in a header
      */
-    private fun String.filterHeader() = this.filter { it in '0'..'9' || it in 'a'..'z' || it in 'A'..'Z' || it in listOf(' ', '!', '#', '$', '%', '&', '*', '+', '-', '.', '^', '`', '|', '~') }
+    private fun String.filterHeader() = this.filter { it in '0'..'9' || it in 'a'..'z' || it in 'A'..'Z' || it in listOf(' ', '(', ')', '!', '#', '$', '%', '&', '*', '+', '-', '.', '^', '`', '|', '~') }
 }
 
 @Serializable

@@ -107,17 +107,25 @@ fun Int.distributeInto(amount: Int): List<Int> {
 
 enum class Difficulty { Easy, Medium, Hard }
 fun List<String>.randomLyricIndex(difficulty: Difficulty): Int {
-    val byFrequency = this.dropLast(1).withIndex().groupBy { it.value }
+    val byFrequency: Map<String, List<IndexedValue<String>>> = this.dropLast(1).withIndex().groupBy { it.value }
     println("byFrequency = $byFrequency")
 
     val selectedLyric = when (difficulty) {
-        Difficulty.Easy -> byFrequency.filter { it.value.size > 1 && it.key.wordCount() > 4 }
-        Difficulty.Medium -> byFrequency.filter { it.key.wordCount() > 4 }
-        Difficulty.Hard -> byFrequency.filter { it.value.size == 1 && it.key.wordCount() > 3 }
+        Difficulty.Easy -> byFrequency.filterWordCount(4).filterFrequency { it > 1 }
+        Difficulty.Medium -> byFrequency.filterWordCount(4)
+        Difficulty.Hard -> byFrequency.filterWordCount(3).filterFrequency { it == 1 }
     }.toList().random().second.random()
 
     println("selectedLyric = $selectedLyric")
     return selectedLyric.index
+}
+
+private fun Map<String, List<IndexedValue<String>>>.filterFrequency(block: (Int) -> Boolean) = if (this.any { block(it.value.size) }) this.filter { block(it.value.size) } else this
+private fun Map<String, List<IndexedValue<String>>>.filterWordCount(minWordCount: Int): Map<String, List<IndexedValue<String>>> {
+    (minWordCount downTo 0).map { wordCount ->
+        if (this.any { it.key.wordCount() > wordCount }) return this.filter { it.key.wordCount() >= wordCount }
+    }
+    return this
 }
 
 fun String.wordCount() = this.fold(Pair(false, 0)) { (lastWasWhitespace, accWords), char ->
