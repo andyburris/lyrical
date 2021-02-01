@@ -25,6 +25,7 @@ data class Theme(
     val onBackgroundPlaceholder: Color = Color("rgba(255, 255, 255, .12)"),
     val primary: Color = Color("#1DB954"),
     val onPrimary: Color = Color("#FFFFFF"),
+    val onPrimarySecondary: Color = Color("rgba(255, 255, 255, .5)"),
     val overlay: Color = Color("rgba(0, 0, 0, .12)"),
     val darkOverlay: Color = Color("rgba(0, 0, 0, .70)"),
 )

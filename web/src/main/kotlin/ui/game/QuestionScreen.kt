@@ -98,8 +98,7 @@ val question = functionalComponent<QuestionProps> { props ->
                             it.preventDefault()
                             if (it.asDynamic().key == "Enter" && answer.isNotBlank()) {
                                 console.log("hit")
-                                val points = 1.0 - (if (showingArtist) 0.5 else 0.0) - (if (showingNextLine) 0.25 else 0.0)
-                                props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Answer(answer, points)))
+                                props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Answer(answer, showingNextLine, showingArtist)))
                             }
                         }
                     }
@@ -140,8 +139,7 @@ val question = functionalComponent<QuestionProps> { props ->
                 +"Answer".toUpperCase()
                 attrs {
                     onClickFunction = {
-                        val points = 1.0 - (if (showingArtist) 0.5 else 0.0) - (if (showingNextLine) 0.25 else 0.0)
-                        props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Answer(answer, points)))
+                        props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Answer(answer, showingNextLine, showingArtist)))
                     }
                 }
             }

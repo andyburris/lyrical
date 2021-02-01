@@ -19,7 +19,7 @@ data class GameQuestion(val trackWithLyrics: TrackWithLyrics, val answer: GameAn
         return when (answer) {
             is UserAnswer.Answer -> {
                 val gameAnswer = when (answer.answer.formatAnswer() == trackWithLyrics.sourcedTrack.track.name.formatAnswer()) {
-                    true -> GameAnswer.Correct(answer.potentialPoints)
+                    true -> GameAnswer.Correct(answer.withNextLine, answer.withArtist)
                     false -> GameAnswer.Incorrect(answer.answer)
                 }
                 this.copy(answer = gameAnswer)
@@ -32,14 +32,16 @@ data class GameQuestion(val trackWithLyrics: TrackWithLyrics, val answer: GameAn
 }
 
 sealed class GameAnswer {
-    data class Correct(val points: Double) : GameAnswer()
+    data class Correct(val withNextLine: Boolean, val withArtist: Boolean) : GameAnswer() {
+        val points = 1.0 - (if (withArtist) 0.5 else 0.0) - (if (withNextLine) 0.25 else 0.0)
+    }
     data class Incorrect(val answer: String) : GameAnswer()
     object Skipped : GameAnswer()
     object Unanswered : GameAnswer()
 }
 
 sealed class UserAnswer {
-    data class Answer(val answer: String, val potentialPoints: Double) : UserAnswer()
+    data class Answer(val answer: String, val withNextLine: Boolean, val withArtist: Boolean) : UserAnswer()
     object Skipped : UserAnswer()
 }
 

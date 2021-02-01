@@ -1,6 +1,7 @@
 package ui.game
 
 import com.adamratzman.spotify.models.Track
+import imageUrl
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
 import react.RBuilder
@@ -139,7 +140,7 @@ val songItem = functionalComponent<SongProps> { props ->
             gap = Gap("32px")
         }
 
-        styledImg(src = props.song.album.images.firstOrNull()?.url ?: "/assets/AlbumPlaceholder.svg") {
+        styledImg(src = props.song.imageUrl) {
             css {
                 marginTop = 12.px
                 width = 96.px

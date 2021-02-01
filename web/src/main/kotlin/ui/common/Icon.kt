@@ -17,6 +17,8 @@ sealed class Icon {
     object Login : Icon()
     object Check : Icon()
     object Clear : Icon()
+    object Profile : Icon()
+    object NextLine : Icon()
     sealed class Arrow : Icon() {
         object Up : Arrow()
         object Down : Arrow()
@@ -34,6 +36,8 @@ val Icon.resourcePath get() = "/assets/icons/" + when(this) {
     Icon.Login -> "Login"
     Icon.Check -> "Check"
     Icon.Clear -> "Clear"
+    Icon.Profile -> "Profile"
+    Icon.NextLine -> "NextLine"
     Icon.Arrow.Up -> "ArrowUp"
     Icon.Arrow.Down -> "ArrowDown"
     Icon.Arrow.Left -> "ArrowLeft"

@@ -6,6 +6,8 @@ import flexColumn
 import flexbox
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
+import onHorizontalLayout
+import onVerticalLayout
 import react.*
 import styled.*
 import ui.common.Icon
@@ -45,17 +47,6 @@ val setup = functionalComponent<SetupProps> { props ->
     }
 }
 
-private fun CSSBuilder.onVerticalLayout(block: CSSBuilder.() -> Unit) {
-    media("screen and (max-width: 1152px)") {
-        block()
-    }
-}
-
-private fun CSSBuilder.onHorizontalLayout(block: CSSBuilder.() -> Unit) {
-    media("not screen and (max-width: 1152px)") {
-        block()
-    }
-}
 
 private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Unit) {
     flexbox(justifyContent = JustifyContent.spaceBetween, alignItems = Align.center) {
