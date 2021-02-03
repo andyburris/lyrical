@@ -55,6 +55,8 @@ data class GameConfig(
     val difficulty: Difficulty = Difficulty.Medium
 )
 
+@Serializable enum class Difficulty { Easy, Medium, Hard }
+
 /*@OptIn(ExperimentalTime::class)
 object DurationAsDoubleSerializer : KSerializer<Duration> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Duration", PrimitiveKind.DOUBLE)

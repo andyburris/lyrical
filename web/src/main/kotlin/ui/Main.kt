@@ -26,6 +26,7 @@ data class Theme(
     val primary: Color = Color("#1DB954"),
     val onPrimary: Color = Color("#FFFFFF"),
     val onPrimarySecondary: Color = Color("rgba(255, 255, 255, .5)"),
+    val onPrimaryOverlay: Color = Color("rgba(255, 255, 255, .20)"),
     val overlay: Color = Color("rgba(0, 0, 0, .12)"),
     val darkOverlay: Color = Color("rgba(0, 0, 0, .70)"),
 )
@@ -107,7 +108,7 @@ val stack = functionalComponent<RProps> {
                 println("parameters = $parameters")
                 if (parameters.size >= 4) {
                     val (token, tokenType, expiresIn, state) = parameters
-                    browserState.handleAction(Action.CheckAuthentication(token, tokenType, expiresIn.toInt(), state))
+                    browserState.handleAction(AuthAction.CheckAuthentication(token, tokenType, expiresIn.toInt(), state))
                 }
                 props.history.replace("/")
                 emptyContent()

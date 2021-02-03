@@ -30,7 +30,7 @@ fun statusHandler(xhr: XMLHttpRequest, coroutineContext: Continuation<Document>)
     }
 }
 
-fun getClientAPIIfLoggedIn(onAuthentication: (Action.Authenticate) -> Unit): SpotifyImplicitGrantApi? {
+fun getClientAPIIfLoggedIn(onAuthentication: (AuthAction.Authenticate) -> Unit): SpotifyImplicitGrantApi? {
     println("checking for user login")
     val accessToken = localStorage["access_token"] ?: return null
     val tokenType = localStorage["access_token_type"] ?: return null
@@ -41,7 +41,7 @@ fun getClientAPIIfLoggedIn(onAuthentication: (Action.Authenticate) -> Unit): Spo
         val api = spotifyImplicitGrantApi(spotifyClientID, token)
         println("created implicitGrantApi")
         CoroutineScope(Dispatchers.Default).launch {
-            if (!api.isTokenValid().isValid) onAuthentication.invoke(Action.Authenticate(Random.nextInt().toString()))
+            if (!api.isTokenValid().isValid) onAuthentication.invoke(AuthAction.Authenticate(Random.nextInt().toString()))
         }
         api
     } catch (e: Exception) {

@@ -18,13 +18,13 @@ import styled.styledP
 import ui.theme
 import kotlin.random.Random
 
-fun RBuilder.LandingScreen(onAuthenticate: (Action.Authenticate) -> Unit) = child(landingScreen) {
+fun RBuilder.LandingScreen(onAuthenticate: (AuthAction.Authenticate) -> Unit) = child(landingScreen) {
     attrs {
         this.onAuthenticate = onAuthenticate
     }
 }
 external interface LandingProps : RProps {
-    var onAuthenticate: (Action.Authenticate) -> Unit
+    var onAuthenticate: (AuthAction.Authenticate) -> Unit
 }
 val landingScreen = functionalComponent<LandingProps> { props ->
     Screen {
@@ -40,7 +40,7 @@ val landingScreen = functionalComponent<LandingProps> { props ->
                 button {
                     +"LOG IN WITH SPOTIFY"
                     attrs.onClickFunction = {
-                        props.onAuthenticate.invoke(Action.Authenticate(Random.nextInt().toString()))
+                        props.onAuthenticate.invoke(AuthAction.Authenticate(Random.nextInt().toString()))
                     }
                 }
                 styledP {
