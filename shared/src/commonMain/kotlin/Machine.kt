@@ -2,9 +2,12 @@ import com.adamratzman.spotify.models.SimplePlaylist
 import com.adamratzman.spotify.models.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.random.Random
+import kotlin.time.ExperimentalTime
+import kotlin.time.milliseconds
 
 abstract class Machine(
     coroutineScope: CoroutineScope,
@@ -25,7 +28,8 @@ abstract class Machine(
         }
     }
 
-    private val searchedPlaylists = combineTransform(spotifyRepository, backingSearchTerm) { repository, term ->
+    @OptIn(ExperimentalTime::class, FlowPreview::class)
+    private val searchedPlaylists = combineTransform(spotifyRepository, backingSearchTerm.debounce(500.milliseconds)) { repository, term ->
         if (repository !is SpotifyRepository.LoggedIn) return@combineTransform
         println("transforming term = $term")
         val playlists = when {

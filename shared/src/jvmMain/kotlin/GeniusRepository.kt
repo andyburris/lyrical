@@ -33,7 +33,7 @@ data class GeniusRepository(
         val response = httpClient.get<JsonObject>(url) {}
         //println(response)
         return try {
-            response.hits().first { hit -> allArtists.any { it.replace(invalidSearch, "").toLowerCase() in hit.hitArtist().replace(invalidSearch, "").replace(" ", "").toLowerCase() } }.hitUrl()
+            response.hits().first { hit -> allArtists.any { it.replace(invalidSearch, "").replace(" ", "").toLowerCase() in hit.hitArtist().replace(invalidSearch, "").replace(" ", "").toLowerCase() } }.hitUrl()
         } catch (e: Exception) {
             Error("Genius contains no results for $trackName by $artist (search term was ${trackName.replace(invalidSearch, "")} $artist").printStackTrace()
             null
