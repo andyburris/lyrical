@@ -65,7 +65,7 @@ val horizontalPlaylistItem = functionalComponent<PlaylistProps> { props ->
 
         }
         div {
-            Icon(Icon.Clear)
+            Icon(Icon.Clear, alpha = 0.5)
             attrs.onClickFunction = {
                 println("playlist item clicked")
                 props.onClick.invoke()

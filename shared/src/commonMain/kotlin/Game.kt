@@ -18,6 +18,7 @@ data class GameQuestion(val trackWithLyrics: TrackWithLyrics, val answer: GameAn
     fun withAnswer(answer: UserAnswer): GameQuestion {
         return when (answer) {
             is UserAnswer.Answer -> {
+                println("answered, formatted user answer = ${answer.answer.formatAnswer()}, formatted correct answer = ${trackWithLyrics.sourcedTrack.track.name.formatAnswer()}")
                 val gameAnswer = when (answer.answer.formatAnswer() == trackWithLyrics.sourcedTrack.track.name.formatAnswer()) {
                     true -> GameAnswer.Correct(answer.withNextLine, answer.withArtist)
                     false -> GameAnswer.Incorrect(answer.answer)
@@ -64,9 +65,14 @@ object DurationAsDoubleSerializer : KSerializer<Duration> {
     override fun serialize(encoder: Encoder, value: Duration) = encoder.encodeDouble(value.inMilliseconds)
 }*/
 
-private val answerFormatRegex = Regex("( \\(.*\\))+|( -.*)|( \\[.*])|(feat.*)|(ft.*)")
+private val answerFormatRegex = Regex("( \\(.*\\))+|( -.*)|( \\[.*])|(([( ])feat.*)|(([( ])ft.*)")
 
-fun String.formatAnswer(): String = this.toLowerCase().replace(answerFormatRegex, "").filter { it in 'a'..'z' }
+fun String.formatAnswer(): String = this
+    .toLowerCase()
+    .replace(answerFormatRegex, "")
+    .stripAccents()
+    .replace("&", "and")
+    .filter { it in 'a'..'z' || it in '0'..'9'}
 
 data class SourcedTrack(val track: Track, val sourcePlaylist: SimplePlaylist)
 

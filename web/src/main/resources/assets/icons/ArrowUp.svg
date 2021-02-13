@@ -1,3 +1,7 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M16 12.5523L6.27614 22.2761L4.39053 20.3905L16 8.78104L27.6095 20.3905L25.7239 22.2761L16 12.5523Z" fill="white"/>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Direction=Up, Platform=Android">
+<g id="expand_less">
+<path id="Vector" d="M12 8L6 14L7.41 15.41L12 10.83L16.59 15.41L18 14L12 8Z" fill="white"/>
+</g>
+</g>
 </svg>

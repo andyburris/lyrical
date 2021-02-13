@@ -5,6 +5,10 @@ import collectAsState
 import kotlinx.browser.document
 import kotlinx.coroutines.GlobalScope
 import kotlinx.css.*
+import kotlinx.css.properties.ms
+import kotlinx.css.properties.s
+import kotlinx.css.properties.transition
+import kotlinx.html.InputType
 import react.*
 import react.dom.*
 import react.router.dom.*
@@ -15,23 +19,6 @@ import ui.game.QuestionScreen
 import ui.landing.LandingScreen
 import ui.loading.LoadingScreen
 import ui.setup.SetupScreen
-
-data class Theme(
-    val background: Color = Color("#333333"),
-    val backgroundDark: Color = Color("#2D2D2D"),
-    val backgroundCard: Color = Color("#545454"),
-    val onBackground: Color = Color("#FFFFFF"),
-    val onBackgroundSecondary: Color = Color("rgba(255, 255, 255, .5)"),
-    val onBackgroundPlaceholder: Color = Color("rgba(255, 255, 255, .12)"),
-    val primary: Color = Color("#1DB954"),
-    val onPrimary: Color = Color("#FFFFFF"),
-    val onPrimarySecondary: Color = Color("rgba(255, 255, 255, .5)"),
-    val onPrimaryOverlay: Color = Color("rgba(255, 255, 255, .20)"),
-    val overlay: Color = Color("rgba(0, 0, 0, .12)"),
-    val darkOverlay: Color = Color("rgba(0, 0, 0, .70)"),
-)
-
-val theme = Theme()
 
 val styles = CSSBuilder().apply {
     fontFace {
@@ -53,6 +40,10 @@ val styles = CSSBuilder().apply {
         fontWeight = FontWeight.w700
         fontSize = 24.px
         cursor = Cursor.pointer
+        transition("box-shadow", duration = 200.ms)
+        hover {
+            shadow(1)
+        }
     }
     h1 {
         fontFamily = "YoungSerif"

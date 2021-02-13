@@ -45,11 +45,19 @@ kotlin {
             }
         }
 
+        val jvmTest by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.21")
+            }
+        }
+
         val jsMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-js"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.4.2")
             }
         }
+
+        val jsTest by getting {}
     }
 }

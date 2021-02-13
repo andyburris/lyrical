@@ -4,13 +4,15 @@ import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import kotlinx.serialization.json.*
 
-data class GeniusRepository(val apiKey: String, val httpClient: HttpClient = HttpClient() {
-    install(JsonFeature) {
-        serializer = KotlinxSerializer()
+data class GeniusRepository(
+    val apiKey: String,
+    val httpClient: HttpClient = HttpClient {
+        install(JsonFeature) {
+            serializer = KotlinxSerializer()
+        }
     }
-}) {
-    //TODO: exclude anything after '-'
-    private val invalidSearch = Regex("( \\(.*\\))+|( \\[.*])|(-.*)|([^\\w\\d\\s])")
+) {
+    private val invalidSearch = Regex("( \\(.*\\))+|( \\[.*])|(-.*)|([^\\w\\d\\s&])")
     internal val unnecessaryScrapingRegex = Regex("(<section[^>]*>|</section[^>]*>)+|(<![^>]*>)+|(<p[^>]*>|</p[^>]*>)+|(<a[^>]*>|</a[^>]*>)+|(<i>|</i>)+|(<b>|</b>)+|(<div[^>]*>|</div[^>]*>)+")
 
     suspend fun getLyrics(trackName: String, artists: List<String>): String? {
@@ -31,9 +33,9 @@ data class GeniusRepository(val apiKey: String, val httpClient: HttpClient = Htt
         val response = httpClient.get<JsonObject>(url) {}
         //println(response)
         return try {
-            response.hits().first { hit -> allArtists.any { it.replace(invalidSearch, "").toLowerCase() in hit.hitArtist().replace(invalidSearch, "").toLowerCase() } }.hitUrl()
+            response.hits().first { hit -> allArtists.any { it.replace(invalidSearch, "").toLowerCase() in hit.hitArtist().replace(invalidSearch, "").replace(" ", "").toLowerCase() } }.hitUrl()
         } catch (e: Exception) {
-            Error("Genius contains no results for $trackName by $artist (search term was ").printStackTrace()
+            Error("Genius contains no results for $trackName by $artist (search term was ${trackName.replace(invalidSearch, "")} $artist").printStackTrace()
             null
         }
     }

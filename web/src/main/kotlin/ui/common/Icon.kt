@@ -1,8 +1,7 @@
 package ui.common
 
 import Size
-import kotlinx.css.filter
-import kotlinx.css.px
+import kotlinx.css.*
 import react.RBuilder
 import size
 import styled.css
@@ -44,13 +43,15 @@ val Icon.resourcePath get() = "/assets/icons/" + when(this) {
     Icon.Arrow.Right -> "ArrowRight"
 } + ".svg"
 
-fun RBuilder.Icon(icon: Icon, colorFilter: String? = null, size: Size = Size(32.px)) {
+fun RBuilder.Icon(icon: Icon, colorFilter: String? = null, alpha: Double = 1.0, size: Size = Size(32.px), css: CSSBuilder.() -> Unit = {}) {
     styledImg(src = icon.resourcePath) {
         css {
             size(size)
+            opacity = alpha
             if (colorFilter != null) {
                 filter = colorFilter
             }
+            css.invoke(this)
         }
     }
 }

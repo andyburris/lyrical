@@ -1,5 +1,6 @@
 package ui.game
 
+import Screen
 import com.adamratzman.spotify.models.Track
 import imageUrl
 import kotlinx.browser.window
@@ -38,18 +39,10 @@ val answerScreen = functionalComponent<AnswerProps> { props ->
         }
     }
 
-    styledDiv {
+    Screen(backgroundColor = if (props.state.answer is GameAnswer.Correct) theme.primary else theme.background) {
         css {
-            width = 100.pct
-            minHeight = 100.vh
-            display = Display.flex
-            flexDirection = FlexDirection.column
-            justifyContent = JustifyContent.center
-            alignItems = Align.center
-            padding(vertical = 128.px, horizontal = 196.px)
-            boxSizing = BoxSizing.borderBox
-            backgroundColor = if (props.state.answer is GameAnswer.Correct) theme.primary else theme.background
             gap = Gap("64px")
+            alignItems = Align.center
         }
         h1 {
             when(props.state.answer) {

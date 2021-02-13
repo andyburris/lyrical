@@ -158,7 +158,7 @@ fun RBuilder.GameState(questionNumber: Int, game: Game, colors: Pair<Color, Colo
     div {
         styledP {
             css { color = colors.first }
-            +"${questionNumber + 1}/${game.questions.size}"
+            +"Q${questionNumber + 1}/${game.questions.size}"
         }
         styledP {
             css { color = colors.second }

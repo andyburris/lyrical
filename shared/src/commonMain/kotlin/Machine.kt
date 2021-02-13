@@ -38,7 +38,7 @@ abstract class Machine(
 
     private val filteredUserPlaylists = combineTransform(spotifyRepository, backingSearchTerm) { repository, term ->
         if (repository !is SpotifyRepository.LoggedIn) return@combineTransform
-        val playlists = repository.getUserPlaylists().filter { term in it.name }
+        val playlists = repository.getUserPlaylists().filter { term.toLowerCase() in it.name.toLowerCase() }
         cachedPlaylists.value = (cachedPlaylists.value + playlists).distinct()
         emit(playlists)
     }.stateIn(coroutineScope, SharingStarted.Lazily, null)

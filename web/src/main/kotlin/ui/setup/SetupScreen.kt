@@ -5,6 +5,7 @@ import SetupAction
 import flexColumn
 import flexbox
 import kotlinx.css.*
+import kotlinx.css.properties.*
 import kotlinx.html.js.onClickFunction
 import onHorizontalLayout
 import onVerticalLayout
@@ -121,7 +122,7 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
                 boxSizing = BoxSizing.borderBox
             }
             val (optionsOpen, setOptionsOpen) = useState(false)
-            SectionHeader("Options", optionsOpen, Icon.List) { setOptionsOpen(!optionsOpen) }
+            SectionHeader("Options", optionsOpen) { setOptionsOpen(!optionsOpen) }
             if (optionsOpen) {
                 Options(setupState.config) {
                     onUpdateSetup.invoke(SetupAction.UpdateConfig(it))
@@ -141,7 +142,12 @@ private fun RBuilder.SectionHeader(title: String, open: Boolean, icon: Icon? = n
                 +title
             }
         }
-        Icon(if (open) Icon.Arrow.Down else Icon.Arrow.Right)
+        Icon(Icon.Arrow.Right) {
+            transition("transform", duration = 200.ms)
+            transform {
+                rotate(if (open) 90.deg else 0.deg)
+            }
+        }
         attrs {
             onClickFunction = {
                 onToggle.invoke()
