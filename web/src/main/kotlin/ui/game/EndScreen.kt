@@ -45,7 +45,6 @@ private fun RBuilder.Header(gameState: State.GameState, onRestart: () -> Unit) {
     flexRow(justifyContent = JustifyContent.spaceBetween, alignItems = Align.center) {
         flexColumn {
             styledP {
-                css { color = theme.onPrimary }
                 +"YOUR SCORE"
             }
             h1 {
