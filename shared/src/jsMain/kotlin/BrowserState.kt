@@ -15,6 +15,7 @@ class BrowserState(coroutineScope: CoroutineScope) : Machine(
     backingPlaylistURIs = SourcedMutableStateFlow(savedPlaylistURIs) { savedPlaylistURIs = it },
 ) {
     init {
+        println("initializing BrowserState")
         spotifyRepository.value = getClientAPIIfLoggedIn { this.handleAuthAction(it) }?.let { SpotifyRepository.LoggedIn(it) } ?: SpotifyRepository.LoggedOut
     }
     override fun handleAuthAction(authAction: AuthAction) {

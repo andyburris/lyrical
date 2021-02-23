@@ -16,6 +16,10 @@ abstract class Machine(
     val backingConfig: MutableStateFlow<GameConfig>,
     val backingPlaylistURIs: MutableStateFlow<List<String>>,
 ) {
+    init {
+        println("initializing Machine")
+    }
+
     private val backingSearchTerm = MutableStateFlow("")
     private val cachedPlaylists = MutableStateFlow(listOf<SimplePlaylist>())
     private val backingGame: MutableStateFlow<GameState> = MutableStateFlow(GameState.Unstarted)

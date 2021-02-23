@@ -83,7 +83,7 @@ fun main() {
 }
 
 val stack = functionalComponent<RProps> {
-    val (browserState, _) = useState(BrowserState(GlobalScope))
+    val (browserState, _) = useState { BrowserState(GlobalScope) }
     val setupScreen = browserState.currentSetupScreen.collectAsState()
     val gameState = browserState.currentGame.collectAsState()
     val loadingScreen = browserState.currentLoadingScreen.collectAsState()
