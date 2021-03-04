@@ -113,7 +113,7 @@ private fun RBuilder.QuestionItem(question: GameQuestion, index: Int) {
                 css {
                     size(64.px)
                     borderRadius = 32.px
-                    backgroundColor = if (question.answer is GameAnswer.Correct) theme.onPrimaryOverlay else theme.background
+                    backgroundColor = if (question.answer is GameAnswer.Correct) theme.onPrimaryTernary else theme.background
                     color = if (question.answer is GameAnswer.Correct) theme.onPrimary else theme.onBackground
                 }
                 val icon = when(question.answer) {

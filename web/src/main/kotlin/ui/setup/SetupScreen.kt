@@ -1,7 +1,16 @@
 package ui.setup
 
+import ui.khakra.Heading1
 import Screen
 import SetupAction
+import Spacing
+import com.github.mpetuska.khakra.button.Button
+import com.github.mpetuska.khakra.hooks.useDisclosure
+import com.github.mpetuska.khakra.image.Image
+import com.github.mpetuska.khakra.layout.Box
+import com.github.mpetuska.khakra.layout.Container
+import com.github.mpetuska.khakra.layout.Stack
+import com.github.mpetuska.khakra.transition.Collapse
 import flexColumn
 import flexbox
 import kotlinx.css.*
@@ -12,6 +21,9 @@ import onVerticalLayout
 import react.*
 import styled.*
 import ui.common.Icon
+import ui.khakra.SectionHeader
+import ui.khakra.Subtitle1
+import ui.khakra.onClick
 import ui.theme
 
 fun RBuilder.SetupScreen(state: State.Setup, onUpdateSetup: (SetupAction) -> Unit) = child(setup) {
@@ -25,6 +37,7 @@ external interface SetupProps : RProps {
     var onUpdateSetup: (SetupAction) -> Unit
 }
 val setup = functionalComponent<SetupProps> { props ->
+
     Screen {
         css {
             gap = Gap("64px")
@@ -53,23 +66,19 @@ private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Uni
     flexbox(justifyContent = JustifyContent.spaceBetween, alignItems = Align.center) {
         css { width = 100.pct }
         flexbox(alignItems = Align.center, gap = 32.px) {
-            styledImg(src = "/assets/LyricalIcon.svg") {
-                css { width = 72.px; height = 72.px }
-            }
-            styledH1 { +"Lyrical" }
+            Image({
+                src = "/assets/LyricalIcon.svg"
+                boxSize = "20"
+            })
+            Heading1 { +"Lyrical" }
         }
-        styledButton {
-            css {
-                backgroundColor = theme.primary.withAlpha(if (canStartGame) 1.0 else 0.25)
-                cursor = if (canStartGame) Cursor.pointer else Cursor.default
-                color = if (canStartGame) theme.onBackground else theme.onBackgroundSecondary
+        Button({
+            isDisabled = !canStartGame
+            onClick = {
+                onPlayGameClick.invoke()
             }
-            attrs {
-                disabled = !canStartGame
-                onClickFunction = {
-                    onPlayGameClick.invoke()
-                }
-            }
+            size = "lg"
+        }) {
             +"Play Game".toUpperCase()
         }
     }
@@ -91,17 +100,18 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
                 width = 100.pct
             }
         }
-        flexColumn(gap = 32.px) {
+        flexColumn(gap = 32.px, alignItems = Align.stretch) {
             css {
                 padding(32.px)
                 borderRadius = 16.px
                 backgroundColor = theme.primary
                 width = 100.pct
                 boxSizing = BoxSizing.borderBox
+                overflow = Overflow.hidden
             }
-            val (playlistsOpen, setPlaylistsOpen) = useState(true)
-            SectionHeader("${setupState.selectedPlaylists.size} Playlists Selected", playlistsOpen) { setPlaylistsOpen(!playlistsOpen) }
-            if (playlistsOpen) {
+            val disclosure = useDisclosure()
+            SectionHeader("${setupState.selectedPlaylists.size} Playlists Selected", disclosure.isOpen) { disclosure.onToggle() }
+            Collapse({`in` = disclosure.isOpen}) {
                 flexColumn(gap = 16.px) {
                     css { width = 100.pct }
                     setupState.selectedPlaylists.forEach {
@@ -113,7 +123,7 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
             }
         }
 
-        flexColumn(gap = 32.px) {
+        flexColumn(alignItems = Align.stretch) {
             css {
                 padding(all = 32.px)
                 backgroundColor = theme.backgroundDark
@@ -121,9 +131,10 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
                 width = 100.pct
                 boxSizing = BoxSizing.borderBox
             }
-            val (optionsOpen, setOptionsOpen) = useState(false)
-            SectionHeader("Options", optionsOpen) { setOptionsOpen(!optionsOpen) }
-            if (optionsOpen) {
+            val disclosure = useDisclosure()
+            SectionHeader("Options", disclosure.isOpen) { disclosure.onToggle() }
+            Collapse({`in` = disclosure.isOpen}) {
+                Spacing(verticalSpace = 32.px)
                 Options(setupState.config) {
                     onUpdateSetup.invoke(SetupAction.UpdateConfig(it))
                 }
@@ -137,8 +148,7 @@ private fun RBuilder.SectionHeader(title: String, open: Boolean, icon: Icon? = n
         css { width = 100.pct }
         flexbox(alignItems = Align.center, gap = 16.px) {
             icon?.let { Icon(it) }
-            styledP {
-                css { color = theme.onBackground }
+            Subtitle1 {
                 +title
             }
         }

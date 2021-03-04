@@ -5,11 +5,7 @@ import com.adamratzman.spotify.models.Track
 import imageUrl
 import kotlinx.browser.window
 import kotlinx.css.*
-import kotlinx.html.contentEditable
 import kotlinx.html.js.onClickFunction
-import kotlinx.html.js.onKeyUpFunction
-import kotlinx.html.tabIndex
-import org.w3c.dom.HTMLElement
 import react.*
 import styled.*
 import react.dom.*
@@ -54,7 +50,7 @@ val answerScreen = functionalComponent<AnswerProps> { props ->
 
         styledDiv {
             css {
-                backgroundColor = theme.onBackgroundPlaceholder
+                backgroundColor = theme.onBackgroundTernary
                 padding(48.px)
                 borderRadius = 16.px
                 display = Display.flex

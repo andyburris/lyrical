@@ -2,20 +2,19 @@ package ui
 
 import BrowserState
 import collectAsState
+import com.github.mpetuska.khakra.react.ChakraProvider
 import kotlinx.browser.document
 import kotlinx.coroutines.GlobalScope
 import kotlinx.css.*
 import kotlinx.css.properties.ms
-import kotlinx.css.properties.s
 import kotlinx.css.properties.transition
-import kotlinx.html.InputType
 import react.*
 import react.dom.*
 import react.router.dom.*
-import styled.*
 import ui.game.AnswerScreen
 import ui.game.EndScreen
 import ui.game.QuestionScreen
+import ui.khakra.*
 import ui.landing.LandingScreen
 import ui.loading.LoadingScreen
 import ui.setup.SetupScreen
@@ -29,6 +28,7 @@ val styles = CSSBuilder().apply {
         margin(0.px)
         padding(0.px)
         backgroundColor = theme.background
+        overflowX = Overflow.hidden
     }
     button {
         backgroundColor = theme.primary
@@ -76,9 +76,138 @@ val styles = CSSBuilder().apply {
 
 fun main() {
     println("is this even updating?")
-    injectGlobal(styles.toString())
+    //injectGlobal(styles.toString())
     render(document.getElementById("root")) {
-        child(stack) {}
+        val customTheme2 = createTheme {
+            colors {
+                "brand" toObject {
+                    "background" to "#333333"
+                    "backgroundDark" to "#2D2D2D"
+                    "backgroundCard" to "#545454"
+                    "onBackground" to "#FFFFFF"
+                    "onBackgroundSecondary" to "rgba(255, 255, 255, .5)"
+                    "onBackgroundTernary" to "rgba(255, 255, 255, .12)"
+                    "primary" to "#1DB954"
+                    "primaryDark" to "#1BAA4D"
+                    "primaryLight" to "#38C169"
+                    "onPrimary" to "#FFFFFF"
+                    "onPrimarySecondary" to "rgba(255, 255, 255, .5)"
+                    "onPrimaryTernary" to "rgba(255, 255, 255, .20)"
+                    "overlay" to "rgba(0, 0, 0, .12)"
+                    "darkOverlay" to "rgba(0, 0, 0, .70)"
+                }
+            }
+            config {
+                initialColorMode = ColorMode.Dark
+            }
+            components {
+                "Button" toComponent {
+                    baseStyle {
+                        "borderRadius" to "full"
+                        "h" to "16"
+                    }
+                    variants {
+                        "solid" toObject {
+                            "bg" to "brand.primary"
+                            "color" to "brand.onPrimary"
+                            "_hover" toObject {
+                                "bg" to "brand.primaryDark"
+                            }
+                        }
+                        "outline" toObject {
+                            "border" to "2px solid"
+                            "borderColor" to "brand.primary"
+                            "color" to "brand.primary"
+                            "_hover" toObject {
+                                "borderColor" to "brand.primaryDark"
+                                "color" to "brand.primaryDark"
+                            }
+                        }
+                    }
+                }
+                "Input" toComponent {
+                    baseStyle {
+                        "fontSize" to ""
+                    }
+                    variants {
+                        "filled" toObject {
+                            "bg" to "brand.backgroundCard"
+                            "textStyle" to "subtitle1"
+                            "borderRadius" to "full"
+                            "px" to "24"
+                            "py" to "16"
+                        }
+                        "unstyled" toObject {
+                            "textStyle" to "h1"
+                        }
+                    }
+                }
+            }
+            layerStyles {
+                "card" toObject {
+                    "backgroundColor" to "brand.backgroundDark"
+                    "color" to "brand.onBackground"
+                    "borderRadius" to "lg"
+                    "p" to "8"
+                }
+                "primaryCard" toObject {
+                    "backgroundColor" to "brand.primary"
+                    "color" to "brand.onPrimary"
+                    "borderRadius" to "lg"
+                    "p" to "8"
+                }
+            }
+            textStyles {
+                "h1" toObject {
+                    "fontFamily" to "YoungSerif"
+                    "color" to "brand.onBackground"
+                    "fontWeight" to "500"
+                }
+                "h2" toObject {
+                    "fontFamily" to "YoungSerif"
+                    "color" to "brand.onBackground"
+                    "fontWeight" to "500"
+                }
+                "sectionHeader" toObject {
+                    "fontFamily" to "Inter"
+                    "color" to "brand.onBackgroundSecondary"
+                    "fontWeight" to "bold"
+                }
+                "subtitle1" toObject {
+                    "fontFamily" to "Inter"
+                    "color" to "brand.onBackground"
+                    "fontWeight" to "bold"
+                }
+                "subtitle2" toObject {
+                    "fontFamily" to "Inter"
+                    "color" to "brand.onBackground"
+                    "fontWeight" to "bold"
+                    "lineHeight" to "100%"
+                }
+                "body2" toObject {
+                    "fontFamily" to "Inter"
+                    "color" to "brand.onBackgroundSecondary"
+                    "lineHeight" to "100%"
+                }
+            }
+            globalStyles {
+                "body" toObject {
+                    "bgColor" to "brand.background"
+                }
+            }
+            typography {
+                fonts {
+                    "heading" to "YoungSerif, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\""
+                    "body" to "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\""
+                    "mono" to "SFMono-Regular,Menlo,Monaco,Consolas,\"Liberation Mono\",\"Courier New\",monospace"
+                }
+            }
+        }
+        val theme = extendTheme(customTheme2)
+        println("theme = ${JSON.stringify(theme)}")
+        ChakraProvider({this.theme = theme}) {
+            child(stack) {}
+        }
     }
 }
 

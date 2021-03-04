@@ -43,25 +43,38 @@ fun RBuilder.flexbox(direction: FlexDirection = FlexDirection.row, justifyConten
 fun RBuilder.flexColumn(justifyContent: JustifyContent = JustifyContent.start, alignItems: Align = Align.start, gap: LinearDimension = 0.px, wrap: FlexWrap = FlexWrap.inherit, content: StyledDOMBuilder<DIV>.() -> Unit) = flexbox(FlexDirection.column, justifyContent, alignItems, gap, wrap, content)
 fun RBuilder.flexRow(justifyContent: JustifyContent = JustifyContent.start, alignItems: Align = Align.start, gap: LinearDimension = 0.px, wrap: FlexWrap = FlexWrap.inherit, content: StyledDOMBuilder<DIV>.() -> Unit) = flexbox(FlexDirection.row, justifyContent, alignItems, gap, wrap, content)
 
-fun RBuilder.Screen(backgroundColor: Color = Color.transparent, content: StyledDOMBuilder<DIV>.() -> Unit) {
+fun RBuilder.Screen(backgroundColor: Color = Color.transparent, innerCSS: CSSBuilder.() -> Unit = {}, content: StyledDOMBuilder<DIV>.() -> Unit) {
+    ScreenPadding {
+        css {
+            minHeight = 100.vh
+            this.backgroundColor = backgroundColor
+            innerCSS()
+        }
+        ContentColumn(content)
+    }
+}
+
+fun RBuilder.ScreenPadding(content: StyledDOMBuilder<DIV>.() -> Unit) {
     flexColumn(justifyContent = JustifyContent.center, alignItems = Align.center) {
         css {
             width = 100.pct
-            minHeight = 100.vh
+            boxSizing = BoxSizing.borderBox
             padding(all = 64.px)
             onHorizontalLayout {
                 padding(vertical = 128.px)
             }
-            boxSizing = BoxSizing.borderBox
-            this.backgroundColor = backgroundColor
         }
-        flexColumn(alignItems = Align.stretch) {
-            css {
-                width = 100.pct
-                maxWidth = 1200.px
-            }
-            content.invoke(this)
+        content.invoke(this)
+    }
+}
+
+fun RBuilder.ContentColumn(content: StyledDOMBuilder<DIV>.() -> Unit) {
+    flexColumn(alignItems = Align.stretch) {
+        css {
+            width = 100.pct
+            maxWidth = 1200.px
         }
+        content.invoke(this)
     }
 }
 
@@ -120,5 +133,14 @@ fun CSSBuilder.onVerticalLayout(block: CSSBuilder.() -> Unit) {
 fun CSSBuilder.onHorizontalLayout(block: CSSBuilder.() -> Unit) {
     media("not screen and (max-width: 1152px)") {
         block()
+    }
+}
+
+fun RBuilder.Spacing(verticalSpace: LinearDimension = 0.px, horizontalSpace: LinearDimension = 0.px) {
+    styledDiv {
+        css {
+            width = horizontalSpace
+            height = verticalSpace
+        }
     }
 }

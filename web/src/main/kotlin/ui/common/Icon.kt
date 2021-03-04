@@ -24,6 +24,12 @@ sealed class Icon {
         object Left : Arrow()
         object Right : Arrow()
     }
+    sealed class Platform : Icon() {
+        object Android : Platform()
+        object Apple : Platform()
+        object Windows : Platform()
+        object Desktop : Platform()
+    }
 }
 
 val Icon.resourcePath get() = "/assets/icons/" + when(this) {
@@ -41,6 +47,10 @@ val Icon.resourcePath get() = "/assets/icons/" + when(this) {
     Icon.Arrow.Down -> "ArrowDown"
     Icon.Arrow.Left -> "ArrowLeft"
     Icon.Arrow.Right -> "ArrowRight"
+    Icon.Platform.Android -> "Platform/Android"
+    Icon.Platform.Apple -> "Platform/Apple"
+    Icon.Platform.Windows -> "Platform/Windows"
+    Icon.Platform.Desktop -> "Platform/Desktop"
 } + ".svg"
 
 fun RBuilder.Icon(icon: Icon, colorFilter: String? = null, alpha: Double = 1.0, size: Size = Size(32.px), css: CSSBuilder.() -> Unit = {}) {

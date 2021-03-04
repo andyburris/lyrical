@@ -1,7 +1,6 @@
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
-    //kotlin("js") version "1.4.21"
 }
 
 group = "com.andb.com.andb.apps"
@@ -17,7 +16,7 @@ repositories {
 
 kotlin {
     jvm()
-    js(LEGACY) {
+    js(BOTH) {
         browser {}
     }
 
@@ -27,10 +26,9 @@ kotlin {
                 implementation(kotlin("stdlib-common"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
                 implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
-                implementation("com.adamratzman:spotify-api-kotlin-core:3.5.02")
+                implementation("com.adamratzman:spotify-api-kotlin-core:3.6.0-rc.2")
                 implementation("io.ktor:ktor-client-core:1.5.0")
                 implementation("io.ktor:ktor-client-serialization:1.5.0")
-
             }
         }
         val commonTest by getting {

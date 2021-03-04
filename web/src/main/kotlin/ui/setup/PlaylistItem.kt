@@ -2,6 +2,7 @@ package ui.setup
 
 import Size
 import com.adamratzman.spotify.models.SimplePlaylist
+import com.github.mpetuska.khakra.layout.Text
 import flexRow
 import flexbox
 import kotlinx.css.*
@@ -17,6 +18,8 @@ import styled.styledDiv
 import styled.styledImg
 import styled.styledP
 import ui.common.Icon
+import ui.khakra.Body2
+import ui.khakra.Subtitle2
 import ui.theme
 
 fun RBuilder.VerticalPlaylistItem(playlist: SimplePlaylist, selected: Boolean, onClick: () -> Unit) = child(verticalPlaylistItem) {
@@ -103,32 +106,10 @@ private fun RBuilder.PlaylistImage(playlist: SimplePlaylist, selected: Boolean, 
 
 private fun RBuilder.PlaylistText(playlist: SimplePlaylist) {
     flexbox(FlexDirection.column) {
-        styledP {
-            css {
-                color = theme.onBackground
-                fontSize = 18.px
-                overflow = Overflow.hidden
-                textOverflow = TextOverflow.ellipsis
-                wordWrap = WordWrap.breakWord
-                put("overflow-wrap", "anywhere")
-                put("display", "-webkit-box")
-                put("-webkit-line-clamp", "2")
-                put("-webkit-box-orient", "vertical")
-            }
+        Subtitle2({noOfLines = 2}) {
             +playlist.name
         }
-        styledP {
-            css {
-                color = theme.onBackgroundSecondary
-                fontSize = 18.px
-                fontWeight = FontWeight.w500
-                overflow = Overflow.hidden
-                textOverflow = TextOverflow.ellipsis
-                put("overflow-wrap", "anywhere")
-                put("display", "-webkit-box")
-                put("-webkit-line-clamp", "2")
-                put("-webkit-box-orient", "vertical")
-            }
+        Body2({noOfLines = 2}) {
             +(playlist.owner.displayName ?: "")
         }
     }
@@ -140,12 +121,12 @@ val loadingVerticalPlaylistItem = functionalComponent<RProps> {
         styledDiv {
             css {
                 size(128.px)
-                backgroundColor = theme.onBackgroundPlaceholder
+                backgroundColor = theme.onBackgroundTernary
             }
         }
         styledDiv {
             css {
-                backgroundColor = theme.onBackgroundPlaceholder
+                backgroundColor = theme.onBackgroundTernary
                 width = 64.px
                 height = 24.px
             }

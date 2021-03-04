@@ -2,6 +2,7 @@ import com.adamratzman.spotify.SpotifyImplicitGrantApi
 import com.adamratzman.spotify.models.Token
 import com.adamratzman.spotify.spotifyImplicitGrantApi
 import kotlinx.browser.localStorage
+import kotlinx.browser.window
 import kotlinx.coroutines.*
 import org.w3c.dom.*
 import org.w3c.dom.parsing.DOMParser
@@ -55,3 +56,26 @@ fun logout() {
     localStorage.removeItem("access_token_expires_in")
 }
 
+enum class Platform { Android, IOS, MacOS, Windows, Linux, Other }
+val Platform.formattedName get() = when(this) {
+    Platform.Android -> "Android"
+    Platform.IOS -> "iOS"
+    Platform.MacOS -> "macOS"
+    Platform.Windows -> "Windows"
+    Platform.Linux -> "Linux"
+    Platform.Other -> "Other"
+}
+
+fun getPlatform(): Platform {
+    val macosPlatforms = listOf("Macintosh", "MacIntel", "MacPPC", "Mac68K")
+    val windowsPlatforms = listOf("Win32", "Win64", "Windows", "WinCE")
+    val iosPlatforms = listOf("iPhone", "iPad", "iPod")
+    return when {
+        window.navigator.platform in macosPlatforms -> Platform.MacOS
+        window.navigator.platform in windowsPlatforms -> Platform.Windows
+        window.navigator.platform in iosPlatforms -> Platform.IOS
+        window.navigator.userAgent.contains("Android") -> Platform.Android
+        window.navigator.userAgent.contains("Linux") -> Platform.Linux
+        else -> Platform.Other
+    }
+}

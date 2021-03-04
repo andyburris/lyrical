@@ -1,24 +1,29 @@
 package ui.game
 
 import Game
-import Screen
-import UserAnswer
 import com.adamratzman.spotify.models.SimplePlaylist
+import com.github.mpetuska.khakra.button.Button
+import com.github.mpetuska.khakra.button.ButtonGroup
+import com.github.mpetuska.khakra.button.IconButton
+import com.github.mpetuska.khakra.image.Image
+import com.github.mpetuska.khakra.input.Input
+import com.github.mpetuska.khakra.kt.set
+import com.github.mpetuska.khakra.layout.*
+import com.github.mpetuska.khakra.tooltip.Tooltip
 import flexColumn
-import flexbox
 import kotlinx.css.*
 import kotlinx.html.DIV
-import kotlinx.html.InputType
 import kotlinx.html.js.*
 import react.*
-import react.dom.button
 import react.dom.div
-import react.dom.p
 import size
 import styled.*
 import targetInputValue
 import ui.common.Icon
 import ui.common.Chip
+import ui.khakra.Heading1
+import ui.khakra.SectionHeader
+import ui.khakra.onChange
 import ui.theme
 
 fun RBuilder.QuestionScreen(data: State.GameState.Question, onAnswer: (GameAction.AnswerQuestion) -> Unit) =
@@ -38,116 +43,56 @@ val question = functionalComponent<QuestionProps> { props ->
     val (answer, setAnswer) = useState("")
     val (showingNextLine, setShowingNextLine) = useState(false)
     val (showingArtist, setShowingArtist) = useState(false)
-    Screen {
-        css { gap = Gap("96px") }
-        flexbox(direction = FlexDirection.column, gap = 32.px) {
-            if (props.screen.data.config.showSourcePlaylist) {
-                PlaylistSource(props.screen.playlist)
-            }
-            styledDiv {
-                css {
-                    width = 100.pct
+    Box({ backgroundColor = "brand.background" }) {
+        Container({maxW = "1280px"}) {
+            VStack({spacing = 4; align="stretch"}) {
+                if (props.screen.data.config.showSourcePlaylist) {
+                    PlaylistSource(props.screen.playlist)
                 }
-                styledP {
-                    css {
-                        color = theme.onBackgroundSecondary
-                    }
-                    +"Lyric".toUpperCase()
-                }
-                styledH1 {
-                    val shownLyrics = props.screen.lyric + if (showingNextLine) " / " + props.screen.nextLyric else ""
-                    +"“$shownLyrics”"
-                }
-                if (showingArtist) {
-                    styledH1 {
-                        css {
-                            color = theme.onBackgroundSecondary
-                        }
-                        +"- ${props.screen.artist}"
-                    }
-                }
-                flexbox(justifyContent = JustifyContent.flexEnd, gap = 8.px) {
-                    css { marginTop = 8.px }
-                    if (!showingNextLine) {
-                        HoverTooltip("-0.25 points") {
-                            Chip("+ Next Line") { setShowingNextLine(true) }
+                VStack({spacing = 1; align="stretch"}) {
+                    VStack({align="stretch"}) {
+                        SectionHeader { +"LYRIC" }
+                        Heading1 {
+                            val shownLyrics = props.screen.lyric + if (showingNextLine) " / " + props.screen.nextLyric else ""
+                            +"“$shownLyrics”"
                         }
                     }
-                    if (!showingArtist) {
-                        HoverTooltip("-0.5 points") {
-                            Chip("+ Show Artist") { setShowingArtist(true) }
+                    HStack({spacing = 1}) {
+                        if (!showingNextLine) {
+                            Tooltip({label = "-0.25 points"}) {
+                                Chip("+ Next Line") { setShowingNextLine(true) }
+                            }
                         }
-                    }
-                }
-                styledP {
-                    css {
-                        color = theme.onBackgroundSecondary
-                    }
-                    +"Answer".toUpperCase()
-                }
-                styledInput(InputType.text) {
-                    css {
-                        backgroundColor = Color.transparent
-                        border = "none"
-                        color = theme.onBackground
-                        fontFamily = "YoungSerif"
-                        fontSize = 64.px
-                        width = 100.pct
-                    }
-                    attrs {
-                        autoFocus = true
-                        placeholder = "Song Name"
-                        onChangeFunction = {
-                            val value = it.targetInputValue
-                            setAnswer(value)
-                        }
-                        onKeyUpFunction = {
-                            console.log("keyup")
-                            it.preventDefault()
-                            if (it.asDynamic().key == "Enter" && answer.isNotBlank()) {
-                                console.log("hit")
-                                props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Answer(answer, showingNextLine, showingArtist)))
+                        if (!showingArtist) {
+                            Tooltip({label = "-0.5 points"}) {
+                                Chip("+ Show Artist") { setShowingArtist(true) }
                             }
                         }
                     }
                 }
-            }
-        }
-        styledDiv {
-            css {
-                display = Display.flex
-                flexDirection = FlexDirection.row
-                justifyContent = JustifyContent.center
-                gap = Gap("16px")
-            }
-            HoverTooltip("-1 Points") {
-                styledButton {
-                    css {
-                        padding(16.px)
-                        display = Display.flex
-                        justifyContent = JustifyContent.center
-                        alignItems = Align.center
-                        backgroundColor = theme.onBackgroundSecondary
-                        size(64.px)
-                    }
-                    attrs {
-                        onClickFunction = {
-                            props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Skipped))
+                VStack({align="stretch"}) {
+                    SectionHeader { +"LYRIC" }
+                    Input({
+                        variant="unstyled"
+                        textStyle="heading"
+                        this["placeholder"] = "Song Name"
+                        onChange = {
+                            setAnswer(it.targetInputValue)
                         }
-                    }
-                    Icon(Icon.Skip)
+                    })
                 }
-            }
 
-            button {
-                +"Answer".toUpperCase()
-                attrs {
-                    onClickFunction = {
-                        props.onAnswer.invoke(GameAction.AnswerQuestion(UserAnswer.Answer(answer, showingNextLine, showingArtist)))
+                HStack {
+                    ButtonGroup({isAttached=true}) {
+                        Button { +"Answer" }
+                        IconButton { Icon(Icon.Skip) }
+                    }
+                    VStack({align="stretch"}) {
+                        Text { +"Question ${props.screen.questionNumber + 1}/${props.screen.data.questions.size}" }
+                        Text { +"${props.screen.data.points + 1}/${props.screen.data.questions.size}" }
                     }
                 }
             }
-            GameState(props.screen.questionNumber, props.screen.data, Pair(theme.primary, theme.onBackgroundSecondary))
         }
     }
 }
@@ -168,13 +113,11 @@ fun RBuilder.GameState(questionNumber: Int, game: Game, colors: Pair<Color, Colo
 }
 
 fun RBuilder.PlaylistSource(playlist: SimplePlaylist) {
-    flexbox(gap = 16.px, justifyContent = JustifyContent.start, alignItems = Align.center) {
-        styledImg(src = playlist.images.firstOrNull()?.url ?: "/assets/PlaylistPlaceholder.svg") {
-            css { size(32.px) }
-        }
-        p {
+    HStack({spacing = 4}) {
+        Image({boxSize=8; src=playlist.images.firstOrNull()?.url ?: "/assets/PlaylistPlaceholder.svg"})
+        Text {
             styledSpan {
-                css { color = theme.onBackgroundPlaceholder }
+                css { color = theme.onBackgroundTernary }
                 + "from "
             }
             styledSpan {

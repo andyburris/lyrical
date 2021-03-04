@@ -1,6 +1,8 @@
 package ui.setup
 
 import GameConfig
+import com.github.mpetuska.khakra.checkbox.Checkbox
+import com.github.mpetuska.khakra.switch.Switch
 import flexColumn
 import flexRow
 import flexbox
@@ -8,12 +10,17 @@ import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
 import onTextChanged
 import react.*
+import react.dom.div
 import size
 import styled.css
 import styled.styledDiv
 import styled.styledInput
 import styled.styledP
 import ui.common.Chip
+import ui.khakra.Subtitle2
+import ui.khakra.isChecked
+import ui.khakra.onChange
+import ui.khakra.onClick
 import ui.theme
 import kotlin.time.ExperimentalTime
 
@@ -40,13 +47,9 @@ val optionsComponent = functionalComponent<OptionsProps> { props ->
 }
 
 private fun RBuilder.PickerItem(label: String, content: RBuilder.() -> Unit) {
-    flexbox(justifyContent = JustifyContent.spaceBetween) {
+    flexbox(justifyContent = JustifyContent.spaceBetween, alignItems = Align.center) {
         css { width = 100.pct }
-        styledP {
-            css {
-                color = theme.onBackground
-                fontSize = 18.px
-            }
+        Subtitle2 {
             +label
         }
         content()
@@ -94,7 +97,7 @@ private fun RBuilder.SwitchItem(label: String, current: Boolean, onChange: (Bool
             styledDiv {
                 css {
                     size(20.px)
-                    backgroundColor = if (current) theme.onPrimary else theme.onBackgroundPlaceholder
+                    backgroundColor = if (current) theme.onPrimary else theme.onBackgroundTernary
                     borderRadius = 16.px
                 }
             }

@@ -55,7 +55,7 @@ val loading = functionalComponent<LoadingProps> { props ->
 private fun RBuilder.indeterminateProgressBar() {
     styledDiv {
         css {
-            backgroundColor = theme.onBackgroundPlaceholder
+            backgroundColor = theme.onBackgroundTernary
             width = 100.pct
             height = 8.px
             position = Position.relative
@@ -124,7 +124,7 @@ private fun CSSBuilder.secondAnimation() {
 private fun RBuilder.determinateProgressBar(loadingState: LoadingState.LoadingLyrics) {
     styledDiv {
         css {
-            backgroundColor = theme.onBackgroundPlaceholder
+            backgroundColor = theme.onBackgroundTernary
             width = 100.pct
             height = 8.px
         }

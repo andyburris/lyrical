@@ -2,6 +2,12 @@ package ui.setup
 
 import PlaylistSearchState
 import SetupAction
+import com.github.mpetuska.khakra.icon.Icon
+import com.github.mpetuska.khakra.input.Input
+import com.github.mpetuska.khakra.input.InputGroup
+import com.github.mpetuska.khakra.input.InputLeftElement
+import com.github.mpetuska.khakra.kt.get
+import com.github.mpetuska.khakra.kt.set
 import flexColumn
 import flexRow
 import flexbox
@@ -15,6 +21,8 @@ import react.dom.*
 import styled.*
 import targetInputValue
 import ui.common.Icon
+import ui.khakra.SectionHeader
+import ui.khakra.onChange
 import ui.theme
 
 fun RBuilder.FindPlaylists(addPlaylistState: State.Setup.AddPlaylistState, onAction: (SetupAction) -> Unit) = child(findPlaylists) {
@@ -40,7 +48,7 @@ val findPlaylists = functionalComponent<FindPlaylistsProps> { props ->
 private fun RBuilder.SpotifyPlaylists(props: FindPlaylistsProps) {
     flexbox(direction = FlexDirection.column, gap = 32.px) {
         css { width = 100.pct }
-        p { +"SPOTIFY PLAYLISTS" }
+        SectionHeader { +"SPOTIFY PLAYLISTS" }
         PlaylistSearchResults(
             searchState = props.addPlaylistState.spotifySearchState,
             onTogglePlaylist = props.onAction,
@@ -51,9 +59,7 @@ private fun RBuilder.SpotifyPlaylists(props: FindPlaylistsProps) {
 private fun RBuilder.MyPlaylists(props: FindPlaylistsProps) {
     flexbox(direction = FlexDirection.column, gap = 32.px) {
         css { width = 100.pct }
-        p {
-            +"MY PLAYLISTS "
-        }
+        SectionHeader { +"MY PLAYLISTS" }
         PlaylistSearchResults(
             searchState = props.addPlaylistState.myPlaylistSearchState,
             onTogglePlaylist = props.onAction,
@@ -65,7 +71,7 @@ private fun RBuilder.MyPlaylists(props: FindPlaylistsProps) {
 private fun RBuilder.LogoutSpan() {
     styledSpan {
         css {
-            color = theme.onBackgroundPlaceholder
+            color = theme.onBackgroundTernary
             hover {
                 textDecoration = TextDecoration(lines = setOf(TextDecorationLine.underline))
             }
@@ -78,36 +84,16 @@ private fun RBuilder.LogoutSpan() {
 }
 
 private fun RBuilder.SearchBar(placeholder: String, onTermUpdate: (String) -> Unit) {
-    flexbox(alignItems = Align.center, justifyContent = JustifyContent.start) {
-        css {
-            width = 100.pct
-            padding(horizontal = 24.px, vertical = 16.px)
-            backgroundColor = theme.backgroundCard
-            borderRadius = 32.px
-            boxSizing = BoxSizing.borderBox
+    InputGroup({variant="filled"; size="lg"}) {
+        InputLeftElement {
+            Icon(ui.common.Icon.Search)
         }
-        Icon(Icon.Search)
-        styledInput {
-            css {
-                padding(horizontal = 16.px)
-                fontFamily = "Inter"
-                fontSize = 24.px
-                fontWeight = FontWeight.w700
-                border = "none"
-                width = 100.pct
-                backgroundColor = Color.transparent
-                color = theme.onBackground
-                borderRadius = 32.px
+        Input({
+            this["placeholder"] = placeholder
+            onChange = { event ->
+                onTermUpdate.invoke(event.targetInputValue)
             }
-
-            attrs {
-                this.placeholder = placeholder
-                onChangeFunction = {
-                    val value = it.targetInputValue
-                    onTermUpdate(value)
-                }
-            }
-        }
+        })
     }
 }
 
