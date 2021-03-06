@@ -4,12 +4,15 @@ import ui.khakra.Heading1
 import Screen
 import SetupAction
 import Spacing
+import VerticalSpacing
 import com.github.mpetuska.khakra.button.Button
 import com.github.mpetuska.khakra.hooks.useDisclosure
 import com.github.mpetuska.khakra.image.Image
+import com.github.mpetuska.khakra.kt.set
 import com.github.mpetuska.khakra.layout.Box
 import com.github.mpetuska.khakra.layout.Container
 import com.github.mpetuska.khakra.layout.Stack
+import com.github.mpetuska.khakra.layout.VStack
 import com.github.mpetuska.khakra.transition.Collapse
 import flexColumn
 import flexbox
@@ -37,28 +40,28 @@ external interface SetupProps : RProps {
     var onUpdateSetup: (SetupAction) -> Unit
 }
 val setup = functionalComponent<SetupProps> { props ->
-
-    Screen {
+    Box({ backgroundColor = "brand.background" }) {
+        Container({maxW = "1280px"; p = arrayOf("32", "48", "64")}) {
+            Stack({spacing= arrayOf("32", "48", "64")}) {
+                AppHeader(props.state.selectedPlaylists.isNotEmpty() && props.state.config.amountOfSongs > 0) {
+                    props.onUpdateSetup.invoke(SetupAction.StartGame(props.state.selectedPlaylists, props.state.config))
+                }
+                Stack({direction= arrayOf("column", "column", "row"); spacing= arrayOf("32", "48", "64")}) {
+                    Sidebar(props.state, props.onUpdateSetup)
+                    FindPlaylists(
+                        props.state.addPlaylistState,
+                        onAction = { props.onUpdateSetup.invoke(it) }
+                    )
+                }
+            }
+        }
+    }
+/*    Screen {
         css {
             gap = Gap("64px")
             justifyContent = JustifyContent.start
         }
-        AppHeader(props.state.selectedPlaylists.isNotEmpty() && props.state.config.amountOfSongs > 0) {
-            props.onUpdateSetup.invoke(SetupAction.StartGame(props.state.selectedPlaylists, props.state.config))
-        }
-        flexbox(gap = 64.px) {
-            css {
-                onVerticalLayout {
-                    flexDirection = FlexDirection.column
-                }
-            }
-            Sidebar(props.state, props.onUpdateSetup)
-            FindPlaylists(
-                props.state.addPlaylistState,
-                onAction = { props.onUpdateSetup.invoke(it) }
-            )
-        }
-    }
+    }*/
 }
 
 
@@ -68,7 +71,7 @@ private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Uni
         flexbox(alignItems = Align.center, gap = 32.px) {
             Image({
                 src = "/assets/LyricalIcon.svg"
-                boxSize = "20"
+                boxSize = arrayOf("40", "48", "64")
             })
             Heading1 { +"Lyrical" }
         }
@@ -77,7 +80,7 @@ private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Uni
             onClick = {
                 onPlayGameClick.invoke()
             }
-            size = "lg"
+            size = "fab"
         }) {
             +"Play Game".toUpperCase()
         }
@@ -85,35 +88,23 @@ private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Uni
 }
 
 private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupAction) -> Unit) {
-    flexbox(FlexDirection.column, gap = 32.px) {
-        css {
-            onHorizontalLayout {
-                width = 30.pct
-                minWidth = 400.px
-                position = Position.sticky
-                alignSelf = Align.flexStart
-                top = 0.px
-                marginTop = (-64).px
-                paddingTop = 64.px
-            }
-            onVerticalLayout {
-                width = 100.pct
-            }
-        }
-        flexColumn(gap = 32.px, alignItems = Align.stretch) {
-            css {
-                padding(32.px)
-                borderRadius = 16.px
-                backgroundColor = theme.primary
-                width = 100.pct
-                boxSizing = BoxSizing.borderBox
-                overflow = Overflow.hidden
-            }
+    VStack({spacing = arrayOf("8", "16", "32"); w = arrayOf("100%", "100%", "30%"); minWidth = arrayOf("0px", "350px", "400px")}) {
+        VStack({
+            layerStyle="primaryCard"
+            width="100%"
+            alignItems="stretch"
+        }) {
             val disclosure = useDisclosure()
             SectionHeader("${setupState.selectedPlaylists.size} Playlists Selected", disclosure.isOpen) { disclosure.onToggle() }
-            Collapse({`in` = disclosure.isOpen}) {
-                flexColumn(gap = 16.px) {
-                    css { width = 100.pct }
+            Collapse({
+                `in` = disclosure.isOpen
+                this["marginTop"] = "0px"
+            }) {
+                VerticalSpacing("24", "32")
+                VStack({
+                    w="100%"
+                    spacing="16"
+                }) {
                     setupState.selectedPlaylists.forEach {
                         HorizontalPlaylistItem(it, true) {
                             onUpdateSetup.invoke(SetupAction.RemovePlaylist(it))
@@ -122,19 +113,18 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
                 }
             }
         }
-
-        flexColumn(alignItems = Align.stretch) {
-            css {
-                padding(all = 32.px)
-                backgroundColor = theme.backgroundDark
-                borderRadius = 16.px
-                width = 100.pct
-                boxSizing = BoxSizing.borderBox
-            }
+        VStack({
+            layerStyle="card"
+            width="100%"
+            alignItems="stretch"
+        }) {
             val disclosure = useDisclosure()
             SectionHeader("Options", disclosure.isOpen) { disclosure.onToggle() }
-            Collapse({`in` = disclosure.isOpen}) {
-                Spacing(verticalSpace = 32.px)
+            Collapse({
+                `in` = disclosure.isOpen
+                this["mt"] = "0"
+            }) {
+                VerticalSpacing("24", "32")
                 Options(setupState.config) {
                     onUpdateSetup.invoke(SetupAction.UpdateConfig(it))
                 }
@@ -153,10 +143,12 @@ private fun RBuilder.SectionHeader(title: String, open: Boolean, icon: Icon? = n
             }
         }
         Icon(Icon.Arrow.Right) {
-            transition("transform", duration = 200.ms)
+            transition = "transform 200ms"
+            transform = if (open) "rotate(90deg)" else "rotate(0deg)"
+/*            transition("transform", duration = 200.ms)
             transform {
                 rotate(if (open) 90.deg else 0.deg)
-            }
+            }*/
         }
         attrs {
             onClickFunction = {

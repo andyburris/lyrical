@@ -14,9 +14,9 @@ fun <V: Any> recordOf(vararg entries: Pair<String, V>) = Record<String, V> {
         this[pair.first] = pair.second
     }
 }
-fun <V: Any> emptyRecord() = Record<String, V> {}
+fun <V: Any> recordOf() = Record<String, V> {}
 operator fun <V: Any> Record<String, V>.plus(other: Record<String, V>): Record<String, V> {
-    val new = emptyRecord<V>()
+    val new = recordOf<V>()
     for ((key, value ) in jsObjectToMap(this)) {
         new[key] = value
     }

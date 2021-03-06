@@ -1,6 +1,8 @@
 package ui.common
 
 import Size
+import com.github.mpetuska.khakra.image.Image
+import com.github.mpetuska.khakra.image.ImageProps
 import kotlinx.css.*
 import react.RBuilder
 import size
@@ -53,15 +55,14 @@ val Icon.resourcePath get() = "/assets/icons/" + when(this) {
     Icon.Platform.Desktop -> "Platform/Desktop"
 } + ".svg"
 
-fun RBuilder.Icon(icon: Icon, colorFilter: String? = null, alpha: Double = 1.0, size: Size = Size(32.px), css: CSSBuilder.() -> Unit = {}) {
-    styledImg(src = icon.resourcePath) {
-        css {
-            size(size)
-            opacity = alpha
-            if (colorFilter != null) {
-                filter = colorFilter
-            }
-            css.invoke(this)
+fun RBuilder.Icon(icon: Icon, colorFilter: String? = null, alpha: Double = 1.0, props: ImageProps.() -> Unit = {}) {
+    Image({
+        opacity = alpha
+        if (colorFilter != null) {
+            filter = colorFilter
         }
-    }
+        boxSize = arrayOf("24", "32")
+        src=icon.resourcePath
+        props()
+    })
 }

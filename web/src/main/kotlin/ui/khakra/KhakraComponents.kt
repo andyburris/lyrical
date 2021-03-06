@@ -14,19 +14,19 @@ import react.ReactElement
 public inline fun RBuilder.Heading1(
     noinline props: Builder<HeadingProps> = {},
     crossinline block: Builder<RElementBuilder<HeadingProps>> = {},
-): ReactElement = Heading({ size = "4xl"; `as` = "h1"; textStyle="h1"; props() }, block)
+): ReactElement = Heading({ size = "3xl"; `as` = "h1"; textStyle="h1"; props() }, block)
 
 @KhakraDSL
 public inline fun RBuilder.SectionHeader(
     noinline props: Builder<TextProps> = {},
     crossinline block: Builder<RElementBuilder<TextProps>> = {},
-): ReactElement = Text({fontSize = "xl"; textStyle="sectionHeader"; props();}, block)
+): ReactElement = Text({fontSize = "2xl"; textStyle="sectionHeader"; props();}, block)
 
 @KhakraDSL
 public inline fun RBuilder.Subtitle1(
     noinline props: Builder<TextProps> = {},
     crossinline block: Builder<RElementBuilder<TextProps>> = {},
-): ReactElement = Text({fontSize = "xl"; textStyle="subtitle1"; props();}, block)
+): ReactElement = Text({fontSize = "2xl"; textStyle="subtitle1"; props();}, block)
 
 @KhakraDSL
 public inline fun RBuilder.Subtitle2(
@@ -38,7 +38,7 @@ public inline fun RBuilder.Subtitle2(
 public inline fun RBuilder.Body1(
     noinline props: Builder<TextProps> = {},
     crossinline block: Builder<RElementBuilder<TextProps>> = {},
-): ReactElement = Text({fontSize = "xl"; props();}, block)
+): ReactElement = Text({fontSize = "2xl"; props();}, block)
 
 @KhakraDSL
 public inline fun RBuilder.Body2(

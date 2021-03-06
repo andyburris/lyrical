@@ -2,7 +2,10 @@ package ui.setup
 
 import Size
 import com.adamratzman.spotify.models.SimplePlaylist
-import com.github.mpetuska.khakra.layout.Text
+import com.github.mpetuska.khakra.image.Image
+import com.github.mpetuska.khakra.kt.get
+import com.github.mpetuska.khakra.kt.set
+import com.github.mpetuska.khakra.layout.*
 import flexRow
 import flexbox
 import kotlinx.css.*
@@ -12,6 +15,7 @@ import react.RProps
 import react.child
 import react.dom.div
 import react.functionalComponent
+import recordOf
 import size
 import styled.css
 import styled.styledDiv
@@ -20,6 +24,7 @@ import styled.styledP
 import ui.common.Icon
 import ui.khakra.Body2
 import ui.khakra.Subtitle2
+import ui.khakra.onClick
 import ui.theme
 
 fun RBuilder.VerticalPlaylistItem(playlist: SimplePlaylist, selected: Boolean, onClick: () -> Unit) = child(verticalPlaylistItem) {
@@ -35,17 +40,16 @@ external interface PlaylistProps : RProps {
     var onClick: () -> Unit
 }
 val verticalPlaylistItem = functionalComponent<PlaylistProps> { props ->
-    flexbox(FlexDirection.column, gap = 12.px) {
-        css {
-            cursor = Cursor.pointer
-            width = 128.px
-        }
-        PlaylistImage(props.playlist, props.selected, 128.px)
-        PlaylistText(props.playlist)
-        attrs.onClickFunction = {
+    VStack({
+        spacing="3"
+        onClick = {
             println("playlist item clicked")
             props.onClick.invoke()
         }
+        alignItems="start"
+    }) {
+        PlaylistImage(props.playlist, props.selected)
+        PlaylistText(props.playlist)
     }
 }
 
@@ -62,45 +66,42 @@ val horizontalPlaylistItem = functionalComponent<PlaylistProps> { props ->
             cursor = Cursor.pointer
             width = 100.pct
         }
-        flexRow(gap = 16.px, alignItems = Align.center) {
-            PlaylistImage(props.playlist, props.selected, 56.px)
+        HStack({
+            spacing = 16
+        }) {
+            Box({
+                boxSize = arrayOf(40, 48)
+                flexShrink = 0
+            }) {
+                PlaylistImage(props.playlist, props.selected)
+            }
             PlaylistText(props.playlist)
-
         }
-        div {
-            Icon(Icon.Clear, alpha = 0.5)
-            attrs.onClickFunction = {
+        Icon(Icon.Clear, alpha = 0.5) {
+            onClick = {
                 println("playlist item clicked")
                 props.onClick.invoke()
             }
+            flexShrink = 0
         }
     }
 }
 
-private fun RBuilder.PlaylistImage(playlist: SimplePlaylist, selected: Boolean, size: LinearDimension) {
-    flexbox {
-        css {
-            size(size)
-        }
-        styledImg(src = playlist.images.firstOrNull()?.url ?: "/assets/PlaylistPlaceholder.svg") {
-            css {
-                borderRadius = 4.px
-                size(size)
-            }
-
-        }
+private fun RBuilder.PlaylistImage(playlist: SimplePlaylist, selected: Boolean) {
+    Center({
+        borderRadius="2"
+        val beforeProps = recordOf(
+            "content" to "''",
+            "paddingTop" to "100%"
+        )
+        this["_before"] = beforeProps
+        bg = (if (selected)"linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5))," else "") + "url('${playlist.images.firstOrNull()?.url ?: "/assets/PlaylistPlaceholder.svg"}')"
+        backgroundSize = "cover"
+        width = "100%"
+    }) {
         if (selected) {
-            flexbox(justifyContent = JustifyContent.center, alignItems = Align.center) {
-                css {
-                    position = Position.absolute
-                    borderRadius = 4.px
-                    size(size)
-                    backgroundColor = Color.black.withAlpha(0.7)
-                }
-                Icon(Icon.Check, size = Size(size / 2))
-            }
+            Icon(Icon.Check) { boxSize = "50%" }
         }
-
     }
 }
 

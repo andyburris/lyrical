@@ -79,6 +79,12 @@ fun main() {
     //injectGlobal(styles.toString())
     render(document.getElementById("root")) {
         val customTheme2 = createTheme {
+            val subtitle1 = styleBlock {
+                "fontFamily" to "Inter"
+                "fontSize" to "1.5rem"
+                "color" to "brand.onBackground"
+                "fontWeight" to "bold"
+            }
             colors {
                 "brand" toObject {
                     "background" to "#333333"
@@ -101,10 +107,9 @@ fun main() {
                 initialColorMode = ColorMode.Dark
             }
             components {
-                "Button" toComponent {
+                "Button" toSinglePartComponent {
                     baseStyle {
-                        "borderRadius" to "full"
-                        "h" to "16"
+
                     }
                     variants {
                         "solid" toObject {
@@ -124,21 +129,57 @@ fun main() {
                             }
                         }
                     }
-                }
-                "Input" toComponent {
-                    baseStyle {
-                        "fontSize" to ""
+                    sizes {
+                        "fab" toObject {
+                            "borderRadius" to "full"
+                            "height".toBreakpoints("48", "64")
+                            "px" to "24"
+                            "position".toBreakpoints("fixed", "inherit")
+                            "bottom".toBreakpoints("32", "0")
+                            "right".toBreakpoints("32", "0")
+                            subtitle1()
+                            "fontSize".toBreakpoints("1rem", "1.5rem")
+                            "zIndex" to "docked"
+                        }
                     }
+                }
+                "Input".toMultiPartComponent(listOf("field", "addon")) {
                     variants {
                         "filled" toObject {
-                            "bg" to "brand.backgroundCard"
-                            "textStyle" to "subtitle1"
-                            "borderRadius" to "full"
-                            "px" to "24"
-                            "py" to "16"
+                            "field" toObject {
+                                "bg" to "brand.backgroundCard"
+                                "textStyle" to "subtitle1"
+                                "borderRadius" to "full"
+                            }
                         }
                         "unstyled" toObject {
-                            "textStyle" to "h1"
+                            "field" toObject {
+                                "textStyle" to "h1"
+                            }
+                        }
+                    }
+                    sizes {
+                        "lg" toObject {
+                            "field" toObject {
+                                "h" to "3rem"
+                                subtitle1()
+                            }
+                            "addon" toObject {
+                                "h" to "48"
+                                "pl" to "8"
+                            }
+                        }
+                        "xl" toObject {
+                            "field" toObject {
+                                "h" to "4rem"
+                                subtitle1()
+                            }
+                            "addon" toObject {
+                                "h" to "4rem"
+                                "w" to "4rem"
+                                "pl" to "1rem"
+                                "pr" to "0rem"
+                            }
                         }
                     }
                 }
@@ -147,15 +188,55 @@ fun main() {
                 "card" toObject {
                     "backgroundColor" to "brand.backgroundDark"
                     "color" to "brand.onBackground"
-                    "borderRadius" to "lg"
-                    "p" to "8"
+                    "borderRadius" to "16"
+                    "p".toBreakpoints("24", "32")
                 }
                 "primaryCard" toObject {
                     "backgroundColor" to "brand.primary"
                     "color" to "brand.onPrimary"
-                    "borderRadius" to "lg"
-                    "p" to "8"
+                    "borderRadius" to "16"
+                    "p".toBreakpoints("24", "32")
                 }
+            }
+            radii {
+                "0" to "0"
+                "4" to "0.25rem"
+                "8" to "0.5rem"
+                "12" to "0.75"
+                "16" to "1rem"
+                "20" to "1.25rem"
+                "24" to "1.5rem"
+                "32" to "2rem"
+                "40" to "2.5rem"
+                "48" to "3rem"
+                "56" to "3.5rem"
+                "64" to "4rem"
+                "72" to "4.5rem"
+                "80" to "5rem"
+                "88" to "5.5rem"
+                "96" to "6rem"
+                "112" to "7rem"
+                "128" to "8rem"
+            }
+            space {
+                "0" to "0"
+                "4" to "0.25rem"
+                "8" to "0.5rem"
+                "12" to "0.75"
+                "16" to "1rem"
+                "20" to "1.25rem"
+                "24" to "1.5rem"
+                "32" to "2rem"
+                "40" to "2.5rem"
+                "48" to "3rem"
+                "56" to "3.5rem"
+                "64" to "4rem"
+                "72" to "4.5rem"
+                "80" to "5rem"
+                "88" to "5.5rem"
+                "96" to "6rem"
+                "112" to "7rem"
+                "128" to "8rem"
             }
             textStyles {
                 "h1" toObject {
@@ -173,21 +254,17 @@ fun main() {
                     "color" to "brand.onBackgroundSecondary"
                     "fontWeight" to "bold"
                 }
-                "subtitle1" toObject {
-                    "fontFamily" to "Inter"
-                    "color" to "brand.onBackground"
-                    "fontWeight" to "bold"
-                }
+                "subtitle1" toObject subtitle1
                 "subtitle2" toObject {
                     "fontFamily" to "Inter"
                     "color" to "brand.onBackground"
                     "fontWeight" to "bold"
-                    "lineHeight" to "100%"
+                    "lineHeight" to "115%"
                 }
                 "body2" toObject {
                     "fontFamily" to "Inter"
                     "color" to "brand.onBackgroundSecondary"
-                    "lineHeight" to "100%"
+                    "lineHeight" to "115%"
                 }
             }
             globalStyles {

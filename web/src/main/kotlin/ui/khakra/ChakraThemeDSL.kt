@@ -1,6 +1,6 @@
 package ui.khakra
 
-import emptyRecord
+import recordOf
 import kotlinext.js.Record
 import kotlinext.js.asJsObject
 import kotlinext.js.get
@@ -15,7 +15,8 @@ fun createTheme(block: ThemeScope.() -> Unit): Record<String, Any> {
 }
 
 class ThemeScope {
-    internal val jsObject: Record<String, Any> = emptyRecord()
+    internal val jsObject: Record<String, Any> = recordOf()
+    fun styleBlock(block: StyleScope.() -> Unit): StyleScope.() -> Unit = block
     fun borders(block: StyleScope.() -> Unit) = jsObject.styleBlock("borders", block)
     fun breakpoints(block: ValueScope.() -> Unit) = jsObject.valueBlock("breakpoints", block)
     fun colors(block: StyleScope.() -> Unit) = jsObject.styleBlock("colors", block)
@@ -28,10 +29,13 @@ class ThemeScope {
         set(value) { jsObject["direction"] = if (value == Direction.LTR) "ltr" else "rtl" }
     fun radii(block: StyleScope.() -> Unit) = jsObject.styleBlock("radii", block)
     fun shadows(block: StyleScope.() -> Unit) = jsObject.styleBlock("shadows", block)
-    fun space(block: StyleScope.() -> Unit) = jsObject.styleBlock("space", block)
+    fun space(block: StyleScope.() -> Unit) {
+        jsObject.styleBlock("space", block)
+        jsObject.styleBlock("sizes", block)
+    }
     fun sizes(block: StyleScope.() -> Unit) = jsObject.styleBlock("sizes", block)
     fun globalStyles(block: StyleScope.() -> Unit) {
-        val styles = emptyRecord<Any>().also { it.styleBlock("global", block) }
+        val styles = recordOf<Any>().also { it.styleBlock("global", block) }
         jsObject["styles"] = styles
     }
     fun transition(block: TransitionScope.() -> Unit) {
@@ -54,9 +58,10 @@ class ThemeScope {
 
 /**Scope that allows string to string values, string to breakpoint array values, reactive function values, and subobject values**/
 class StyleScope {
-    internal val jsObject: Record<String, Any> = emptyRecord()
+    internal val jsObject: Record<String, Any> = recordOf()
     infix fun String.to(value: String) { jsObject[this] = value }
-    infix fun String.toBreakpoints(values: List<String>) { jsObject[this] = values.asJsObject() }
+    fun String.toBreakpoints(values: List<String>) { jsObject[this] = values.asJsObject() }
+    fun String.toBreakpoints(vararg values: String) { jsObject[this] = values }
     infix fun String.toReactive(block: (props: StyleProps) -> Unit) {
         jsObject[this] = { props: Record<String, Any> ->
             val colorMode = if(props["colorMode"] as String == "light") ColorMode.Light else ColorMode.Dark
@@ -68,13 +73,13 @@ class StyleScope {
 
 /**Scope that only allows string to string values**/
 class ValueScope {
-    internal val jsObject: Record<String, Any> = emptyRecord()
+    internal val jsObject: Record<String, Any> = recordOf()
     infix fun String.to(value: String) { jsObject[this] = value }
 }
 
 /**Scope that only allows string to string values**/
 class ObjectScope {
-    internal val jsObject: Record<String, Any> = emptyRecord()
+    internal val jsObject: Record<String, Any> = recordOf()
     infix fun String.toObject(block: StyleScope.() -> Unit) { jsObject[this] = StyleScope().apply(block).jsObject }
 }
 data class StyleProps(val colorMode: ColorMode)
@@ -87,12 +92,15 @@ class ConfigScope {
 }
 
 class ComponentListScope {
-    internal val jsObject: Record<String, Any> = emptyRecord()
-    infix fun String.toComponent(block: ComponentScope.() -> Unit) { jsObject[this] = ComponentScope().apply(block).jsObject }
+    internal val jsObject: Record<String, Any> = recordOf()
+    infix fun String.toSinglePartComponent(block: SinglePartComponentScope.() -> Unit) { jsObject[this] = SinglePartComponentScope().apply(block).jsObject }
+    fun String.toMultiPartComponent(parts: List<String>, block: MultiPartComponentScope.() -> Unit) {
+        jsObject[this] = MultiPartComponentScope(parts).apply(block).jsObject
+    }
 }
 
-class ComponentScope {
-    internal val jsObject: Record<String, Any> = emptyRecord()
+class SinglePartComponentScope {
+    internal val jsObject: Record<String, Any> = recordOf()
     fun baseStyle(block: StyleScope.() -> Unit) = jsObject.styleBlock("baseStyle", block)
     fun sizes(block: ObjectScope.() -> Unit) = jsObject.objectBlock("sizes", block)
     fun variants(block: ObjectScope.() -> Unit) = jsObject.objectBlock("variants", block)
@@ -102,13 +110,31 @@ class ComponentScope {
     }
 }
 
+class MultiPartComponentScope(parts: List<String>) {
+    internal val jsObject: Record<String, Any> = recordOf("parts" to parts.toTypedArray())
+    private fun <V: Any> Record<String, V>.multiPartObjectBlock(label: String, block: MultiPartObjectScope.() -> Unit) { this[label] = MultiPartObjectScope().apply(block).jsObject }
+    fun baseStyle(block: ObjectScope.() -> Unit) = jsObject.objectBlock("baseStyle", block)
+    fun sizes(block: MultiPartObjectScope.() -> Unit) = jsObject.multiPartObjectBlock("sizes", block)
+    fun variants(block: MultiPartObjectScope.() -> Unit) = jsObject.multiPartObjectBlock("variants", block)
+    fun defaultProps(block: ComponentDefaultScope.() -> Unit) {
+        val componentDefaultScope = ComponentDefaultScope().apply(block)
+        jsObject["defaultProps"] = mapOf("size" to componentDefaultScope.size, "variant" to componentDefaultScope.variant).filter { it.value != null }.asJsObject()
+    }
+}
+
+class MultiPartObjectScope {
+    internal val jsObject: Record<String, Any> = recordOf()
+    infix fun String.toObject(block: ObjectScope.() -> Unit) { jsObject[this] = ObjectScope().apply(block).jsObject }
+}
+
+
 class ComponentDefaultScope {
     var size: String? = null
     var variant: String? = null
 }
 
 class TransitionScope {
-    internal val jsObject: Record<String, Any> = emptyRecord()
+    internal val jsObject: Record<String, Any> = recordOf()
     private fun valueBlock(label: String, block: ValueScope.() -> Unit) { jsObject[label] = ValueScope().apply(block).jsObject }
     fun property(block: ValueScope.() -> Unit) = valueBlock("property", block)
     fun easing(block: ValueScope.() -> Unit) = valueBlock("easing", block)
@@ -116,7 +142,7 @@ class TransitionScope {
 }
 
 class TypographyScope {
-    internal val jsObject: Record<String, Any> = emptyRecord()
+    internal val jsObject: Record<String, Any> = recordOf()
     private fun valueBlock(label: String, block: ValueScope.() -> Unit) { jsObject[label] = ValueScope().apply(block).jsObject }
     fun letterSpacings(block: ValueScope.() -> Unit) = valueBlock("letterSpacings", block)
     fun lineHeights(block: ValueScope.() -> Unit) = valueBlock("lineHeights", block)

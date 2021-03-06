@@ -1,7 +1,7 @@
 package ui.khakra
 
 import com.soywiz.korio.toJsObject
-import emptyRecord
+import recordOf
 import iterator
 import kotlinext.js.Record
 import map
@@ -100,7 +100,7 @@ data class ChakraThemeConfig(
         "7xl" to "80rem",
         "8xl" to "90rem",
     ),
-    val styles: ChakraStyles = ChakraStyles { emptyRecord() },
+    val styles: ChakraStyles = ChakraStyles { recordOf() },
     val transition: Transition = Transition(),
     val typography: Typography = Typography(),
     val zIndices: Record<String, String> = recordOf(
@@ -118,9 +118,9 @@ data class ChakraThemeConfig(
         "toast" to "1700",
         "tooltip" to "1800",
     ),
-    val layerStyles: Record<String, Record<String, String>> = emptyRecord(),
-    val textStyles: Record<String, Record<String, String>> = emptyRecord(),
-    val components: Record<String, ComponentStyle> = emptyRecord(),
+    val layerStyles: Record<String, Record<String, String>> = recordOf(),
+    val textStyles: Record<String, Record<String, String>> = recordOf(),
+    val components: Record<String, ComponentStyle> = recordOf(),
 )
 
 fun ChakraThemeConfig.toRecord(): Record<String, Any> = recordOf(

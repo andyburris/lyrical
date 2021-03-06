@@ -1,3 +1,4 @@
+import com.github.mpetuska.khakra.layout.Box
 import kotlinx.browser.document
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.StateFlow
@@ -143,4 +144,10 @@ fun RBuilder.Spacing(verticalSpace: LinearDimension = 0.px, horizontalSpace: Lin
             height = verticalSpace
         }
     }
+}
+
+fun RBuilder.VerticalSpacing(vararg breakpoints: String) {
+    Box({
+        h = breakpoints
+    })
 }
