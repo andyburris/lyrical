@@ -1,8 +1,13 @@
 package ui.setup
 
 import GameConfig
-import com.github.mpetuska.khakra.checkbox.Checkbox
-import com.github.mpetuska.khakra.switch.Switch
+import com.github.mpetuska.khakra.button.Button
+import com.github.mpetuska.khakra.colorMode.useColorMode
+import com.github.mpetuska.khakra.kt.get
+import com.github.mpetuska.khakra.kt.set
+import com.github.mpetuska.khakra.layout.HStack
+import com.github.mpetuska.khakra.numberInput.UseNumberInputProps
+import com.github.mpetuska.khakra.numberInput.useNumberInput
 import flexColumn
 import flexRow
 import flexbox
@@ -10,32 +15,29 @@ import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
 import onTextChanged
 import react.*
-import react.dom.div
 import size
 import styled.css
 import styled.styledDiv
 import styled.styledInput
-import styled.styledP
 import ui.common.Chip
+import ui.common.Icon
 import ui.khakra.Subtitle2
-import ui.khakra.isChecked
-import ui.khakra.onChange
 import ui.khakra.onClick
 import ui.theme
 import kotlin.time.ExperimentalTime
 
-fun RBuilder.Options(options: GameConfig, onUpdate: (GameConfig) -> Unit) = child(optionsComponent) {
+fun RBuilder.GameOptions(options: GameConfig, onUpdate: (GameConfig) -> Unit) = child(optionsComponent) {
     attrs {
         this.options = options
         this.onUpdate = onUpdate
     }
 }
-external interface OptionsProps : RProps {
+external interface GameOptionsProps : RProps {
     var options: GameConfig
     var onUpdate: (GameConfig) -> Unit
 }
 @OptIn(ExperimentalTime::class)
-val optionsComponent = functionalComponent<OptionsProps> { props ->
+val optionsComponent = functionalComponent<GameOptionsProps> { props ->
     flexColumn(gap = 16.px) {
         css { width = 100.pct }
         NumberPickerItem("Number of songs", 10, props.options.amountOfSongs) { props.onUpdate.invoke(props.options.copy(amountOfSongs = it)) }
@@ -59,6 +61,7 @@ private fun RBuilder.PickerItem(label: String, content: RBuilder.() -> Unit) {
 private fun RBuilder.NumberPickerItem(label: String, default: Int, current: Int, onChange: (Int) -> Unit) {
     val (currentText, setCurrentText) = useState(if (current == default) "" else current.toString())
     PickerItem(label) {
+        val numberInput = useNumberInput()
         styledInput {
             css {
                 border = "none"
@@ -114,8 +117,23 @@ private fun <T> RBuilder.ChipItem(label: String, items: List<T>, selected: T, st
     PickerItem(label) {
         flexRow(gap = 4.px) {
             items.forEach {
-                Chip(stringify(it), backgroundColor = if (it == selected) theme.primary else theme.backgroundCard, textColor = if (it == selected) theme.onPrimary else theme.onBackgroundSecondary, fontSize = 12.px) { onChange.invoke(it) }
+                Chip(stringify(it), props = {
+                    variant = if (it == selected) "solid" else "solidSecondary"
+                    fontSize = arrayOf("0.5rem", "0.75rem")
+                }) { onChange.invoke(it) }
             }
+        }
+    }
+}
+
+fun RBuilder.AppOptions(onLogout: () -> Unit) {
+    flexColumn(gap = 16.px) {
+        css { width = 100.pct }
+        val darkMode = useColorMode()
+        SwitchItem("Dark Mode", darkMode.colorMode == "dark") { darkMode.setColorMode?.invoke(if (it) "dark" else "light") }
+        HStack({spacing = 16; onClick = onLogout }) {
+            Icon(Icon.Login) { boxSize = "24" }
+            Subtitle2 { +"Log out of Spotify" }
         }
     }
 }

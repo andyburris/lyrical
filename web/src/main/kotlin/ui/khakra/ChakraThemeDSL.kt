@@ -5,8 +5,8 @@ import kotlinext.js.Record
 import kotlinext.js.asJsObject
 import kotlinext.js.get
 import kotlinext.js.set
+import plus
 import plusAssign
-import recordOf
 
 fun createTheme(block: ThemeScope.() -> Unit): Record<String, Any> {
     val themeScope = ThemeScope()
@@ -34,8 +34,8 @@ class ThemeScope {
         jsObject.styleBlock("sizes", block)
     }
     fun sizes(block: StyleScope.() -> Unit) = jsObject.styleBlock("sizes", block)
-    fun globalStyles(block: StyleScope.() -> Unit) {
-        val styles = recordOf<Any>().also { it.styleBlock("global", block) }
+    fun globalStyles(block: StyleScope.(StyleProps) -> Unit) {
+        val styles = recordOf<Any>().also { it.reactiveStyleBlock("global", block) }
         jsObject["styles"] = styles
     }
     fun transition(block: TransitionScope.() -> Unit) {
@@ -49,27 +49,45 @@ class ThemeScope {
         jsObject += typographyScope.jsObject
     }
     fun zIndices(block: ValueScope.() -> Unit) = jsObject.valueBlock("zIndices", block)
-    fun layerStyles(block: ObjectScope.() -> Unit) = jsObject.objectBlock("layerStyles", block)
-    fun textStyles(block: ObjectScope.() -> Unit) = jsObject.objectBlock("textStyles", block)
+    fun layerStyles(block: LayerScope.() -> Unit) = jsObject.layerBlock("layerStyles", block)
+    fun textStyles(block: LayerScope.() -> Unit) = jsObject.layerBlock("textStyles", block)
     fun components(block: ComponentListScope.() -> Unit) {
         jsObject["components"] = ComponentListScope().apply(block).jsObject
     }
 }
 
 /**Scope that allows string to string values, string to breakpoint array values, reactive function values, and subobject values**/
-class StyleScope {
+open class StyleScope {
     internal val jsObject: Record<String, Any> = recordOf()
     infix fun String.to(value: String) { jsObject[this] = value }
     fun String.toBreakpoints(values: List<String>) { jsObject[this] = values.asJsObject() }
     fun String.toBreakpoints(vararg values: String) { jsObject[this] = values }
-    infix fun String.toReactive(block: (props: StyleProps) -> Unit) {
-        jsObject[this] = { props: Record<String, Any> ->
-            val colorMode = if(props["colorMode"] as String == "light") ColorMode.Light else ColorMode.Dark
-            StyleProps(colorMode).apply(block)
+    infix fun String.toReactive(block: StyleScope.(props: StyleProps) -> Unit) {
+        println("running toReactive")
+        fun function(reallyLongName: GlobalStyleProps) : Record<String, Any> {
+            println("in closure")
+            println("props = $reallyLongName")
+            println("reallyLongName = ${JSON.stringify(reallyLongName)}")
+            println("props.colorMode = ${reallyLongName.colorMode}")
+            /*val colorMode = if(props["colorMode"] as String == "light") ColorMode.Light else ColorMode.Dark
+            println("after colorMode = $colorMode")
+            val styleProps = StyleProps(colorMode)
+            val scope = StyleScope()
+            block.invoke(scope, styleProps)
+            scope.jsObject*/
+            return recordOf()
         }
+        jsObject[this] = ::function
     }
     infix fun String.toObject(block: StyleScope.() -> Unit) { jsObject[this] = StyleScope().apply(block).jsObject }
 }
+
+external interface GlobalStyleProps {
+    var colorScheme: String
+    var colorMode: String
+    var theme: Record<String, Any>
+}
+fun GlobalStyleProps.toStyleProps() = StyleProps(if(colorMode == "light") ColorMode.Light else ColorMode.Dark)
 
 /**Scope that only allows string to string values**/
 class ValueScope {
@@ -80,10 +98,12 @@ class ValueScope {
 /**Scope that only allows string to string values**/
 class ObjectScope {
     internal val jsObject: Record<String, Any> = recordOf()
-    infix fun String.toObject(block: StyleScope.() -> Unit) { jsObject[this] = StyleScope().apply(block).jsObject }
+    infix fun String.toObject(block: StyleScope.() -> Unit) = jsObject.styleBlock(this, block)
+    infix fun String.toReactive(block: StyleScope.(StyleProps) -> Unit) = jsObject.reactiveStyleBlock(this, block)
 }
 data class StyleProps(val colorMode: ColorMode)
 enum class ColorMode { Light, Dark }
+fun ColorMode.value(ifLight: String, ifDark: String) = if (this == ColorMode.Dark) ifDark else ifLight
 enum class Direction { LTR, RTL }
 
 class ConfigScope {
@@ -101,7 +121,7 @@ class ComponentListScope {
 
 class SinglePartComponentScope {
     internal val jsObject: Record<String, Any> = recordOf()
-    fun baseStyle(block: StyleScope.() -> Unit) = jsObject.styleBlock("baseStyle", block)
+    fun baseStyle(block: StyleScope.(StyleProps) -> Unit) = jsObject.reactiveStyleBlock("baseStyle", block)
     fun sizes(block: ObjectScope.() -> Unit) = jsObject.objectBlock("sizes", block)
     fun variants(block: ObjectScope.() -> Unit) = jsObject.objectBlock("variants", block)
     fun defaultProps(block: ComponentDefaultScope.() -> Unit) {
@@ -124,7 +144,7 @@ class MultiPartComponentScope(parts: List<String>) {
 
 class MultiPartObjectScope {
     internal val jsObject: Record<String, Any> = recordOf()
-    infix fun String.toObject(block: ObjectScope.() -> Unit) { jsObject[this] = ObjectScope().apply(block).jsObject }
+    infix fun String.toObject(block: ObjectScope.(StyleProps) -> Unit) = jsObject.reactiveObjectBlock(this, block)
 }
 
 
@@ -151,6 +171,26 @@ class TypographyScope {
     fun fontSizes(block: ValueScope.() -> Unit) = valueBlock("fontSizes", block)
 }
 
+class LayerScope {
+    internal val jsObject: Record<String, Any> = recordOf()
+    infix fun String.toObject(block: LayerStyleScope.() -> Unit) = jsObject.layerStyleBlock(this, block)
+}
+
+class LayerStyleScope : StyleScope() {
+    fun String.toReactive(ifLight: String, ifDark: String) {
+        jsObject[this] = ifLight
+        jsObject[".chakra-ui-dark &"] = (jsObject[".chakra-ui-dark &"] as? Record<String, Any> ?: recordOf()) + recordOf(Pair(this, ifDark))
+    }
+}
+
 private fun <V: Any> Record<String, V>.styleBlock(label: String, block: StyleScope.() -> Unit) { this[label] = StyleScope().apply(block).jsObject }
+private fun <V: Any> Record<String, V>.reactiveStyleBlock(label: String, block: StyleScope.(StyleProps) -> Unit) {
+    this[label] = { props: GlobalStyleProps ->
+        StyleScope().apply{ block.invoke(this, props.toStyleProps()) }.jsObject
+    }
+}
 private fun <V: Any> Record<String, V>.valueBlock(label: String, block: ValueScope.() -> Unit) { this[label] = ValueScope().apply(block).jsObject }
 private fun <V: Any> Record<String, V>.objectBlock(label: String, block: ObjectScope.() -> Unit) { this[label] = ObjectScope().apply(block).jsObject }
+private fun <V: Any> Record<String, V>.reactiveObjectBlock(label: String, block: ObjectScope.(StyleProps) -> Unit) { this[label] = { props: GlobalStyleProps -> ObjectScope().apply{ block.invoke(this, props.toStyleProps()) }.jsObject } }
+private fun <V: Any> Record<String, V>.layerBlock(label: String, block: LayerScope.() -> Unit) { this[label] = LayerScope().apply(block).jsObject }
+private fun <V: Any> Record<String, V>.layerStyleBlock(label: String, block: LayerStyleScope.() -> Unit) { this[label] = LayerStyleScope().apply(block).jsObject }

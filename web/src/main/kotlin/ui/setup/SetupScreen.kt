@@ -1,33 +1,23 @@
 package ui.setup
 
 import ui.khakra.Heading1
-import Screen
 import SetupAction
-import Spacing
 import VerticalSpacing
 import com.github.mpetuska.khakra.button.Button
 import com.github.mpetuska.khakra.hooks.useDisclosure
 import com.github.mpetuska.khakra.image.Image
 import com.github.mpetuska.khakra.kt.set
-import com.github.mpetuska.khakra.layout.Box
-import com.github.mpetuska.khakra.layout.Container
-import com.github.mpetuska.khakra.layout.Stack
-import com.github.mpetuska.khakra.layout.VStack
+import com.github.mpetuska.khakra.layout.*
 import com.github.mpetuska.khakra.transition.Collapse
-import flexColumn
 import flexbox
 import kotlinx.css.*
-import kotlinx.css.properties.*
 import kotlinx.html.js.onClickFunction
-import onHorizontalLayout
-import onVerticalLayout
+import logout
 import react.*
 import styled.*
 import ui.common.Icon
-import ui.khakra.SectionHeader
 import ui.khakra.Subtitle1
 import ui.khakra.onClick
-import ui.theme
 
 fun RBuilder.SetupScreen(state: State.Setup, onUpdateSetup: (SetupAction) -> Unit) = child(setup) {
     attrs {
@@ -35,24 +25,24 @@ fun RBuilder.SetupScreen(state: State.Setup, onUpdateSetup: (SetupAction) -> Uni
         this.onUpdateSetup = onUpdateSetup
     }
 }
+
 external interface SetupProps : RProps {
     var state: State.Setup
     var onUpdateSetup: (SetupAction) -> Unit
 }
+
 val setup = functionalComponent<SetupProps> { props ->
-    Box({ backgroundColor = "brand.background" }) {
-        Container({maxW = "1280px"; p = arrayOf("32", "48", "64")}) {
-            Stack({spacing= arrayOf("32", "48", "64")}) {
-                AppHeader(props.state.selectedPlaylists.isNotEmpty() && props.state.config.amountOfSongs > 0) {
-                    props.onUpdateSetup.invoke(SetupAction.StartGame(props.state.selectedPlaylists, props.state.config))
-                }
-                Stack({direction= arrayOf("column", "column", "row"); spacing= arrayOf("32", "48", "64")}) {
-                    Sidebar(props.state, props.onUpdateSetup)
-                    FindPlaylists(
-                        props.state.addPlaylistState,
-                        onAction = { props.onUpdateSetup.invoke(it) }
-                    )
-                }
+    Container({ maxW = "1280px"; p = arrayOf("32", "48", "64") }) {
+        Stack({ spacing = arrayOf("32", "48", "64") }) {
+            AppHeader(props.state.selectedPlaylists.isNotEmpty() && props.state.config.amountOfSongs > 0) {
+                props.onUpdateSetup.invoke(SetupAction.StartGame(props.state.selectedPlaylists, props.state.config))
+            }
+            Stack({ direction = arrayOf("column", "column", "row"); spacing = arrayOf("32", "48", "64") }) {
+                Sidebar(props.state, props.onUpdateSetup)
+                FindPlaylists(
+                    props.state.addPlaylistState,
+                    onAction = { props.onUpdateSetup.invoke(it) }
+                )
             }
         }
     }
@@ -88,11 +78,12 @@ private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Uni
 }
 
 private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupAction) -> Unit) {
-    VStack({spacing = arrayOf("8", "16", "32"); w = arrayOf("100%", "100%", "30%"); minWidth = arrayOf("0px", "350px", "400px")}) {
+    VStack({ spacing = arrayOf("8", "16", "32"); w = arrayOf("100%", "100%", "30%"); minWidth = arrayOf("0px", "350px", "400px") }) {
         VStack({
-            layerStyle="primaryCard"
-            width="100%"
-            alignItems="stretch"
+            layerStyle = "primaryCard"
+            width = "100%"
+            alignItems = "stretch"
+            spacing = 0
         }) {
             val disclosure = useDisclosure()
             SectionHeader("${setupState.selectedPlaylists.size} Playlists Selected", disclosure.isOpen) { disclosure.onToggle() }
@@ -102,8 +93,8 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
             }) {
                 VerticalSpacing("24", "32")
                 VStack({
-                    w="100%"
-                    spacing="16"
+                    w = "100%"
+                    spacing = "16"
                 }) {
                     setupState.selectedPlaylists.forEach {
                         HorizontalPlaylistItem(it, true) {
@@ -114,9 +105,10 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
             }
         }
         VStack({
-            layerStyle="card"
-            width="100%"
-            alignItems="stretch"
+            layerStyle = "card"
+            width = "100%"
+            alignItems = "stretch"
+            spacing = 0
         }) {
             val disclosure = useDisclosure()
             SectionHeader("Options", disclosure.isOpen) { disclosure.onToggle() }
@@ -125,8 +117,14 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
                 this["mt"] = "0"
             }) {
                 VerticalSpacing("24", "32")
-                Options(setupState.config) {
-                    onUpdateSetup.invoke(SetupAction.UpdateConfig(it))
+                VStack({ spacing = arrayOf("24", "32") }) {
+                    GameOptions(setupState.config) {
+                        onUpdateSetup.invoke(SetupAction.UpdateConfig(it))
+                    }
+                    Divider()
+                    AppOptions {
+                        logout()
+                    }
                 }
             }
         }

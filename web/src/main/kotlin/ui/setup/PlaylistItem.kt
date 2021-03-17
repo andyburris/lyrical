@@ -95,6 +95,7 @@ private fun RBuilder.PlaylistImage(playlist: SimplePlaylist, selected: Boolean) 
             "paddingTop" to "100%"
         )
         this["_before"] = beforeProps
+        transition = "background 200ms"
         bg = (if (selected)"linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5))," else "") + "url('${playlist.images.firstOrNull()?.url ?: "/assets/PlaylistPlaceholder.svg"}')"
         backgroundSize = "cover"
         width = "100%"

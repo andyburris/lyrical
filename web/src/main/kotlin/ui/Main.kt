@@ -81,18 +81,40 @@ fun main() {
         val customTheme2 = createTheme {
             val subtitle1 = styleBlock {
                 "fontFamily" to "Inter"
-                "fontSize" to "1.5rem"
-                "color" to "brand.onBackground"
+                "fontSize".toBreakpoints("1rem", "1.5rem")
                 "fontWeight" to "bold"
+                "lineHeight" to "115%"
+            }
+            val heading1 = styleBlock {
+                "fontFamily" to "YoungSerif"
+                "fontWeight" to "500"
+                "fontSize".toBreakpoints("3rem", "4rem")
+                "lineHeight" to "115%"
             }
             colors {
-                "brand" toObject {
+                "brandLight" toObject {
+                    "background" to "#FFFFFF"
+                    "backgroundDark" to "#F0F0F0"
+                    "backgroundCard" to "#FFFFFF"
+                    "onBackground" to "rgba(0, 0, 0, .87)"
+                    "onBackgroundSecondary" to "rgba(0, 0, 0, .5)"
+                    "onBackgroundTernary" to "rgba(0, 0, 0, .20)"
+                    "primary" to "#1DB954"
+                    "primaryDark" to "#1BAA4D"
+                    "primaryLight" to "#38C169"
+                    "onPrimary" to "#FFFFFF"
+                    "onPrimarySecondary" to "rgba(255, 255, 255, .5)"
+                    "onPrimaryTernary" to "rgba(255, 255, 255, .20)"
+                    "overlay" to "rgba(0, 0, 0, .05)"
+                    "darkOverlay" to "rgba(0, 0, 0, .70)"
+                }
+                "brandDark" toObject {
                     "background" to "#333333"
                     "backgroundDark" to "#2D2D2D"
                     "backgroundCard" to "#545454"
                     "onBackground" to "#FFFFFF"
                     "onBackgroundSecondary" to "rgba(255, 255, 255, .5)"
-                    "onBackgroundTernary" to "rgba(255, 255, 255, .12)"
+                    "onBackgroundTernary" to "rgba(255, 255, 255, .20)"
                     "primary" to "#1DB954"
                     "primaryDark" to "#1BAA4D"
                     "primaryLight" to "#38C169"
@@ -108,24 +130,28 @@ fun main() {
             }
             components {
                 "Button" toSinglePartComponent {
-                    baseStyle {
-
-                    }
                     variants {
-                        "solid" toObject {
-                            "bg" to "brand.primary"
-                            "color" to "brand.onPrimary"
+                        "solid" toReactive { props ->
+                            "bg" to props.colorMode.value("brandLight.primary", "brandDark.primary")
+                            "color" to props.colorMode.value("brandLight.onPrimary", "brandDark.onPrimary")
                             "_hover" toObject {
-                                "bg" to "brand.primaryDark"
+                                "bg" to props.colorMode.value("brandLight.primaryDark", "brandDark.primaryDark")
                             }
                         }
-                        "outline" toObject {
-                            "border" to "2px solid"
-                            "borderColor" to "brand.primary"
-                            "color" to "brand.primary"
+                        "solidSecondary" toReactive { props ->
+                            "bg" to props.colorMode.value("brandLight.backgroundCard", "brandDark.backgroundCard")
+                            "color" to props.colorMode.value("brandLight.onBackgroundSecondary", "brandDark.onBackgroundSecondary")
                             "_hover" toObject {
-                                "borderColor" to "brand.primaryDark"
-                                "color" to "brand.primaryDark"
+                                "bg" to props.colorMode.value("brandLight.backgroundDark", "brandDark.backgroundDark")
+                            }
+                        }
+                        "outline" toReactive { props ->
+                            "border" to "2px solid"
+                            "borderColor" to props.colorMode.value("brandLight.primary", "brandLight.primary")
+                            "color" to props.colorMode.value("brandLight.primary", "brandLight.primary")
+                            "_hover" toObject {
+                                "borderColor" to props.colorMode.value("brandLight.primaryDark", "brandLight.primaryDark")
+                                "color" to props.colorMode.value("brandLight.primaryDark", "brandLight.primaryDark")
                             }
                         }
                     }
@@ -141,20 +167,25 @@ fun main() {
                             "fontSize".toBreakpoints("1rem", "1.5rem")
                             "zIndex" to "docked"
                         }
+                        "chip" toObject {
+                            "borderRadius" to "full"
+                            "fontSize".toBreakpoints("1rem", "1.5rem")
+                            "px" to "12"
+                            "py" to "4"
+                        }
                     }
                 }
                 "Input".toMultiPartComponent(listOf("field", "addon")) {
                     variants {
-                        "filled" toObject {
+                        "filled" toObject { props ->
                             "field" toObject {
-                                "bg" to "brand.backgroundCard"
-                                "textStyle" to "subtitle1"
+                                "bg" to props.colorMode.value("brandLight.backgroundCard", "brandDark.backgroundCard")
                                 "borderRadius" to "full"
                             }
                         }
                         "unstyled" toObject {
                             "field" toObject {
-                                "textStyle" to "h1"
+                                "background" to "transparent"
                             }
                         }
                     }
@@ -181,21 +212,12 @@ fun main() {
                                 "pr" to "0rem"
                             }
                         }
+                        "unstyled" toObject {
+                            "field" toObject {
+                                heading1()
+                            }
+                        }
                     }
-                }
-            }
-            layerStyles {
-                "card" toObject {
-                    "backgroundColor" to "brand.backgroundDark"
-                    "color" to "brand.onBackground"
-                    "borderRadius" to "16"
-                    "p".toBreakpoints("24", "32")
-                }
-                "primaryCard" toObject {
-                    "backgroundColor" to "brand.primary"
-                    "color" to "brand.onPrimary"
-                    "borderRadius" to "16"
-                    "p".toBreakpoints("24", "32")
                 }
             }
             radii {
@@ -222,7 +244,7 @@ fun main() {
                 "0" to "0"
                 "4" to "0.25rem"
                 "8" to "0.5rem"
-                "12" to "0.75"
+                "12" to "0.75rem"
                 "16" to "1rem"
                 "20" to "1.25rem"
                 "24" to "1.5rem"
@@ -238,38 +260,59 @@ fun main() {
                 "112" to "7rem"
                 "128" to "8rem"
             }
+            layerStyles {
+                "card" toObject {
+                    "backgroundColor".toReactive("brandLight.backgroundDark", "brandDark.backgroundDark")
+/*                    ".chakra-ui-dark &" toObject {
+                        "backgroundColor" to "brandDark.backgroundDark"
+                        "color" to "brandDark.onBackground"
+                    }*/
+                    "color".toReactive("brandLight.onBackground", "brandDark.onBackground")
+                    "borderRadius" to "16"
+                    "p".toBreakpoints("24", "32")
+                    "transition" to "background-color 200ms"
+                }
+                "primaryCard" toObject {
+                    "backgroundColor" to "brandDark.primary"
+                    "color" to "brandDark.onPrimary"
+                    "borderRadius" to "16"
+                    "p".toBreakpoints("24", "32")
+                }
+            }
             textStyles {
                 "h1" toObject {
-                    "fontFamily" to "YoungSerif"
-                    "color" to "brand.onBackground"
-                    "fontWeight" to "500"
+                    heading1()
+                    "color".toReactive("brandLight.onBackground", "brandDark.onBackground")
                 }
                 "h2" toObject {
                     "fontFamily" to "YoungSerif"
-                    "color" to "brand.onBackground"
+                    "color".toReactive("brandLight.onBackground", "brandDark.onBackground")
                     "fontWeight" to "500"
                 }
                 "sectionHeader" toObject {
-                    "fontFamily" to "Inter"
-                    "color" to "brand.onBackgroundSecondary"
+                    subtitle1()
                     "fontWeight" to "bold"
+                    "color".toReactive("brandLight.onBackgroundSecondary", "brandDark.onBackgroundSecondary")
                 }
-                "subtitle1" toObject subtitle1
+                "subtitle1" toObject {
+                    subtitle1()
+                    "color".toReactive("brandLight.onBackground", "brandDark.onBackground")
+                }
                 "subtitle2" toObject {
                     "fontFamily" to "Inter"
-                    "color" to "brand.onBackground"
                     "fontWeight" to "bold"
                     "lineHeight" to "115%"
+                    "color".toReactive("brandLight.onBackground", "brandDark.onBackground")
                 }
                 "body2" toObject {
                     "fontFamily" to "Inter"
-                    "color" to "brand.onBackgroundSecondary"
                     "lineHeight" to "115%"
+                    "color".toReactive("brandLight.onBackgroundSecondary", "brandDark.onBackgroundSecondary")
                 }
             }
-            globalStyles {
+            globalStyles { props ->
                 "body" toObject {
-                    "bgColor" to "brand.background"
+                    "bgColor" to if (props.colorMode == ColorMode.Dark) "brandDark.background" else "brandLight.background"
                 }
             }
             typography {

@@ -54,6 +54,7 @@ fun getClientAPIIfLoggedIn(onAuthentication: (AuthAction.Authenticate) -> Unit):
 fun logout() {
     localStorage.removeItem("access_token")
     localStorage.removeItem("access_token_expires_in")
+    window.location.reload()
 }
 
 enum class Platform { Android, IOS, MacOS, Windows, Linux, Other }

@@ -15,6 +15,8 @@ import react.dom.p
 import react.functionalComponent
 import styled.*
 import tween
+import ui.khakra.Heading1
+import ui.khakra.Subtitle1
 import ui.theme
 import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
@@ -32,18 +34,14 @@ external interface LoadingProps : RProps {
 val loading = functionalComponent<LoadingProps> { props ->
     Screen {
         flexbox(FlexDirection.column, gap = 32.px) {
-            styledH1 {
-                +"Loading..."
-            }
+            Heading1 { +"Loading..." }
             flexbox(FlexDirection.column, gap = 16.px) {
                 css { width = 100.pct }
                 indeterminateProgressBar()
-                when (val state = props.loadingState) {
-                    LoadingState.LoadingSongs -> {
-                        p { +"LOADING SONGS" }
-                    }
-                    is LoadingState.LoadingLyrics -> {
-                        p { +"LOADING LYRICS" }
+                Subtitle1 {
+                    when (val state = props.loadingState) {
+                        LoadingState.LoadingSongs -> +"LOADING SONGS"
+                        is LoadingState.LoadingLyrics -> +"LOADING LYRICS"
                     }
                 }
             }

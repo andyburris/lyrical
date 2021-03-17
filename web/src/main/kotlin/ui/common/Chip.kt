@@ -1,5 +1,7 @@
 package ui.common
 
+import com.github.mpetuska.khakra.button.Button
+import com.github.mpetuska.khakra.button.ButtonProps
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
 import react.RBuilder
@@ -9,6 +11,7 @@ import react.functionalComponent
 import styled.css
 import styled.styledDiv
 import styled.styledP
+import ui.khakra.onClick
 import ui.theme
 
 fun RBuilder.Chip(text: String, backgroundColor: Color = theme.backgroundCard, textColor: Color = theme.onBackgroundSecondary, fontSize: LinearDimension = 24.px, icon: Icon? = null, onClick: (() -> Unit)? = null) = child(chip) {
@@ -19,6 +22,17 @@ fun RBuilder.Chip(text: String, backgroundColor: Color = theme.backgroundCard, t
         this.fontSize = fontSize
         this.icon = icon
         this.onClick = onClick
+    }
+}
+
+fun RBuilder.Chip(text: String, props: ButtonProps.() -> Unit = {}, onClick: (() -> Unit)? = null) {
+    Button({
+        size = "chip"
+        variant = "solidSecondary"
+        if (onClick != null) this.onClick = onClick
+        props()
+    }) {
+        +text
     }
 }
 
