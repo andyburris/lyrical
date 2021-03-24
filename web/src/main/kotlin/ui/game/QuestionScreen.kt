@@ -131,9 +131,9 @@ fun RBuilder.Header(state: State.GameState.Question) {
                 }
             }
         }
-        HStack({ spacing = 0; flexShrink = 0 }) {
-            SectionHeader { +state.game.points.toString() }
-            Subtitle1({ color = colorTheme() + "onBackgroundTernary" }) { +"/${state.game.questions.size} pts" }
+        Subtitle1 ({ flexShrink = 0 }) {
+            Subtitle1({ `as` = "span"; textColor = colorTheme() + "onBackgroundSecondary" }) { +state.game.points.toString() }
+            Subtitle1({ `as` = "span"; textColor = colorTheme() + "onBackgroundTernary" }) { +"/${state.game.questions.size} pts" }
         }
     }
 }

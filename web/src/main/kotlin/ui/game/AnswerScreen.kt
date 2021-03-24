@@ -39,13 +39,23 @@ val answerScreen = functionalComponent<AnswerProps> { props ->
 
     Box({ backgroundColor = colorTheme() + if (props.state.answer is GameAnswer.Answered.Correct) "primary" else "background" }) {
         VStack({ spacing = arrayOf(32, 48, 64); maxW = "1280px"; alignItems = "start"; p = arrayOf("32", "48", "64"); minH = "100vh"; justifyContent = "center"; margin="auto" }) {
-            Heading1 {
-                when(props.state.answer) {
-                    is GameAnswer.Answered.Correct -> +"Correct!"
-                    is GameAnswer.Answered.Incorrect -> +"Incorrect"
-                    is GameAnswer.Answered.Skipped -> +"Skipped"
+            HStack({ spacing = arrayOf(16, 24, 32); width = "100%" }) {
+                VStack({ spacing = 0; alignItems = "start"; width = "100%" }) {
+                    Heading1 {
+                        when(props.state.answer) {
+                            is GameAnswer.Answered.Correct -> +"Correct!"
+                            is GameAnswer.Answered.Incorrect -> +"Incorrect"
+                            is GameAnswer.Answered.Skipped -> +"Skipped"
+                        }
+                    }
+                    SectionHeader { +"Question ${props.state.questionNumber}/${props.state.game.questions.size}" }
+                }
+                Subtitle1 ({ flexShrink = 0 }) {
+                    Subtitle1({ `as` = "span"; textColor = colorTheme() + if (props.state.answer is GameAnswer.Answered.Correct) "onPrimarySecondary" else "onBackgroundSecondary" }) { +props.state.game.points.toString() }
+                    Subtitle1({ `as` = "span"; textColor = colorTheme() + if (props.state.answer is GameAnswer.Answered.Correct) "onPrimaryTernary" else "onBackgroundTernary" }) { +"/${props.state.game.questions.size} pts" }
                 }
             }
+
 
             VStack({
                 padding = arrayOf(24, 32, 48)
