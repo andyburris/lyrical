@@ -81,15 +81,25 @@ fun main() {
         val customTheme2 = createTheme {
             val subtitle1 = styleBlock {
                 "fontFamily" to "Inter"
-                "fontSize".toBreakpoints("1rem", "1.5rem")
+                "fontSize".toBreakpoints("1rem", "1.25rem", "1.5rem")
                 "fontWeight" to "bold"
                 "lineHeight" to "115%"
             }
             val heading1 = styleBlock {
                 "fontFamily" to "YoungSerif"
                 "fontWeight" to "500"
-                "fontSize".toBreakpoints("3rem", "4rem")
+                "fontSize".toBreakpoints("2.5rem", "3rem", "4rem")
                 "lineHeight" to "115%"
+            }
+            val heading2 = styleBlock {
+                "fontFamily" to "YoungSerif"
+                "fontWeight" to "500"
+                "fontSize".toBreakpoints("1.5rem", "2rem", "2.5rem")
+                "lineHeight" to "115%"
+            }
+            breakpoints {
+                "md" to "60em"
+                "lg" to "70em"
             }
             colors {
                 "brandLight" toObject {
@@ -160,7 +170,7 @@ fun main() {
                             "borderRadius" to "full"
                             "height".toBreakpoints("48", "64")
                             "px" to "24"
-                            "position".toBreakpoints("fixed", "inherit")
+                            "position".toBreakpoints("fixed", "static")
                             "bottom".toBreakpoints("32", "0")
                             "right".toBreakpoints("32", "0")
                             subtitle1()
@@ -202,7 +212,7 @@ fun main() {
                         }
                         "xl" toObject {
                             "field" toObject {
-                                "h" to "4rem"
+                                "h".toBreakpoints("3rem", "4rem")
                                 subtitle1()
                             }
                             "addon" toObject {
@@ -282,32 +292,27 @@ fun main() {
             textStyles {
                 "h1" toObject {
                     heading1()
-                    "color".toReactive("brandLight.onBackground", "brandDark.onBackground")
                 }
                 "h2" toObject {
-                    "fontFamily" to "YoungSerif"
-                    "color".toReactive("brandLight.onBackground", "brandDark.onBackground")
-                    "fontWeight" to "500"
+                    heading2()
                 }
                 "sectionHeader" toObject {
                     subtitle1()
                     "fontWeight" to "bold"
-                    "color".toReactive("brandLight.onBackgroundSecondary", "brandDark.onBackgroundSecondary")
                 }
                 "subtitle1" toObject {
                     subtitle1()
-                    "color".toReactive("brandLight.onBackground", "brandDark.onBackground")
                 }
                 "subtitle2" toObject {
                     "fontFamily" to "Inter"
                     "fontWeight" to "bold"
                     "lineHeight" to "115%"
-                    "color".toReactive("brandLight.onBackground", "brandDark.onBackground")
+                    "fontSize".toBreakpoints("0.875rem", "1rem", "1.25rem")
                 }
                 "body2" toObject {
                     "fontFamily" to "Inter"
                     "lineHeight" to "115%"
-                    "color".toReactive("brandLight.onBackgroundSecondary", "brandDark.onBackgroundSecondary")
+                    "fontSize".toBreakpoints("0.875rem", "1rem", "1.25rem")
                 }
             }
             globalStyles { props ->

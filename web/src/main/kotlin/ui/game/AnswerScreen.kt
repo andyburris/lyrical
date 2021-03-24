@@ -2,13 +2,17 @@ package ui.game
 
 import Screen
 import com.adamratzman.spotify.models.Track
+import com.github.mpetuska.khakra.button.Button
+import com.github.mpetuska.khakra.image.Image
+import com.github.mpetuska.khakra.layout.Box
+import com.github.mpetuska.khakra.layout.HStack
+import com.github.mpetuska.khakra.layout.VStack
 import imageUrl
 import kotlinx.browser.window
 import kotlinx.css.*
-import kotlinx.html.js.onClickFunction
 import react.*
 import styled.*
-import react.dom.*
+import ui.khakra.*
 import ui.theme
 
 fun RBuilder.AnswerScreen(state: State.GameState.Answer, onNextScreen: () -> Unit) = child(answerScreen) {
@@ -30,103 +34,68 @@ val answerScreen = functionalComponent<AnswerProps> { props ->
                 "Enter" -> props.onNextScreen.invoke()
             }
         }
-        {
-           window.onkeypress = null
-        }
+        { window.onkeypress = null }
     }
 
-    Screen(backgroundColor = if (props.state.answer is GameAnswer.Correct) theme.primary else theme.background) {
-        css {
-            gap = Gap("64px")
-            alignItems = Align.center
-        }
-        h1 {
-            when(props.state.answer) {
-                is GameAnswer.Correct -> +"Correct!"
-                is GameAnswer.Incorrect -> +"Incorrect"
-                is GameAnswer.Skipped -> +"Skipped"
-            }
-        }
-
-        styledDiv {
-            css {
-                backgroundColor = theme.onBackgroundTernary
-                padding(48.px)
-                borderRadius = 16.px
-                display = Display.flex
-                flexDirection = FlexDirection.column
-                gap = Gap("32px")
-                width = 100.pct
-            }
-            when (val answer = props.state.answer) {
-                is GameAnswer.Correct -> {
-                    SongItem(props.state.track.track)
+    Box({ backgroundColor = colorTheme() + if (props.state.answer is GameAnswer.Answered.Correct) "primary" else "background" }) {
+        VStack({ spacing = arrayOf(32, 48, 64); maxW = "1280px"; alignItems = "start"; p = arrayOf("32", "48", "64"); minH = "100vh"; justifyContent = "center"; margin="auto" }) {
+            Heading1 {
+                when(props.state.answer) {
+                    is GameAnswer.Answered.Correct -> +"Correct!"
+                    is GameAnswer.Answered.Incorrect -> +"Incorrect"
+                    is GameAnswer.Answered.Skipped -> +"Skipped"
                 }
-                is GameAnswer.Incorrect -> {
-                    YourAnswer(answer.answer)
-                    CorrectAnswer(props.state.track.track)
-                }
-                is GameAnswer.Skipped -> {
-                    CorrectAnswer(props.state.track.track)
-                }
-            }
-        }
-
-        styledDiv {
-            css {
-                display = Display.flex
-                flexDirection = FlexDirection.row
-                gap = Gap("32px")
             }
 
-            styledButton {
-                css {
-                    backgroundColor = if (props.state.answer is GameAnswer.Correct) theme.background else theme.primary
-                }
-                attrs {
-                    onClickFunction = {
-                        props.onNextScreen.invoke()
+            VStack({
+                padding = arrayOf(24, 32, 48)
+                spacing = arrayOf(24, 32, 48)
+                borderRadius = 16
+                width = "100%"
+                backgroundColor = colorTheme() + if (props.state.answer is GameAnswer.Answered.Correct) "primaryDark" else "backgroundDark"
+                alignItems = "start"
+            }) {
+                when (val answer = props.state.answer) {
+                    is GameAnswer.Answered.Correct -> {
+                        SongItem(props.state.track.track)
+                    }
+                    is GameAnswer.Answered.Incorrect -> {
+                        YourAnswer(answer.answer)
+                        CorrectAnswer(props.state.track.track)
+                    }
+                    is GameAnswer.Answered.Skipped -> {
+                        CorrectAnswer(props.state.track.track)
                     }
                 }
-                when(props.state.questionNumber == props.state.data.questions.size - 1) {
+            }
+
+            Button({
+                size = "fab"
+                variant = "solid"
+                bg = colorTheme() + if (props.state.answer is GameAnswer.Answered.Correct) "background" else "primary"
+                onClick = {
+                    props.onNextScreen.invoke()
+                }
+            }) {
+                when(props.state.questionNumber == props.state.game.questions.size - 1) {
                     false -> +"Next Question".toUpperCase()
                     true -> +"End Game".toUpperCase()
                 }
-
             }
-
-            GameState(props.state.questionNumber, props.state.data, Pair(theme.onBackgroundSecondary, theme.onBackground))
         }
     }
 }
 
 private fun RBuilder.YourAnswer(answer: String) {
-    styledDiv {
-        css {
-            display = Display.flex
-            flexDirection = FlexDirection.column
-            gap = Gap("16px")
-        }
-        p {
-            +"YOUR ANSWER"
-        }
-        h2 {
-            +answer
-        }
+    VStack({ spacing = arrayOf(8, 12, 16); alignItems = "start" }) {
+        SectionHeader { +"YOUR ANSWER" }
+        Heading2 { +answer }
     }
-
 }
 
 private fun RBuilder.CorrectAnswer(song: Track) {
-    styledDiv {
-        css {
-            display = Display.flex
-            flexDirection = FlexDirection.column
-            gap = Gap("16px")
-        }
-        p {
-            +"CORRECT ANSWER"
-        }
+    VStack({ spacing = arrayOf(8, 12, 16); alignItems = "start" }) {
+        SectionHeader { +"CORRECT ANSWER" }
         SongItem(song)
     }
 }
@@ -139,29 +108,19 @@ external interface SongProps : RProps {
     var song: Track
 }
 val songItem = functionalComponent<SongProps> { props ->
-    styledDiv {
-        css {
-            display = Display.flex
-            flexDirection = FlexDirection.row
-            gap = Gap("32px")
-        }
+    HStack({
+        spacing = arrayOf(16, 24, 32)
+        alignItems = "start"
+    }) {
+        Image({
+            src = props.song.imageUrl
+            mt = arrayOf(4, 8, 12)
+            boxSize = arrayOf(48, 72, 96)
+        })
 
-        styledImg(src = props.song.imageUrl) {
-            css {
-                marginTop = 12.px
-                width = 96.px
-                height = 96.px
-            }
-        }
-
-        div {
-            h2 {
-                +props.song.name
-            }
-            styledH2 {
-                css { color = theme.onBackgroundSecondary }
-                +props.song.artists.joinToString { it.name }
-            }
+        VStack({spacing = "0"; alignItems = "start"}) {
+            Heading2 { +props.song.name }
+            Heading2(textColor = "onBackgroundSecondary") { +props.song.artists.joinToString { it.name } }
         }
     }
 }

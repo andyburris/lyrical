@@ -19,7 +19,7 @@ private fun Map<String, List<IndexedValue<String>>>.filterWordCount(minWordCount
     }
     return this
 }
-private fun Map<String, List<IndexedValue<String>>>.filterNotSongTitle(title: String) = this.filter { it.key.contains(title) }.ifEmpty { this }
+private fun Map<String, List<IndexedValue<String>>>.filterNotSongTitle(title: String) = this.filter { !it.key.contains(title) }.ifEmpty { this }
 
 private fun List<IndexedValue<String>>.filterNextNotRepeating() = this.filter { indexedLyric -> indexedLyric.index + 1 !in this.map { it.index } }
 

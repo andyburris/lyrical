@@ -16,6 +16,7 @@ import react.functionalComponent
 import styled.*
 import tween
 import ui.khakra.Heading1
+import ui.khakra.SectionHeader
 import ui.khakra.Subtitle1
 import ui.theme
 import kotlin.time.ExperimentalTime
@@ -38,7 +39,7 @@ val loading = functionalComponent<LoadingProps> { props ->
             flexbox(FlexDirection.column, gap = 16.px) {
                 css { width = 100.pct }
                 indeterminateProgressBar()
-                Subtitle1 {
+                SectionHeader {
                     when (val state = props.loadingState) {
                         LoadingState.LoadingSongs -> +"LOADING SONGS"
                         is LoadingState.LoadingLyrics -> +"LOADING LYRICS"

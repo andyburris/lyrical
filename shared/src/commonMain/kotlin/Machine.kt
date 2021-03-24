@@ -5,7 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
 
@@ -147,7 +146,7 @@ abstract class Machine(
                     val randomTracks = action.playlists.getRandomSongs(spotifyRepository, action.config)
                     backingGame.value = GameState.Loading(LoadingState.LoadingLyrics(0, action.config.amountOfSongs))
                     val tracksWithLyrics = lyricsRepository.getLyricsFor(randomTracks)
-                    val game = Game(tracksWithLyrics.toQuestions(), action.config)
+                    val game = Game(tracksWithLyrics.generateQuestions(action.config), action.config)
                     backingGame.value = GameState.Playing(game, GameScreen.Question)
                 }
             }

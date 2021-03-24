@@ -2,6 +2,7 @@ package ui.khakra
 
 import com.github.mpetuska.khakra.KhakraDSL
 import com.github.mpetuska.khakra.checkbox.CheckboxProps
+import com.github.mpetuska.khakra.colorMode.useColorMode
 import com.github.mpetuska.khakra.input.InputProps
 import com.github.mpetuska.khakra.kt.Builder
 import com.github.mpetuska.khakra.kt.get
@@ -32,6 +33,8 @@ var InputProps.onKeyUp: (Event) -> Unit
 var SwitchProps.isChecked: Boolean
     get() = this["isChecked"]
     set(value) { this["isChecked"] = value }
+
+fun colorTheme() = if (useColorMode().colorMode == "light") "brandLight." else "brandDark."
 
 fun extendTheme(overrides: ChakraThemeConfig): Record<String, Any> = com.github.mpetuska.khakra.react.extendTheme<ChakraTheme>(overrides.toRecord())
 fun extendTheme(overrides: Record<String, Any>): Record<String, Any> = com.github.mpetuska.khakra.react.extendTheme<ChakraTheme>(overrides)

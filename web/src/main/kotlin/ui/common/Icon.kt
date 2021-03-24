@@ -1,13 +1,8 @@
 package ui.common
 
-import Size
 import com.github.mpetuska.khakra.image.Image
 import com.github.mpetuska.khakra.image.ImageProps
-import kotlinx.css.*
 import react.RBuilder
-import size
-import styled.css
-import styled.styledImg
 
 sealed class Icon {
     object Add : Icon()
@@ -18,8 +13,9 @@ sealed class Icon {
     object Login : Icon()
     object Check : Icon()
     object Clear : Icon()
-    object Profile : Icon()
+    object Person : Icon()
     object NextLine : Icon()
+    object Quote : Icon()
     sealed class Arrow : Icon() {
         object Up : Arrow()
         object Down : Arrow()
@@ -43,8 +39,9 @@ val Icon.resourcePath get() = "/assets/icons/" + when(this) {
     Icon.Login -> "Login"
     Icon.Check -> "Check"
     Icon.Clear -> "Clear"
-    Icon.Profile -> "Profile"
+    Icon.Person -> "Profile"
     Icon.NextLine -> "NextLine"
+    Icon.Quote -> "Quote"
     Icon.Arrow.Up -> "ArrowUp"
     Icon.Arrow.Down -> "ArrowDown"
     Icon.Arrow.Left -> "ArrowLeft"

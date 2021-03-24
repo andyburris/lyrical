@@ -58,7 +58,7 @@ val setup = functionalComponent<SetupProps> { props ->
 private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Unit) {
     flexbox(justifyContent = JustifyContent.spaceBetween, alignItems = Align.center) {
         css { width = 100.pct }
-        flexbox(alignItems = Align.center, gap = 32.px) {
+        HStack({ spacing = arrayOf(24, 32) }) {
             Image({
                 src = "/assets/LyricalIcon.svg"
                 boxSize = arrayOf("40", "48", "64")
@@ -78,7 +78,7 @@ private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Uni
 }
 
 private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupAction) -> Unit) {
-    VStack({ spacing = arrayOf("8", "16", "32"); w = arrayOf("100%", "100%", "30%"); minWidth = arrayOf("0px", "350px", "400px") }) {
+    VStack({ spacing = arrayOf("8", "16", "32"); w = arrayOf("100%", "100%", "30%"); minWidth = arrayOf("0px", "0px", "350px", "400px") }) {
         VStack({
             layerStyle = "primaryCard"
             width = "100%"
