@@ -78,15 +78,22 @@ private fun RBuilder.SongList(gameState: State.GameState) {
 
 private fun RBuilder.QuestionItem(question: GameQuestion, index: Int) {
     val disclosure = useDisclosure()
-    VStack({ spacing = 0; width = "100%"; alignItems = "stretch" }) {
+    VStack({
+        spacing = 0
+        width = "100%"
+        alignItems = "stretch"
+    }) {
         HStack({
             w = "100%"
             spacing = arrayOf("16", "24", "32")
             onClick = { disclosure.onToggle() }
+            `as` = "Button"
+            textAlign = "left"
         }) {
             HStack({
                 spacing = arrayOf("16", "24", "32")
                 boxSize = arrayOf("32", "40", "48")
+                flexShrink = 0
                 justifyContent = "end"
             }) {
                 SectionHeader { +"${index + 1}" }

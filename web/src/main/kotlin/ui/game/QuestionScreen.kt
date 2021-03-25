@@ -122,7 +122,7 @@ fun RBuilder.Header(state: State.GameState.Question) {
         HStack({ spacing = arrayOf(12, 16); width = "100%" }) {
             Icon(Icon.Clear, alpha = 0.5)
             VStack({ spacing = 0; width = "100%"; alignItems = "start" }) {
-                SectionHeader { +"Question ${state.questionNumber}/${state.game.questions.size}" }
+                SectionHeader { +"Question ${state.questionNumber + 1}/${state.game.questions.size}" }
                 if (state.game.config.showSourcePlaylist) {
                     Subtitle2 ({ width = "100%" }) {
                         Subtitle2({ `as` = "span"; textColor = colorTheme() + "onBackgroundTernary" }) { +"from" }

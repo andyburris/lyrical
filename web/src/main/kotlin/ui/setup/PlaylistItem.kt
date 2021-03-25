@@ -41,12 +41,14 @@ external interface PlaylistProps : RProps {
 }
 val verticalPlaylistItem = functionalComponent<PlaylistProps> { props ->
     VStack({
-        spacing="3"
+        spacing="12"
         onClick = {
             println("playlist item clicked")
             props.onClick.invoke()
         }
         alignItems="start"
+        `as` = "Button"
+        textAlign = "left"
     }) {
         PlaylistImage(props.playlist, props.selected)
         PlaylistText(props.playlist)
@@ -61,14 +63,14 @@ fun RBuilder.HorizontalPlaylistItem(playlist: SimplePlaylist, selected: Boolean,
     }
 }
 val horizontalPlaylistItem = functionalComponent<PlaylistProps> { props ->
-    flexRow(justifyContent = JustifyContent.spaceBetween, alignItems = Align.center, gap = 16.px) {
-        css {
-            cursor = Cursor.pointer
-            width = 100.pct
-        }
-        HStack({
-            spacing = 16
-        }) {
+    HStack({
+        spacing = 16
+        width = "100%"
+        `as` = "Button"
+        textAlign = "left"
+        onClick = props.onClick
+    }) {
+        HStack({ spacing = 16; width = "100%" }) {
             Box({
                 boxSize = arrayOf(40, 48)
                 flexShrink = 0
@@ -77,13 +79,7 @@ val horizontalPlaylistItem = functionalComponent<PlaylistProps> { props ->
             }
             PlaylistText(props.playlist)
         }
-        Icon(Icon.Clear, alpha = 0.5) {
-            onClick = {
-                println("playlist item clicked")
-                props.onClick.invoke()
-            }
-            flexShrink = 0
-        }
+        Icon(Icon.Clear, alpha = 0.5) { flexShrink = 0 }
     }
 }
 
@@ -107,13 +103,16 @@ private fun RBuilder.PlaylistImage(playlist: SimplePlaylist, selected: Boolean) 
 }
 
 private fun RBuilder.PlaylistText(playlist: SimplePlaylist) {
-    flexbox(FlexDirection.column) {
-        Subtitle2({noOfLines = 2}) {
+    VStack({ spacing = 0; width = "100%" }) {
+        Subtitle2({ noOfLines = 2; width = "100%" }) {
             +playlist.name
         }
-        Body2({noOfLines = 2}) {
+        Body2({ noOfLines = 2; width = "100%" }) {
             +(playlist.owner.displayName ?: "")
         }
+    }
+    flexbox(FlexDirection.column) {
+
     }
 }
 

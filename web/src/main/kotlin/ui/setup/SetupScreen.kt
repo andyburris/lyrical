@@ -131,27 +131,19 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
     }
 }
 
-private fun RBuilder.SectionHeader(title: String, open: Boolean, icon: Icon? = null, onToggle: () -> Unit) {
-    flexbox(justifyContent = JustifyContent.spaceBetween, alignItems = Align.center) {
-        css { width = 100.pct }
-        flexbox(alignItems = Align.center, gap = 16.px) {
-            icon?.let { Icon(it) }
-            Subtitle1 {
-                +title
-            }
-        }
+private fun RBuilder.SectionHeader(title: String, open: Boolean, onToggle: () -> Unit) {
+    HStack({
+        `as` = "Button"
+        this["variant"] = "link"
+        width = "100%"
+        spacing = arrayOf(8, 12, 16)
+        onClick = onToggle
+    }) {
+        Subtitle1({ width = "100%"; textAlign = "left" }) { +title }
         Icon(Icon.Arrow.Right) {
+            flexShrink = 0
             transition = "transform 200ms"
             transform = if (open) "rotate(90deg)" else "rotate(0deg)"
-/*            transition("transform", duration = 200.ms)
-            transform {
-                rotate(if (open) 90.deg else 0.deg)
-            }*/
-        }
-        attrs {
-            onClickFunction = {
-                onToggle.invoke()
-            }
         }
     }
 }

@@ -48,11 +48,11 @@ val answerScreen = functionalComponent<AnswerProps> { props ->
                             is GameAnswer.Answered.Skipped -> +"Skipped"
                         }
                     }
-                    SectionHeader { +"Question ${props.state.questionNumber}/${props.state.game.questions.size}" }
+                    SectionHeader { +"Question ${props.state.questionNumber + 1}/${props.state.game.questions.size}" }
                 }
                 Subtitle1 ({ flexShrink = 0 }) {
-                    Subtitle1({ `as` = "span"; textColor = colorTheme() + if (props.state.answer is GameAnswer.Answered.Correct) "onPrimarySecondary" else "onBackgroundSecondary" }) { +props.state.game.points.toString() }
-                    Subtitle1({ `as` = "span"; textColor = colorTheme() + if (props.state.answer is GameAnswer.Answered.Correct) "onPrimaryTernary" else "onBackgroundTernary" }) { +"/${props.state.game.questions.size} pts" }
+                    Subtitle1({ `as` = "span"; textColor = colorTheme() + if (props.state.answer is GameAnswer.Answered.Correct) "onPrimary" else "onBackground" }) { +props.state.game.points.toString() }
+                    Subtitle1({ `as` = "span"; textColor = colorTheme() + if (props.state.answer is GameAnswer.Answered.Correct) "onPrimarySecondary" else "onBackgroundSecondary" }) { +"/${props.state.game.questions.size} pts" }
                 }
             }
 

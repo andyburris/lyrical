@@ -3,11 +3,15 @@ package ui.setup
 import GameConfig
 import com.github.mpetuska.khakra.button.Button
 import com.github.mpetuska.khakra.colorMode.useColorMode
+import com.github.mpetuska.khakra.input.Input
 import com.github.mpetuska.khakra.kt.get
 import com.github.mpetuska.khakra.kt.set
+import com.github.mpetuska.khakra.layout.Box
 import com.github.mpetuska.khakra.layout.HStack
 import com.github.mpetuska.khakra.numberInput.UseNumberInputProps
 import com.github.mpetuska.khakra.numberInput.useNumberInput
+import com.github.mpetuska.khakra.switch.Switch
+import com.github.mpetuska.khakra.transition.Fade
 import flexColumn
 import flexRow
 import flexbox
@@ -15,14 +19,15 @@ import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
 import onTextChanged
 import react.*
+import recordOf
 import size
 import styled.css
 import styled.styledDiv
 import styled.styledInput
+import targetInputValue
 import ui.common.Chip
 import ui.common.Icon
-import ui.khakra.Subtitle2
-import ui.khakra.onClick
+import ui.khakra.*
 import ui.theme
 import kotlin.time.ExperimentalTime
 
@@ -40,7 +45,7 @@ external interface GameOptionsProps : RProps {
 val optionsComponent = functionalComponent<GameOptionsProps> { props ->
     flexColumn(gap = 16.px) {
         css { width = 100.pct }
-        NumberPickerItem("Number of songs", 10, props.options.amountOfSongs) { props.onUpdate.invoke(props.options.copy(amountOfSongs = it)) }
+        NumberPickerItem("Number of songs", 10, props.options.amountOfSongs, min = 1) { props.onUpdate.invoke(props.options.copy(amountOfSongs = it)) }
         //NumberPickerItem("Timer", 0, props.options.timer) { props.onUpdate.invoke(props.options.copy(timer = it)) }
         SwitchItem("Show source playlist", props.options.showSourcePlaylist) { props.onUpdate.invoke(props.options.copy(showSourcePlaylist = it)) }
         SwitchItem("Split playlists evenly", props.options.distributePlaylistsEvenly) { props.onUpdate.invoke(props.options.copy(distributePlaylistsEvenly = it)) }
@@ -58,11 +63,31 @@ private fun RBuilder.PickerItem(label: String, content: RBuilder.() -> Unit) {
     }
 }
 
-private fun RBuilder.NumberPickerItem(label: String, default: Int, current: Int, onChange: (Int) -> Unit) {
+private fun RBuilder.NumberPickerItem(label: String, default: Int, current: Int, min: Int = 0, max: Int = Int.MAX_VALUE, onChange: (Int) -> Unit) {
     val (currentText, setCurrentText) = useState(if (current == default) "" else current.toString())
     PickerItem(label) {
-        val numberInput = useNumberInput()
-        styledInput {
+        Input({
+            size = "sm"
+            variant = "filled"
+            this["value"] = currentText
+            this["placeholder"] = default.toString()
+            width = arrayOf(32, 40, 48)
+            height = arrayOf(24, 28, 32)
+            textAlign = "center"
+            this.onChange = {
+                val filtered = it.targetInputValue.filter { it in '0'..'9' }
+                setCurrentText(filtered)
+                onChange.invoke(filtered.toIntOrNull() ?: default)
+            }
+            this.onBlur = {
+                if (current !in min..max) {
+                    val inbounds = current.coerceIn(min..max)
+                    setCurrentText(inbounds.toString())
+                    onChange.invoke(inbounds)
+                }
+            }
+        })
+/*        styledInput {
             css {
                 border = "none"
                 borderRadius = 4.px
@@ -79,35 +104,40 @@ private fun RBuilder.NumberPickerItem(label: String, default: Int, current: Int,
                 value = currentText
                 placeholder = default.toString()
                 onTextChanged { text ->
-                    val filtered = text.filter { it in '0'..'9' }
-                    setCurrentText(filtered)
-                    onChange.invoke(filtered.toIntOrNull() ?: default)
+
                 }
             }
-        }
+        }*/
     }
 }
 
 private fun RBuilder.SwitchItem(label: String, current: Boolean, onChange: (Boolean) -> Unit) {
     PickerItem(label) {
-        flexbox(justifyContent = if (current) JustifyContent.flexEnd else JustifyContent.start, alignItems = Align.center) {
-            css {
-                width = 40.px
-                padding(all = 4.px)
-                backgroundColor = if (current) theme.primary else theme.backgroundCard
-                borderRadius = 20.px
+        HStack({
+            justifyContent = if (current) "end" else "start"
+            backgroundColor = colorTheme() + if (current) "primary" else "backgroundCard"
+            borderRadius = "full"
+            width = arrayOf("32", "40", "48")
+            p = 4
+            `as` = "Button"
+            outline = "none"
+            transition = "all 0.2s cubic-bezier(.08,.52,.52,1)"
+            this["_focus"] = recordOf(
+                "boxShadow" to "outline"
+            )
+            onClick = {
+                onChange.invoke(!current)
             }
-            styledDiv {
-                css {
-                    size(20.px)
-                    backgroundColor = if (current) theme.onPrimary else theme.onBackgroundTernary
-                    borderRadius = 16.px
-                }
-            }
-            attrs {
-                onClickFunction = {
-                    onChange.invoke(!current)
-                }
+        }) {
+            Fade({
+                `in` = true
+                this["layout"] = true
+            }) {
+                Box({
+                    boxSize = arrayOf("12", "16", "20")
+                    backgroundColor = colorTheme() + if (current) "onPrimary" else "onBackgroundTernary"
+                    borderRadius = "full"
+                })
             }
         }
     }
@@ -131,7 +161,7 @@ fun RBuilder.AppOptions(onLogout: () -> Unit) {
         css { width = 100.pct }
         val darkMode = useColorMode()
         SwitchItem("Dark Mode", darkMode.colorMode == "dark") { darkMode.setColorMode?.invoke(if (it) "dark" else "light") }
-        HStack({spacing = 16; onClick = onLogout }) {
+        HStack({ `as` = "Button"; spacing = 16; onClick = onLogout }) {
             Icon(Icon.Login) { boxSize = "24" }
             Subtitle2 { +"Log out of Spotify" }
         }

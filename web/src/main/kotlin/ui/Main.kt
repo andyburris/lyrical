@@ -180,7 +180,7 @@ fun main() {
                         "chip" toObject {
                             "borderRadius" to "full"
                             "fontSize".toBreakpoints("1rem", "1.5rem")
-                            "px" to "12"
+                            "px".toBreakpoints("8", "12")
                             "py" to "4"
                         }
                     }
@@ -200,6 +200,9 @@ fun main() {
                         }
                     }
                     sizes {
+                        "sm" toObject {
+                            "px" to "2"
+                        }
                         "lg" toObject {
                             "field" toObject {
                                 "h" to "3rem"
@@ -232,6 +235,7 @@ fun main() {
             }
             radii {
                 "0" to "0"
+                "2" to "0.125rem"
                 "4" to "0.25rem"
                 "8" to "0.5rem"
                 "12" to "0.75"
@@ -252,6 +256,7 @@ fun main() {
             }
             space {
                 "0" to "0"
+                "2" to "0.125rem"
                 "4" to "0.25rem"
                 "8" to "0.5rem"
                 "12" to "0.75rem"

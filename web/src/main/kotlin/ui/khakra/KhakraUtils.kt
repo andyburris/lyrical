@@ -27,6 +27,9 @@ var ChakraProps.onClick: () -> Unit
 var InputProps.onChange: (Event) -> Unit
     get() = this["onChange"]
     set(value) { this["onChange"] = value }
+var InputProps.onBlur: () -> Unit
+    get() = this["onBlur"]
+    set(value) { this["onBlur"] = value }
 var InputProps.onKeyUp: (Event) -> Unit
     get() = this["onKeyUp"]
     set(value) { this["onKeyUp"] = value }
