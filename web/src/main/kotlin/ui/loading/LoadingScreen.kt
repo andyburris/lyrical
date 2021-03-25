@@ -3,6 +3,10 @@ package ui.loading
 import LoadingState
 import Screen
 import animate
+import com.github.mpetuska.khakra.layout.Box
+import com.github.mpetuska.khakra.layout.HStack
+import com.github.mpetuska.khakra.layout.VStack
+import com.github.mpetuska.khakra.spinner.Spinner
 import flexbox
 import kotlinx.css.*
 import kotlinx.css.properties.IterationCount
@@ -18,6 +22,7 @@ import tween
 import ui.khakra.Heading1
 import ui.khakra.SectionHeader
 import ui.khakra.Subtitle1
+import ui.khakra.colorTheme
 import ui.theme
 import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
@@ -33,11 +38,22 @@ external interface LoadingProps : RProps {
 }
 
 val loading = functionalComponent<LoadingProps> { props ->
-    Screen {
-        flexbox(FlexDirection.column, gap = 32.px) {
+    Box() {
+        VStack({
+            spacing = arrayOf(16, 24, 32)
+            maxW = "1280px"
+            alignItems = "start"
+            p = arrayOf("32", "48", "64")
+            minH = "100vh"
+            justifyContent = "center"
+            margin = "auto"
+        }) {
             Heading1 { +"Loading..." }
-            flexbox(FlexDirection.column, gap = 16.px) {
-                css { width = 100.pct }
+            VStack({
+                spacing = arrayOf(8, 12, 16)
+                width = "100%"
+                alignItems = "start"
+            }) {
                 indeterminateProgressBar()
                 SectionHeader {
                     when (val state = props.loadingState) {
@@ -52,15 +68,13 @@ val loading = functionalComponent<LoadingProps> { props ->
 
 
 private fun RBuilder.indeterminateProgressBar() {
-    styledDiv {
-        css {
-            backgroundColor = theme.onBackgroundTernary
-            width = 100.pct
-            height = 8.px
-            position = Position.relative
-            overflow = Overflow.hidden
-        }
-
+    Box({
+        backgroundColor = colorTheme() + "onBackgroundTernary"
+        width = "100%"
+        height = arrayOf(4, 8)
+        position = "relative"
+        overflow = "hidden"
+    }) {
         progressBarForeground {
             firstAnimation()
         }
@@ -74,7 +88,7 @@ private fun RBuilder.progressBarForeground(animation: CSSBuilder.() -> Unit) {
     styledDiv {
         css {
             backgroundColor = theme.primary
-            height = 8.px
+            height = 100.pct
             position = Position.absolute
             top = 0.px
             bottom = 0.px

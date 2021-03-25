@@ -147,6 +147,9 @@ fun main() {
                             "_hover" toObject {
                                 "bg" to props.colorMode.value("brandLight.primaryDark", "brandDark.primaryDark")
                             }
+                            "_active" toObject {
+                                "bg" to props.colorMode.value("brandLight.primaryDark", "brandDark.primaryDark")
+                            }
                         }
                         "solidSecondary" toReactive { props ->
                             "bg" to props.colorMode.value("brandLight.backgroundCard", "brandDark.backgroundCard")
@@ -168,13 +171,12 @@ fun main() {
                     sizes {
                         "fab" toObject {
                             "borderRadius" to "full"
-                            "height".toBreakpoints("48", "64")
+                            "height".toBreakpoints("48", "56", "64")
                             "px" to "24"
                             "position".toBreakpoints("fixed", "static")
                             "bottom".toBreakpoints("32", "0")
                             "right".toBreakpoints("32", "0")
                             subtitle1()
-                            "fontSize".toBreakpoints("1rem", "1.5rem")
                             "zIndex" to "docked"
                         }
                         "chip" toObject {

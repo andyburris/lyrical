@@ -58,7 +58,7 @@ val setup = functionalComponent<SetupProps> { props ->
 private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Unit) {
     flexbox(justifyContent = JustifyContent.spaceBetween, alignItems = Align.center) {
         css { width = 100.pct }
-        HStack({ spacing = arrayOf(24, 32) }) {
+        HStack({ spacing = arrayOf(16, 24, 32) }) {
             Image({
                 src = "/assets/LyricalIcon.svg"
                 boxSize = arrayOf("40", "48", "64")
