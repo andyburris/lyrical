@@ -11,6 +11,7 @@ import com.github.mpetuska.khakra.kt.set
 import com.github.mpetuska.khakra.layout.*
 import com.github.mpetuska.khakra.tooltip.Tooltip
 import flexColumn
+import kotlinx.browser.window
 import kotlinx.css.*
 import kotlinx.html.DIV
 import kotlinx.html.js.*
@@ -42,7 +43,11 @@ val question = functionalComponent<QuestionProps> { props ->
     val (showingArtist, setShowingArtist) = useState(false)
     Box() {
         VStack({ spacing = 32; align = "stretch"; maxW = "1280px"; p = arrayOf("32", "48", "64"); minH = "100vh"; justifyContent = "center"; margin="auto" }) {
-            Header(props.state)
+            Header(props.state) {
+                println("redirecting to ${window.location.host}")
+                val http = window.location.href.takeWhile { it != ':' }
+                window.location.href = "$http://${window.location.host}"
+            }
             VStack({ spacing = 4; align = "stretch" }) {
                 VStack({ align = "stretch"; spacing = 0 }) {
                     SectionHeader { +"LYRIC" }
@@ -117,10 +122,12 @@ val question = functionalComponent<QuestionProps> { props ->
 
 
 
-fun RBuilder.Header(state: State.GameState.Question) {
+fun RBuilder.Header(state: State.GameState.Question, onLeaveGame: () -> Unit) {
     HStack({ spacing = 16; width = "100%" }) {
         HStack({ spacing = arrayOf(12, 16); width = "100%" }) {
-            Icon(Icon.Clear, alpha = 0.5)
+            Icon(Icon.Clear, alpha = 0.5) {
+                onClick = onLeaveGame
+            }
             VStack({ spacing = 0; width = "100%"; alignItems = "start" }) {
                 SectionHeader { +"Question ${state.questionNumber + 1}/${state.game.questions.size}" }
                 if (state.game.config.showSourcePlaylist) {
