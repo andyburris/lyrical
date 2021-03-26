@@ -59,7 +59,7 @@ val question = functionalComponent<QuestionProps> { props ->
                         Heading1 { +"- ${props.state.artist}" }
                     }
                 }
-                HStack({ spacing = arrayOf(8, 12, 16); justifyContent = "end" }) {
+                HStack({ spacing = arrayOf(8, 12, 16); justifyContent = "flex-end" }) {
                     if (!showingNextLine) {
                         Tooltip({ label = "-0.25 points" }) {
                             Chip("+ Next Line") { setShowingNextLine(true) }

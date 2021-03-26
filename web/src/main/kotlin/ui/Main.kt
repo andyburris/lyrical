@@ -2,6 +2,7 @@ package ui
 
 import BrowserState
 import collectAsState
+import com.github.mpetuska.khakra.cssReset.CSSReset
 import com.github.mpetuska.khakra.react.ChakraProvider
 import kotlinx.browser.document
 import kotlinx.coroutines.GlobalScope
@@ -97,6 +98,13 @@ fun main() {
                 "fontSize".toBreakpoints("1.5rem", "2rem", "2.5rem")
                 "lineHeight" to "115%"
             }
+            val fab = styleBlock {
+                "borderRadius" to "full"
+                "height".toBreakpoints("48", "56", "64")
+                "px" to "24"
+                subtitle1()
+                "zIndex" to "docked"
+            }
             breakpoints {
                 "md" to "60em"
                 "lg" to "70em"
@@ -170,14 +178,13 @@ fun main() {
                     }
                     sizes {
                         "fab" toObject {
-                            "borderRadius" to "full"
-                            "height".toBreakpoints("48", "56", "64")
-                            "px" to "24"
-                            "position".toBreakpoints("fixed", "static")
+                            fab()
                             "bottom".toBreakpoints("32", "0")
                             "right".toBreakpoints("32", "0")
-                            subtitle1()
-                            "zIndex" to "docked"
+                            "position".toBreakpoints("fixed", "static")
+                        }
+                        "fabStatic" toObject {
+                            fab()
                         }
                         "chip" toObject {
                             "borderRadius" to "full"
@@ -338,6 +345,7 @@ fun main() {
         val theme = extendTheme(customTheme2)
         println("theme = ${JSON.stringify(theme)}")
         ChakraProvider({this.theme = theme}) {
+            //CSSReset()
             child(stack) {}
         }
     }

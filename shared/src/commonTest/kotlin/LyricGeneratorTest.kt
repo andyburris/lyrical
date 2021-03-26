@@ -22,4 +22,4 @@ class LyricGeneratorTest {
     }
 }
 
-private infix fun String.generatesTo(index: Int) = assertEquals(index, this.lines().randomLyricIndex(Difficulty.Hard))
+private infix fun String.generatesTo(index: Int) = assertEquals(index, this.lines().randomLyricIndex(Difficulty.Hard, title = "lksdjfklsjfsadjf;lksfd;l"))

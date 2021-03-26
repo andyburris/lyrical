@@ -114,7 +114,7 @@ private fun RBuilder.NumberPickerItem(label: String, default: Int, current: Int,
 private fun RBuilder.SwitchItem(label: String, current: Boolean, onChange: (Boolean) -> Unit) {
     PickerItem(label) {
         HStack({
-            justifyContent = if (current) "end" else "start"
+            justifyContent = if (current) "flex-end" else "flex-start"
             backgroundColor = colorTheme() + if (current) "primary" else "backgroundCard"
             borderRadius = "full"
             width = arrayOf("32", "40", "48")

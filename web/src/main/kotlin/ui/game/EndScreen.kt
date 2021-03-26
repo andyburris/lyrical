@@ -94,7 +94,7 @@ private fun RBuilder.QuestionItem(question: GameQuestion, index: Int) {
                 spacing = arrayOf("16", "24", "32")
                 boxSize = arrayOf("32", "40", "48")
                 flexShrink = 0
-                justifyContent = "end"
+                justifyContent = "flex-end"
             }) {
                 SectionHeader { +"${index + 1}" }
                 Image({

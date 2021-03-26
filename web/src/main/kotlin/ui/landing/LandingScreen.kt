@@ -1,9 +1,15 @@
 package ui.landing
 
 import ContentColumn
-import ui.khakra.Heading1
 import Platform
 import ScreenPadding
+import com.github.mpetuska.khakra.button.Button
+import com.github.mpetuska.khakra.button.ButtonIcon
+import com.github.mpetuska.khakra.kt.KhakraComponent
+import com.github.mpetuska.khakra.kt.set
+import com.github.mpetuska.khakra.layout.Box
+import com.github.mpetuska.khakra.layout.HStack
+import com.github.mpetuska.khakra.layout.VStack
 import flexColumn
 import flexRow
 import formattedName
@@ -18,9 +24,11 @@ import react.functionalComponent
 import react.child
 import react.dom.h1
 import react.dom.p
+import recordOf
 import size
 import styled.*
 import ui.common.Icon
+import ui.khakra.*
 import ui.theme
 import kotlin.random.Random
 
@@ -33,34 +41,19 @@ external interface LandingProps : RProps {
     var onAuthenticate: (AuthAction.Authenticate) -> Unit
 }
 val landingScreen = functionalComponent<LandingProps> { props ->
-    flexColumn {
-        flexColumn {
-
-        }
-        ScreenPadding {
-            css {
-                height = 100.vh - 128.px
-                maxHeight = 1200.px
-                backgroundColor = theme.primary
-                paddingBottom = 0.px
-                onHorizontalLayout { paddingBottom = 0.px }
-            }
-            ContentColumn {
+    VStack({ spacing = 0; alignItems = "stretch" }) {
+        Box({ backgroundColor = colorTheme() +  "primary" }) {
+            VStack({ spacing = arrayOf(32, 48, 64); maxW = "1280px"; alignItems = "start"; p = arrayOf("32", "48", "64"); minH = "calc(100vh - 128px)"; justifyContent = "center"; margin = "auto" }) {
                 LandingContent(props.onAuthenticate)
             }
         }
-        ScreenPadding {
-            css {
-                backgroundColor = theme.primary
-                padding(vertical = 0.px)
-                onHorizontalLayout { padding(vertical = 0.px) }
-            }
-            ContentColumn {
+        Box({ backgroundColor = colorTheme() +  "primary" }) {
+            VStack({ spacing = arrayOf(32, 48, 64); maxW = "1280px"; alignItems = "stretch"; px = arrayOf("32", "48", "64"); py = 0; justifyContent = "center"; margin = "auto" }) {
                 PreviewContent()
             }
         }
-        ScreenPadding {
-            ContentColumn {
+        Box() {
+            VStack({ spacing = arrayOf(32, 48, 64); maxW = "1280px"; alignItems = "start"; p = arrayOf("32", "48", "64"); minH = "100vh"; justifyContent = "center"; margin = "auto" }) {
                 AppContent()
             }
         }
@@ -78,26 +71,23 @@ private fun RBuilder.LandingContent(onAuthenticate: (AuthAction.Authenticate) ->
                         border(4.px, BorderStyle.solid, theme.primaryDark, 8.px)
                     }
                 }
-                Heading1 { +"Lyrical" }
+                Heading1(textColor = "onPrimary") { +"Lyrical" }
             }
-            p { +"Get a random lyric from your playlist and guess what song it’s from. Simple." }
+            Subtitle1(textColor = "onPrimarySecondary") { +"Get a random lyric from your playlist and guess what song it’s from. Simple." }
         }
         flexColumn(gap = 16.px) {
-            styledButton {
-                css { backgroundColor = theme.background }
-                +"LOG IN WITH SPOTIFY"
-                attrs.onClickFunction = {
+            Button({
+                variant = "solid"
+                backgroundColor = colorTheme() + "background"
+                color = colorTheme() + "onBackground"
+                size = "fabStatic"
+                onClick = {
                     onAuthenticate.invoke(AuthAction.Authenticate(Random.nextInt().toString()))
                 }
+            }) {
+                +"LOG IN WITH SPOTIFY"
             }
-            styledP {
-                css {
-                    color = theme.onPrimaryTernary
-                    fontSize = 18.px
-                    fontWeight = FontWeight.w600
-                }
-                +"Lyrical only has access to read your username and playlists"
-            }
+            Body2(textColor = "onPrimaryTernary") { +"Lyrical only has access to read your username and playlists" }
         }
     }
 }
@@ -105,14 +95,14 @@ private fun RBuilder.LandingContent(onAuthenticate: (AuthAction.Authenticate) ->
 private fun RBuilder.PreviewContent() {
     flexColumn(alignItems = Align.center) {
         BrowserPreview()
-        flexColumn(justifyContent = JustifyContent.end) {
+        flexColumn(justifyContent = JustifyContent.flexEnd, alignItems = Align.center) {
             css {
-                width = 100.vw
+                width = 100.pct
             }
             styledDiv {
                 css {
                     position = Position.absolute
-                    width = 100.vw
+                    width = 100.pct
                     height = 96.px
                     backgroundColor = Color.black.withAlpha(0.12).blend(theme.backgroundDark)
                     this.put("clip-path", "polygon(0 0, 0% 100%, 100% 100%);")
@@ -121,7 +111,7 @@ private fun RBuilder.PreviewContent() {
             styledDiv {
                 css {
                     position = Position.absolute
-                    width = 100.vw
+                    width = 100.pct
                     height = 96.px
                     backgroundColor = theme.background
                     this.put("clip-path", "polygon(100% 0, 0% 100%, 100% 100%);")
@@ -177,7 +167,7 @@ private fun RBuilder.Circle(size: LinearDimension, color: Color) {
 
 private fun RBuilder.AppContent() {
     flexColumn(gap = 32.px) {
-        h1 { +"Download the app" }
+        Heading1 { +"Download the app" }
         flexRow(wrap = FlexWrap.wrap, gap = 16.px) {
             val currentPlatform = getPlatform()
             val (current, other) = Platform.values().filter { it != Platform.Other }.partition { it == currentPlatform }
@@ -194,14 +184,20 @@ val Platform.icon get() = when(this) {
     else -> Icon.Platform.Desktop
 }
 private fun RBuilder.AppChip(platform: Platform, currentPlatform: Boolean) {
-    styledButton {
-        css {
-            backgroundColor = if (currentPlatform) theme.primary else theme.backgroundCard
-            color = if (currentPlatform) theme.onPrimary else theme.onBackground
-        }
-        flexRow(alignItems = Align.center, gap = 16.px) {
+    Button({
+        variant = "solid"
+        size = "fabStatic"
+        backgroundColor = colorTheme() + if (currentPlatform) "primary" else "overlay"
+        color = colorTheme() + if (currentPlatform) "onPrimary" else "onBackground"
+    }) {
+        HStack({ spacing = 16 }) {
             Icon(platform.icon)
-            +"Download for ${platform.formattedName}"
+            Subtitle1({
+                textColor = colorTheme() + if (currentPlatform) "onPrimary" else "onBackground"
+                this["_hover"] = recordOf(
+                    "textColor" to colorTheme() + "onPrimary"
+                )
+            }) { +"Download for ${platform.formattedName}" }
         }
     }
 }

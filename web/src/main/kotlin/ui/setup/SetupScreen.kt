@@ -78,7 +78,16 @@ private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Uni
 }
 
 private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupAction) -> Unit) {
-    VStack({ spacing = arrayOf("8", "16", "32"); w = arrayOf("100%", "100%", "30%"); minWidth = arrayOf("0px", "0px", "350px", "400px") }) {
+    VStack({
+        spacing = arrayOf("8", "16", "32")
+        w = arrayOf("100%", "100%", "30%")
+        minWidth = arrayOf("0px", "0px", "350px", "400px")
+        h = "min-content"
+        position = arrayOf("static", "static", "sticky")
+        top = 0
+        marginTop = arrayOf(0, 0, -64)
+        paddingTop = arrayOf(0, 0, 64)
+    }) {
         VStack({
             layerStyle = "primaryCard"
             width = "100%"
