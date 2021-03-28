@@ -20,64 +20,8 @@ import ui.landing.LandingScreen
 import ui.loading.LoadingScreen
 import ui.setup.SetupScreen
 
-val styles = CSSBuilder().apply {
-    fontFace {
-        fontFamily = "YoungSerif"
-        put("src", "url('assets/fonts/YoungSerif.otf')")
-    }
-    body {
-        margin(0.px)
-        padding(0.px)
-        backgroundColor = theme.background
-        overflowX = Overflow.hidden
-    }
-    button {
-        backgroundColor = theme.primary
-        color = theme.onPrimary
-        border = "none"
-        borderRadius = 32.px
-        padding(horizontal = 24.px, vertical = 16.px)
-        fontFamily = "Inter"
-        fontWeight = FontWeight.w700
-        fontSize = 24.px
-        cursor = Cursor.pointer
-        transition("box-shadow", duration = 200.ms)
-        hover {
-            shadow(1)
-        }
-    }
-    h1 {
-        fontFamily = "YoungSerif"
-        fontWeight = FontWeight.w500
-        color = theme.onBackground
-        fontSize = 64.px
-        margin(0.px)
-        padding(0.px)
-    }
-    h2 {
-        fontFamily = "YoungSerif"
-        fontWeight = FontWeight.w500
-        color = theme.onBackground
-        fontSize = 48.px
-        margin(0.px)
-        padding(0.px)
-    }
-    p {
-        fontFamily = "Inter"
-        fontSize = 24.px
-        fontWeight = FontWeight.w700
-        color = theme.onBackgroundSecondary
-        margin(0.px)
-        padding(0.px)
-    }
-    input {
-        outline = Outline.none
-    }
-}
-
 fun main() {
     println("is this even updating?")
-    //injectGlobal(styles.toString())
     render(document.getElementById("root")) {
         val customTheme2 = createTheme {
             val subtitle1 = styleBlock {
@@ -152,6 +96,7 @@ fun main() {
                         "solid" toReactive { props ->
                             "bg" to props.colorMode.value("brandLight.primary", "brandDark.primary")
                             "color" to props.colorMode.value("brandLight.onPrimary", "brandDark.onPrimary")
+                            "fill" to props.colorMode.value("brandLight.onPrimary", "brandDark.onPrimary")
                             "_hover" toObject {
                                 "bg" to props.colorMode.value("brandLight.primaryDark", "brandDark.primaryDark")
                             }
@@ -159,20 +104,35 @@ fun main() {
                                 "bg" to props.colorMode.value("brandLight.primaryDark", "brandDark.primaryDark")
                             }
                         }
-                        "solidSecondary" toReactive { props ->
-                            "bg" to props.colorMode.value("brandLight.backgroundCard", "brandDark.backgroundCard")
-                            "color" to props.colorMode.value("brandLight.onBackgroundSecondary", "brandDark.onBackgroundSecondary")
+                        "solidBackground" toReactive { props ->
+                            "bg" to props.colorMode.value("brandLight.background", "brandDark.background")
+                            "color" to props.colorMode.value("brandLight.onBackground", "brandDark.onBackground")
+                            "fill" to props.colorMode.value("brandLight.onBackground", "brandDark.onBackground")
                             "_hover" toObject {
                                 "bg" to props.colorMode.value("brandLight.backgroundDark", "brandDark.backgroundDark")
                             }
+                            "_active" toObject {
+                                "bg" to props.colorMode.value("brandLight.backgroundDark", "brandDark.backgroundDark")
+                            }
+                        }
+                        "solidCard" toReactive { props ->
+                            "bg" to props.colorMode.value("brandLight.backgroundCard", "brandDark.backgroundCard")
+                            "color" to props.colorMode.value("brandLight.onBackground", "brandDark.onBackground")
+                            "fill" to props.colorMode.value("brandLight.onBackground", "brandDark.onBackground")
+                            "_hover" toObject {
+                                "bg" to props.colorMode.value("brandLight.background", "brandDark.background")
+                            }
+                            "_active" toObject {
+                                "bg" to props.colorMode.value("brandLight.background", "brandDark.background")
+                            }
                         }
                         "outline" toReactive { props ->
-                            "border" to "2px solid"
-                            "borderColor" to props.colorMode.value("brandLight.primary", "brandLight.primary")
-                            "color" to props.colorMode.value("brandLight.primary", "brandLight.primary")
+                            "border" to "none"
+                            "boxShadow" to "inset 0px 0px 0px 1px " + props.colorMode.value("rgba(0,0,0,0.20)", "rgba(255,255,255,0.20)")
+                            "color" to props.colorMode.value("brandLight.onBackgroundSecondary", "brandDark.onBackgroundSecondary")
+                            "fill" to props.colorMode.value("brandLight.onBackgroundSecondary", "brandDark.onBackgroundSecondary")
                             "_hover" toObject {
-                                "borderColor" to props.colorMode.value("brandLight.primaryDark", "brandLight.primaryDark")
-                                "color" to props.colorMode.value("brandLight.primaryDark", "brandLight.primaryDark")
+                                "bg" to props.colorMode.value("brandLight.backgroundDark", "brandDark.backgroundDark")
                             }
                         }
                     }
@@ -198,7 +158,7 @@ fun main() {
                     variants {
                         "filled" toObject { props ->
                             "field" toObject {
-                                "bg" to props.colorMode.value("brandLight.backgroundCard", "brandDark.backgroundCard")
+                                "bg" to props.colorMode.value("brandLight.backgroundDark", "brandDark.backgroundCard")
                                 "borderRadius" to "full"
                             }
                         }
@@ -292,6 +252,7 @@ fun main() {
                         "color" to "brandDark.onBackground"
                     }*/
                     "color".toReactive("brandLight.onBackground", "brandDark.onBackground")
+                    "fill".toReactive("brandLight.onBackground", "brandDark.onBackground")
                     "borderRadius" to "16"
                     "p".toBreakpoints("24", "32")
                     "transition" to "background-color 200ms"
@@ -299,6 +260,7 @@ fun main() {
                 "primaryCard" toObject {
                     "backgroundColor" to "brandDark.primary"
                     "color" to "brandDark.onPrimary"
+                    "fill" to "brandDark.onPrimary"
                     "borderRadius" to "16"
                     "p".toBreakpoints("24", "32")
                 }

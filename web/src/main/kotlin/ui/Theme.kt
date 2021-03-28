@@ -5,6 +5,24 @@ import kotlinx.css.*
 import kotlinx.css.properties.BoxShadows
 import kotlinx.css.properties.boxShadow
 import recordOf
+import ui.khakra.colorTheme
+
+object ChakraTheme {
+    val background: String get() = colorTheme() + "background"
+    val backgroundDark: String get() = colorTheme() + "backgroundDark"
+    val backgroundCard: String get() = colorTheme() + "backgroundCard"
+    val onBackground: String get() = colorTheme() + "onBackground"
+    val onBackgroundSecondary: String get() = colorTheme() + "onBackgroundSecondary"
+    val onBackgroundTernary: String get() = colorTheme() + "onBackgroundTernary"
+    val primary: String get() = colorTheme() + "primary"
+    val primaryDark: String get() = colorTheme() + "primaryDark"
+    val primaryLight: String get() = colorTheme() + "primaryLight"
+    val onPrimary: String get() = colorTheme() + "onPrimary"
+    val onPrimarySecondary: String get() = colorTheme() + "onPrimarySecondary"
+    val onPrimaryTernary: String get() = colorTheme() + "onPrimaryTernary"
+    val overlay: String get() = colorTheme() + "overlay"
+    val darkOverlay: String get() = colorTheme() + "darkOverlay"
+}
 
 data class ChakraColors(
     val background: String = "#333333",

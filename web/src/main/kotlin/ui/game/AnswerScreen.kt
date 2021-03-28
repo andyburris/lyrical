@@ -81,8 +81,7 @@ val answerScreen = functionalComponent<AnswerProps> { props ->
 
             Button({
                 size = "fab"
-                variant = "solid"
-                bg = colorTheme() + if (props.state.answer is GameAnswer.Answered.Correct) "background" else "primary"
+                variant =  if (props.state.answer is GameAnswer.Answered.Correct) "solidBackground" else "solid"
                 onClick = {
                     props.onNextScreen.invoke()
                 }

@@ -24,6 +24,7 @@ import react.dom.*
 import size
 import styled.*
 import targetInputValue
+import ui.ChakraTheme
 import ui.common.Icon
 import ui.common.resourcePath
 import ui.khakra.SectionHeader
@@ -89,7 +90,7 @@ private fun RBuilder.LogoutSpan() {
 private fun RBuilder.SearchBar(placeholder: String, onTermUpdate: (String) -> Unit) {
     InputGroup({variant="filled"; size="xl"}) {
         InputLeftElement() {
-            Icon(ui.common.Icon.Search)
+            Icon(ui.common.Icon.Search, color = ChakraTheme.onBackgroundSecondary)
 /*            styledImg(src = ui.common.Icon.Search.resourcePath) {
                 css {
                     size(32.px)

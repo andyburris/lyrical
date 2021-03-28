@@ -21,6 +21,7 @@ import styled.css
 import styled.styledDiv
 import styled.styledImg
 import styled.styledP
+import ui.ChakraTheme
 import ui.common.Icon
 import ui.khakra.Body2
 import ui.khakra.Subtitle2
@@ -51,7 +52,7 @@ val verticalPlaylistItem = functionalComponent<PlaylistProps> { props ->
         textAlign = "left"
     }) {
         PlaylistImage(props.playlist, props.selected)
-        PlaylistText(props.playlist)
+        PlaylistText(props.playlist, ChakraTheme.onBackground to ChakraTheme.onBackgroundSecondary)
     }
 }
 
@@ -77,9 +78,9 @@ val horizontalPlaylistItem = functionalComponent<PlaylistProps> { props ->
             }) {
                 PlaylistImage(props.playlist, props.selected)
             }
-            PlaylistText(props.playlist)
+            PlaylistText(props.playlist, ChakraTheme.onPrimary to ChakraTheme.onPrimarySecondary)
         }
-        Icon(Icon.Clear, alpha = 0.5) { flexShrink = 0 }
+        Icon(Icon.Clear, color = ChakraTheme.onPrimarySecondary) { flexShrink = 0 }
     }
 }
 
@@ -97,17 +98,17 @@ private fun RBuilder.PlaylistImage(playlist: SimplePlaylist, selected: Boolean) 
         width = "100%"
     }) {
         if (selected) {
-            Icon(Icon.Check) { boxSize = "50%" }
+            Icon(Icon.Check, color = ChakraTheme.onPrimary) { boxSize = "50%" }
         }
     }
 }
 
-private fun RBuilder.PlaylistText(playlist: SimplePlaylist) {
+private fun RBuilder.PlaylistText(playlist: SimplePlaylist, colors: Pair<String, String>) {
     VStack({ spacing = 0; width = "100%" }) {
-        Subtitle2({ noOfLines = 2; width = "100%" }) {
+        Subtitle2({ noOfLines = 2; width = "100%"; textColor = colors.first }) {
             +playlist.name
         }
-        Body2({ noOfLines = 2; width = "100%" }) {
+        Body2({ noOfLines = 2; width = "100%"; textColor = colors.second }) {
             +(playlist.owner.displayName ?: "")
         }
     }

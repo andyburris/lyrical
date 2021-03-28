@@ -15,6 +15,7 @@ import react.RBuilder
 import react.RProps
 import react.child
 import react.functionalComponent
+import ui.ChakraTheme
 import ui.common.Icon
 import ui.khakra.*
 
@@ -124,11 +125,11 @@ private fun RBuilder.QuestionItem(question: GameQuestion, index: Int) {
             VStack({ spacing = "24"; paddingTop = "24"; width = "100%" }) {
                 VStack( { spacing = "16"; width = "100%"; alignItems = "start" }) {
                     HStack({ spacing = "16" }) {
-                        Icon(Icon.Quote)
+                        Icon(Icon.Quote, color = ChakraTheme.onPrimary)
                         Subtitle1 { +(question.lyric + if ((question.answer as GameAnswer.Answered).withNextLine) " / ${question.nextLyric}" else "") }
                     }
                     HStack({ spacing = "16" }) {
-                        Icon(Icon.Person)
+                        Icon(Icon.Person, color = ChakraTheme.onPrimary)
                         Subtitle1 { +question.trackWithLyrics.sourcedTrack.track.artists.joinToString { it.name } }
                     }
                 }

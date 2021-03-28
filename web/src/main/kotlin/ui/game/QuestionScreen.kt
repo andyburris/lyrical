@@ -19,6 +19,7 @@ import react.*
 import size
 import styled.*
 import targetInputValue
+import ui.ChakraTheme
 import ui.common.Icon
 import ui.common.Chip
 import ui.khakra.*
@@ -114,7 +115,7 @@ val question = functionalComponent<QuestionProps> { props ->
                         props.onAnswer(action)
                     }
                     position = "static"
-                }) { Icon(Icon.Skip) }
+                }) { Icon(Icon.Skip, color = ChakraTheme.onPrimary) }
             }
         }
     }
@@ -125,7 +126,7 @@ val question = functionalComponent<QuestionProps> { props ->
 fun RBuilder.Header(state: State.GameState.Question, onLeaveGame: () -> Unit) {
     HStack({ spacing = 16; width = "100%" }) {
         HStack({ spacing = arrayOf(12, 16); width = "100%" }) {
-            Icon(Icon.Clear, alpha = 0.5) {
+            Icon(Icon.Clear, color = ChakraTheme.onBackgroundSecondary) {
                 onClick = onLeaveGame
             }
             VStack({ spacing = 0; width = "100%"; alignItems = "start" }) {

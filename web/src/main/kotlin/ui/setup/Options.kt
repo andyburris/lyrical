@@ -25,6 +25,7 @@ import styled.css
 import styled.styledDiv
 import styled.styledInput
 import targetInputValue
+import ui.ChakraTheme
 import ui.common.Chip
 import ui.common.Icon
 import ui.khakra.*
@@ -71,6 +72,7 @@ private fun RBuilder.NumberPickerItem(label: String, default: Int, current: Int,
             variant = "filled"
             this["value"] = currentText
             this["placeholder"] = default.toString()
+            bg = ChakraTheme.backgroundCard
             width = arrayOf(32, 40, 48)
             height = arrayOf(24, 28, 32)
             textAlign = "center"
@@ -87,27 +89,6 @@ private fun RBuilder.NumberPickerItem(label: String, default: Int, current: Int,
                 }
             }
         })
-/*        styledInput {
-            css {
-                border = "none"
-                borderRadius = 4.px
-                width = 48.px
-                height = 30.px
-                backgroundColor = theme.backgroundCard
-                textAlign = TextAlign.center
-                fontFamily = "Inter"
-                fontWeight = FontWeight.w700
-                fontSize = 18.px
-                color = theme.onBackground
-            }
-            attrs {
-                value = currentText
-                placeholder = default.toString()
-                onTextChanged { text ->
-
-                }
-            }
-        }*/
     }
 }
 
@@ -148,7 +129,7 @@ private fun <T> RBuilder.ChipItem(label: String, items: List<T>, selected: T, st
         flexRow(gap = 4.px) {
             items.forEach {
                 Chip(stringify(it), props = {
-                    variant = if (it == selected) "solid" else "solidSecondary"
+                    if (it == selected) { variant = "solid" }
                     fontSize = arrayOf("0.5rem", "0.75rem")
                 }) { onChange.invoke(it) }
             }

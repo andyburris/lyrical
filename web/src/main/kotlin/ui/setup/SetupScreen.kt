@@ -140,7 +140,7 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
     }
 }
 
-private fun RBuilder.SectionHeader(title: String, open: Boolean, onToggle: () -> Unit) {
+private fun RBuilder.SectionHeader(title: String, open: Boolean, textColor: String = "inherit", onToggle: () -> Unit) {
     HStack({
         `as` = "Button"
         this["variant"] = "link"
@@ -148,8 +148,8 @@ private fun RBuilder.SectionHeader(title: String, open: Boolean, onToggle: () ->
         spacing = arrayOf(8, 12, 16)
         onClick = onToggle
     }) {
-        Subtitle1({ width = "100%"; textAlign = "left" }) { +title }
-        Icon(Icon.Arrow.Right) {
+        Subtitle1({ width = "100%"; textAlign = "left" }, textColor = textColor) { +title }
+        Icon(Icon.Arrow.Right, color = textColor) {
             flexShrink = 0
             transition = "transform 200ms"
             transform = if (open) "rotate(90deg)" else "rotate(0deg)"

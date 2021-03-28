@@ -2,6 +2,7 @@ package ui.common
 
 import com.github.mpetuska.khakra.button.Button
 import com.github.mpetuska.khakra.button.ButtonProps
+import com.github.mpetuska.khakra.colorMode.useColorModeValue
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
 import react.RBuilder
@@ -14,61 +15,13 @@ import styled.styledP
 import ui.khakra.onClick
 import ui.theme
 
-fun RBuilder.Chip(text: String, backgroundColor: Color = theme.backgroundCard, textColor: Color = theme.onBackgroundSecondary, fontSize: LinearDimension = 24.px, icon: Icon? = null, onClick: (() -> Unit)? = null) = child(chip) {
-    attrs {
-        this.text = text
-        this.backgroundColor = backgroundColor
-        this.textColor = textColor
-        this.fontSize = fontSize
-        this.icon = icon
-        this.onClick = onClick
-    }
-}
-
 fun RBuilder.Chip(text: String, props: ButtonProps.() -> Unit = {}, onClick: (() -> Unit)? = null) {
     Button({
         size = "chip"
-        variant = "solidSecondary"
+        variant = useColorModeValue("outline", "solidCard")
         if (onClick != null) this.onClick = onClick
         props()
     }) {
         +text
-    }
-}
-
-external interface ChipProps : RProps {
-    var icon: Icon?
-    var text: String
-    var backgroundColor: Color
-    var textColor: Color
-    var fontSize: LinearDimension
-    var onClick: (() -> Unit)?
-}
-
-val chip = functionalComponent<ChipProps> { props ->
-    styledDiv {
-        css {
-            backgroundColor = props.backgroundColor
-            borderRadius = 32.px
-            padding(vertical = 4.px, horizontal = 12.px)
-            color = theme.onBackground
-            if (props.onClick != null) {
-                cursor = Cursor.pointer
-            }
-        }
-        attrs {
-            if (props.onClick != null) {
-                onClickFunction = {
-                    props.onClick?.invoke()
-                }
-            }
-        }
-        styledP {
-            css {
-                fontSize = props.fontSize
-                color = props.textColor
-            }
-            +props.text
-        }
     }
 }

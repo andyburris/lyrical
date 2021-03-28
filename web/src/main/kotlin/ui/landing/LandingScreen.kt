@@ -5,6 +5,7 @@ import Platform
 import ScreenPadding
 import com.github.mpetuska.khakra.button.Button
 import com.github.mpetuska.khakra.button.ButtonIcon
+import com.github.mpetuska.khakra.colorMode.useColorModeValue
 import com.github.mpetuska.khakra.kt.KhakraComponent
 import com.github.mpetuska.khakra.kt.set
 import com.github.mpetuska.khakra.layout.Box
@@ -27,6 +28,7 @@ import react.dom.p
 import recordOf
 import size
 import styled.*
+import ui.ChakraTheme
 import ui.common.Icon
 import ui.khakra.*
 import ui.theme
@@ -73,11 +75,11 @@ private fun RBuilder.LandingContent(onAuthenticate: (AuthAction.Authenticate) ->
                 }
                 Heading1(textColor = "onPrimary") { +"Lyrical" }
             }
-            Subtitle1(textColor = "onPrimarySecondary") { +"Get a random lyric from your playlist and guess what song it’s from. Simple." }
+            Subtitle1(textColor = ChakraTheme.onPrimarySecondary) { +"Get a random lyric from your playlist and guess what song it’s from. Simple." }
         }
         flexColumn(gap = 16.px) {
             Button({
-                variant = "solid"
+                variant = "solidBackground"
                 backgroundColor = colorTheme() + "background"
                 color = colorTheme() + "onBackground"
                 size = "fabStatic"
@@ -99,24 +101,20 @@ private fun RBuilder.PreviewContent() {
             css {
                 width = 100.pct
             }
-            styledDiv {
-                css {
-                    position = Position.absolute
-                    width = 100.pct
-                    height = 96.px
-                    backgroundColor = Color.black.withAlpha(0.12).blend(theme.backgroundDark)
-                    this.put("clip-path", "polygon(0 0, 0% 100%, 100% 100%);")
-                }
-            }
-            styledDiv {
-                css {
-                    position = Position.absolute
-                    width = 100.pct
-                    height = 96.px
-                    backgroundColor = theme.background
-                    this.put("clip-path", "polygon(100% 0, 0% 100%, 100% 100%);")
-                }
-            }
+            Box({
+                position = "absolute"
+                width = "100%"
+                height = "96"
+                backgroundColor = ChakraTheme.primaryDark
+                clipPath = "polygon(0 0, 0% 100%, 100% 100%);"
+            })
+            Box({
+                position = "absolute"
+                width = "100%"
+                height = "96"
+                backgroundColor = ChakraTheme.background
+                clipPath = "polygon(100% 0, 0% 100%, 100% 100%);"
+            })
         }
     }
 }
@@ -185,18 +183,13 @@ val Platform.icon get() = when(this) {
 }
 private fun RBuilder.AppChip(platform: Platform, currentPlatform: Boolean) {
     Button({
-        variant = "solid"
+        variant = if (currentPlatform) "solid" else useColorModeValue("outline", "solidCard")
         size = "fabStatic"
-        backgroundColor = colorTheme() + if (currentPlatform) "primary" else "overlay"
-        color = colorTheme() + if (currentPlatform) "onPrimary" else "onBackground"
     }) {
         HStack({ spacing = 16 }) {
             Icon(platform.icon)
             Subtitle1({
-                textColor = colorTheme() + if (currentPlatform) "onPrimary" else "onBackground"
-                this["_hover"] = recordOf(
-                    "textColor" to colorTheme() + "onPrimary"
-                )
+                textColor = "inherit"
             }) { +"Download for ${platform.formattedName}" }
         }
     }

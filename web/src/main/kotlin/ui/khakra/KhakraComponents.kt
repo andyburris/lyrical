@@ -7,6 +7,7 @@ import com.github.mpetuska.khakra.layout.*
 import react.RBuilder
 import react.RElementBuilder
 import react.ReactElement
+import ui.ChakraTheme
 
 @KhakraDSL
 public inline fun RBuilder.Heading1(
@@ -46,11 +47,11 @@ public inline fun RBuilder.SectionHeader(
 @KhakraDSL
 public inline fun RBuilder.Subtitle1(
     noinline props: Builder<TextProps> = {},
-    textColor: String = "onBackground",
+    textColor: String = ChakraTheme.onBackground,
     crossinline block: Builder<RElementBuilder<TextProps>> = {},
 ): ReactElement = Text({
     textStyle = "subtitle1"
-    this.textColor = colorTheme() + textColor
+    this.textColor = textColor
     props()
 }, block)
 
