@@ -12,6 +12,7 @@ import kotlinx.browser.window
 import kotlinx.css.*
 import react.*
 import styled.*
+import ui.ChakraTheme
 import ui.khakra.*
 import ui.theme
 
@@ -41,18 +42,18 @@ val answerScreen = functionalComponent<AnswerProps> { props ->
         VStack({ spacing = arrayOf(32, 48, 64); maxW = "1280px"; alignItems = "start"; p = arrayOf("32", "48", "64"); minH = "100vh"; justifyContent = "center"; margin="auto" }) {
             HStack({ spacing = arrayOf(16, 24, 32); width = "100%" }) {
                 VStack({ spacing = 0; alignItems = "start"; width = "100%" }) {
-                    Heading1 {
+                    Heading1(textColor = if (props.state.answer is GameAnswer.Answered.Correct) ChakraTheme.onPrimary else ChakraTheme.onBackground) {
                         when(props.state.answer) {
                             is GameAnswer.Answered.Correct -> +"Correct!"
                             is GameAnswer.Answered.Incorrect -> +"Incorrect"
                             is GameAnswer.Answered.Skipped -> +"Skipped"
                         }
                     }
-                    SectionHeader { +"Question ${props.state.questionNumber + 1}/${props.state.game.questions.size}" }
+                    SectionHeader(textColor = if (props.state.answer is GameAnswer.Answered.Correct) ChakraTheme.onPrimarySecondary else ChakraTheme.onBackgroundSecondary) { +"Question ${props.state.questionNumber + 1}/${props.state.game.questions.size}" }
                 }
                 Subtitle1 ({ flexShrink = 0 }) {
-                    Subtitle1({ `as` = "span"; textColor = colorTheme() + if (props.state.answer is GameAnswer.Answered.Correct) "onPrimary" else "onBackground" }) { +props.state.game.points.toString() }
-                    Subtitle1({ `as` = "span"; textColor = colorTheme() + if (props.state.answer is GameAnswer.Answered.Correct) "onPrimarySecondary" else "onBackgroundSecondary" }) { +"/${props.state.game.questions.size} pts" }
+                    Subtitle1({ `as` = "span"; textColor = if (props.state.answer is GameAnswer.Answered.Correct) ChakraTheme.onPrimary else ChakraTheme.onBackground }) { +props.state.game.points.toString() }
+                    Subtitle1({ `as` = "span"; textColor = if (props.state.answer is GameAnswer.Answered.Correct) ChakraTheme.onPrimarySecondary else ChakraTheme.onBackgroundSecondary }) { +"/${props.state.game.questions.size} pts" }
                 }
             }
 
@@ -67,7 +68,7 @@ val answerScreen = functionalComponent<AnswerProps> { props ->
             }) {
                 when (val answer = props.state.answer) {
                     is GameAnswer.Answered.Correct -> {
-                        SongItem(props.state.track.track)
+                        SongItem(props.state.track.track, true)
                     }
                     is GameAnswer.Answered.Incorrect -> {
                         YourAnswer(answer.answer)
@@ -105,16 +106,20 @@ private fun RBuilder.YourAnswer(answer: String) {
 private fun RBuilder.CorrectAnswer(song: Track) {
     VStack({ spacing = arrayOf(8, 12, 16); alignItems = "start" }) {
         SectionHeader { +"CORRECT ANSWER" }
-        SongItem(song)
+        SongItem(song, false)
     }
 }
 
-private fun RBuilder.SongItem(song: Track) = child(songItem) {
-    attrs { this.song = song }
+private fun RBuilder.SongItem(song: Track, correct: Boolean) = child(songItem) {
+    attrs {
+        this.song = song
+        this.correct = correct
+    }
 }
 
 external interface SongProps : RProps {
     var song: Track
+    var correct: Boolean
 }
 val songItem = functionalComponent<SongProps> { props ->
     HStack({
@@ -123,13 +128,13 @@ val songItem = functionalComponent<SongProps> { props ->
     }) {
         Image({
             src = props.song.imageUrl
-            mt = arrayOf(4, 8, 12)
+            mt = arrayOf(4, 2, 0)
             boxSize = arrayOf(48, 72, 96)
         })
 
         VStack({spacing = "0"; alignItems = "start"}) {
-            Heading2 { +props.song.name }
-            Heading2(textColor = "onBackgroundSecondary") { +props.song.artists.joinToString { it.name } }
+            Heading2(textColor = if (props.correct) ChakraTheme.onPrimary else ChakraTheme.onBackground) { +props.song.name }
+            Heading2(textColor = if (props.correct) ChakraTheme.onPrimarySecondary else ChakraTheme.onBackgroundSecondary) { +props.song.artists.joinToString { it.name } }
         }
     }
 }

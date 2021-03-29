@@ -6,11 +6,14 @@ import ScreenPadding
 import com.github.mpetuska.khakra.button.Button
 import com.github.mpetuska.khakra.button.ButtonIcon
 import com.github.mpetuska.khakra.colorMode.useColorModeValue
+import com.github.mpetuska.khakra.image.Image
 import com.github.mpetuska.khakra.kt.KhakraComponent
 import com.github.mpetuska.khakra.kt.set
 import com.github.mpetuska.khakra.layout.Box
+import com.github.mpetuska.khakra.layout.Circle
 import com.github.mpetuska.khakra.layout.HStack
 import com.github.mpetuska.khakra.layout.VStack
+import com.github.mpetuska.khakra.mediaQuery.useBreakpointValue
 import flexColumn
 import flexRow
 import formattedName
@@ -65,23 +68,23 @@ val landingScreen = functionalComponent<LandingProps> { props ->
 private fun RBuilder.LandingContent(onAuthenticate: (AuthAction.Authenticate) -> Unit) {
     flexColumn(gap = 64.px, justifyContent = JustifyContent.center) {
         flexColumn(gap = 16.px) {
-            flexRow(alignItems = Align.center, gap = 32.px) {
-                styledImg(src = "/assets/LyricalIcon.svg") {
-                    css {
-                        width = 72.px
-                        height = 72.px
-                        border(4.px, BorderStyle.solid, theme.primaryDark, 8.px)
-                    }
-                }
-                Heading1(textColor = "onPrimary") { +"Lyrical" }
+            HStack({ spacing = arrayOf(16, 24, 32) }) {
+                Image({
+                    src = "/assets/LyricalIcon.svg"
+                    boxSize = arrayOf(48, 64, 72)
+                    border = "solid 4px"
+                    borderColor = ChakraTheme.primaryDark
+                    borderRadius = "8px"
+                })
+                Heading1(textColor = ChakraTheme.onPrimary) { +"Lyrical" }
             }
             Subtitle1(textColor = ChakraTheme.onPrimarySecondary) { +"Get a random lyric from your playlist and guess what song it’s from. Simple." }
         }
         flexColumn(gap = 16.px) {
+            css {
+            }
             Button({
                 variant = "solidBackground"
-                backgroundColor = colorTheme() + "background"
-                color = colorTheme() + "onBackground"
                 size = "fabStatic"
                 onClick = {
                     onAuthenticate.invoke(AuthAction.Authenticate(Random.nextInt().toString()))
@@ -89,7 +92,7 @@ private fun RBuilder.LandingContent(onAuthenticate: (AuthAction.Authenticate) ->
             }) {
                 +"LOG IN WITH SPOTIFY"
             }
-            Body2(textColor = "onPrimaryTernary") { +"Lyrical only has access to read your username and playlists" }
+            Body2(textColor = ChakraTheme.onPrimaryTernary) { +"Lyrical only has access to read your username and playlists" }
         }
     }
 }
@@ -104,14 +107,22 @@ private fun RBuilder.PreviewContent() {
             Box({
                 position = "absolute"
                 width = "100%"
-                height = "96"
-                backgroundColor = ChakraTheme.primaryDark
+                height = arrayOf(32, 64, 96)
+                backgroundColor = ChakraTheme.backgroundDark
                 clipPath = "polygon(0 0, 0% 100%, 100% 100%);"
             })
             Box({
                 position = "absolute"
                 width = "100%"
-                height = "96"
+                height = arrayOf(32, 64, 96)
+                backgroundColor = ChakraTheme.backgroundDark
+                clipPath = "polygon(100% 0, 0% 100%, 100% 100%);"
+                mb = "2px"
+            })
+            Box({
+                position = "absolute"
+                width = "100%"
+                height = arrayOf(32, 64, 96)
                 backgroundColor = ChakraTheme.background
                 clipPath = "polygon(100% 0, 0% 100%, 100% 100%);"
             })
@@ -120,47 +131,47 @@ private fun RBuilder.PreviewContent() {
 }
 
 private fun RBuilder.BrowserPreview() {
+    val isMobile: Boolean = useBreakpointValue(arrayOf(true, false)) == true
+    val isDarkMode: Boolean = useColorModeValue(light = false, dark = true)
     flexColumn {
         css { width = 100.pct }
-        flexRow(gap = 16.px, alignItems = Align.center) {
-            css {
-                width = 100.pct
-                backgroundColor = theme.onPrimarySecondary
-                borderTopLeftRadius = 16.px
-                borderTopRightRadius = 16.px
-                padding(16.px)
-                boxSizing = BoxSizing.borderBox
-            }
-            flexRow(gap = 8.px) {
-                css { opacity = 0.6 }
-                Circle(16.px, Color.red)
-                Circle(16.px, Color.gold)
-                Circle(16.px, Color.limeGreen)
-            }
-            styledDiv { //Omnibar
-                css {
-                    height = 24.px
-                    backgroundColor = theme.onPrimaryTernary
-                    borderRadius = 12.px
-                    flexGrow = 1.0
+        HStack({
+            spacing = 16
+            width = "100%"
+            backgroundColor = ChakraTheme.backgroundDark
+            borderTopLeftRadius = 16
+            borderTopRightRadius = 16
+            p = 16
+            boxSizing = "border-box"
+        }) {
+            if (!isMobile) {
+                flexRow(gap = 8.px) {
+                    css { opacity = 0.6 }
+                    Circle({ boxSize = 16; bg = Color.red.value })
+                    Circle({ boxSize = 16; bg = Color.gold.value })
+                    Circle({ boxSize = 16; bg = Color.limeGreen.value })
                 }
             }
-            Circle(16.px, Color.gray)
+            Box({
+                height = 24
+                backgroundColor = ChakraTheme.overlay
+                borderRadius = "full"
+                flexGrow = 1
+            })
+            Circle({ boxSize = 16; bg = ChakraTheme.onBackgroundSecondary })
         }
-        styledImg(src = "assets/LyricalDemo.png") {
+        val image = "assets/preview/Preview" + (if (isMobile) "Mobile" else "Desktop") + (if (isDarkMode) "Dark" else "Light") + ".png"
+        styledImg(src = image) {
             css { width = 100.pct }
         }
     }
 }
 
-private fun RBuilder.Circle(size: LinearDimension, color: Color) {
-    styledDiv {
-        css {
-            size(size)
-            borderRadius = size / 2
-            backgroundColor = color
-        }
-    }
+private fun RBuilder.Circle(size: LinearDimension, color: String) {
+    Circle({
+        boxSize = size.value
+        bg = color
+    })
 }
 
 private fun RBuilder.AppContent() {

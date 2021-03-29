@@ -86,7 +86,7 @@ val horizontalPlaylistItem = functionalComponent<PlaylistProps> { props ->
 
 private fun RBuilder.PlaylistImage(playlist: SimplePlaylist, selected: Boolean) {
     Center({
-        borderRadius="2"
+        borderRadius="4"
         val beforeProps = recordOf(
             "content" to "''",
             "paddingTop" to "100%"

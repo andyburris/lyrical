@@ -74,7 +74,7 @@ private fun RBuilder.NumberPickerItem(label: String, default: Int, current: Int,
             this["placeholder"] = default.toString()
             bg = ChakraTheme.backgroundCard
             width = arrayOf(32, 40, 48)
-            height = arrayOf(24, 28, 32)
+            height = arrayOf(24, 32)
             textAlign = "center"
             this.onChange = {
                 val filtered = it.targetInputValue.filter { it in '0'..'9' }
