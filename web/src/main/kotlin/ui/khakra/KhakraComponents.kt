@@ -3,6 +3,8 @@ package ui.khakra
 import com.github.mpetuska.khakra.KhakraDSL
 import com.github.mpetuska.khakra.colorMode.useColorMode
 import com.github.mpetuska.khakra.kt.Builder
+import com.github.mpetuska.khakra.kt.get
+import com.github.mpetuska.khakra.kt.set
 import com.github.mpetuska.khakra.layout.*
 import react.RBuilder
 import react.RElementBuilder
@@ -84,6 +86,18 @@ public inline fun RBuilder.Body2(
     crossinline block: Builder<RElementBuilder<TextProps>> = {},
 ): ReactElement = Text({
     textStyle = "body2"
+    this.textColor = textColor
+    props()
+}, block)
+
+@KhakraDSL
+public inline fun RBuilder.Link(
+    href: String,
+    noinline props: Builder<LinkProps> = {},
+    textColor: String = ChakraTheme.onBackground,
+    crossinline block: Builder<RElementBuilder<LinkProps>> = {},
+): ReactElement = Link({
+    this["href"] = href
     this.textColor = textColor
     props()
 }, block)

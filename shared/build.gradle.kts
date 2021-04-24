@@ -39,7 +39,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3-native-mt") {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt") {
                     isForce = true
                 }
                 implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
@@ -75,8 +75,8 @@ kotlin {
 
         val jsTest by getting {}
 
-/*        val iOSMain by getting {
+        val iOSMain by getting {
         }
-        val iOSTest by getting{}*/
+        val iOSTest by getting{}
     }
 }

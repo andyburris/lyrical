@@ -26,7 +26,6 @@ import styled.*
 import targetInputValue
 import ui.ChakraTheme
 import ui.common.Icon
-import ui.common.resourcePath
 import ui.khakra.SectionHeader
 import ui.khakra.onChange
 import ui.theme

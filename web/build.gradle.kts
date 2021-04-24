@@ -17,7 +17,6 @@ dependencies {
     //Kotlin Styled (chapter 3)
     implementation("org.jetbrains:kotlin-styled:5.2.1-pre.148-kotlin-1.4.30")
     implementation(npm("styled-components", "~5.2.0"))
-    //implementation(npm("react-is", "~16.8.0"))
     implementation(npm("inline-style-prefixer", "~6.0.0"))
 
 
@@ -34,22 +33,5 @@ kotlin {
                 cssSupport.enabled = true
             }
         }
-/*        browser {
-            webpackTask {
-                cssSupport.enabled = true
-            }
-
-            runTask {
-                cssSupport.enabled = true
-            }
-
-            testTask {
-                useKarma {
-                    useChromeHeadless()
-                    webpackConfig.cssSupport.enabled = true
-                }
-            }
-        }
-        binaries.executable()*/
     }
 }

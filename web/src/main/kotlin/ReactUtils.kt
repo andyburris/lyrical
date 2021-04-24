@@ -96,7 +96,9 @@ fun <T> StateFlow<T>.collectAsState(): T {
     val (state, setState) = useState(this.value)
     useEffectWithCleanup {
         val job = this.onEach {
+            println("onEach")
             if (it != state) {
+                println("setting state = $it")
                 setState(it)
             }
         }.launchIn(GlobalScope)

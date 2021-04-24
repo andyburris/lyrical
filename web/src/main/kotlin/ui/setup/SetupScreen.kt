@@ -1,8 +1,12 @@
 package ui.setup
 
+import LyricsRepository
 import ui.khakra.Heading1
 import SetupAction
 import VerticalSpacing
+import com.adamratzman.spotify.models.Playlist
+import com.adamratzman.spotify.models.SimplePlaylist
+import com.adamratzman.spotify.models.Track
 import com.github.mpetuska.khakra.button.Button
 import com.github.mpetuska.khakra.hooks.useDisclosure
 import com.github.mpetuska.khakra.image.Image
@@ -10,12 +14,24 @@ import com.github.mpetuska.khakra.kt.set
 import com.github.mpetuska.khakra.layout.*
 import com.github.mpetuska.khakra.transition.Collapse
 import flexbox
+import getClientAPIIfLoggedIn
+import kotlinx.browser.window
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
 import logout
+import org.w3c.dom.url.URL
+import org.w3c.files.Blob
 import react.*
 import styled.*
+import toSourcedTracks
 import ui.common.Icon
+import ui.demo.PlaylistExport
 import ui.khakra.Subtitle1
 import ui.khakra.onClick
 
@@ -95,7 +111,10 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
             spacing = 0
         }) {
             val disclosure = useDisclosure()
-            SectionHeader("${setupState.selectedPlaylists.size} Playlists Selected", disclosure.isOpen) { disclosure.onToggle() }
+            useEffect(dependencies = listOf(setupState.selectedPlaylists)) {
+                if (setupState.selectedPlaylists.isEmpty()) disclosure.onClose.invoke() else disclosure.onOpen.invoke()
+            }
+            SectionHeader("${setupState.selectedPlaylists.size} Playlists Selected", disclosure.isOpen, enabled = setupState.selectedPlaylists.isNotEmpty()) { if (setupState.selectedPlaylists.isNotEmpty()) disclosure.onToggle() }
             Collapse({
                 `in` = disclosure.isOpen
                 this["marginTop"] = "0px"
@@ -109,6 +128,26 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
                         HorizontalPlaylistItem(it, true) {
                             onUpdateSetup.invoke(SetupAction.RemovePlaylist(it))
                         }
+                    }
+                    Button({
+                        size = "fabStatic"
+                        variant = "solidCard"
+                        onClick = {
+                            CoroutineScope(Dispatchers.Default).launch {
+                                val api = getClientAPIIfLoggedIn {  } ?: return@launch
+                                val lyricsRepository = LyricsRepository()
+                                val serialized = Json.Default.encodeToString<List<PlaylistExport>>(ListSerializer(PlaylistExport.serializer()), setupState.selectedPlaylists.map { playlist: SimplePlaylist ->
+                                    val tracks = api.playlists.getPlaylistTracks(playlist.id).getAllItemsNotNull().map { it.track }.filterIsInstance<Track>()
+                                    val sourcedTracks = tracks.toSourcedTracks(playlist)
+                                    PlaylistExport(playlist.name, lyricsRepository.getLyricsFor(sourcedTracks))
+                                })
+                                val blob = Blob(arrayOf(serialized))
+                                val url = URL.createObjectURL(blob)
+                                window.location.href = url
+                            }
+                        }
+                    }) {
+                        +"Export Playlists"
                     }
                 }
             }
@@ -140,7 +179,7 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
     }
 }
 
-private fun RBuilder.SectionHeader(title: String, open: Boolean, textColor: String = "inherit", onToggle: () -> Unit) {
+private fun RBuilder.SectionHeader(title: String, open: Boolean, enabled: Boolean = true, textColor: String = "inherit", onToggle: () -> Unit) {
     HStack({
         `as` = "Button"
         this["variant"] = "link"
@@ -148,11 +187,12 @@ private fun RBuilder.SectionHeader(title: String, open: Boolean, textColor: Stri
         spacing = arrayOf(8, 12, 16)
         onClick = onToggle
     }) {
-        Subtitle1({ width = "100%"; textAlign = "left" }, textColor = textColor) { +title }
+        Subtitle1({ width = "100%"; textAlign = "left"; opacity = if (enabled) 1f else .5f }, textColor = textColor) { +title }
         Icon(Icon.Arrow.Right, color = textColor) {
             flexShrink = 0
             transition = "transform 200ms"
             transform = if (open) "rotate(90deg)" else "rotate(0deg)"
+            opacity = if (enabled) 1f else .2f
         }
     }
 }

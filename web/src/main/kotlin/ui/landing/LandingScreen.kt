@@ -1,40 +1,26 @@
 package ui.landing
 
-import ContentColumn
+import AuthAction
 import Platform
-import ScreenPadding
 import com.github.mpetuska.khakra.button.Button
-import com.github.mpetuska.khakra.button.ButtonIcon
 import com.github.mpetuska.khakra.colorMode.useColorModeValue
+import com.github.mpetuska.khakra.hooks.useDisclosure
 import com.github.mpetuska.khakra.image.Image
-import com.github.mpetuska.khakra.kt.KhakraComponent
-import com.github.mpetuska.khakra.kt.set
-import com.github.mpetuska.khakra.layout.Box
-import com.github.mpetuska.khakra.layout.Circle
-import com.github.mpetuska.khakra.layout.HStack
-import com.github.mpetuska.khakra.layout.VStack
+import com.github.mpetuska.khakra.kt.Builder
+import com.github.mpetuska.khakra.layout.*
 import com.github.mpetuska.khakra.mediaQuery.useBreakpointValue
+import com.github.mpetuska.khakra.transition.Collapse
 import flexColumn
 import flexRow
 import formattedName
 import getPlatform
+import kotlinx.browser.window
 import kotlinx.css.*
-import kotlinx.css.properties.border
-import kotlinx.html.js.onClickFunction
-import onHorizontalLayout
-import react.RBuilder
-import react.RProps
-import react.functionalComponent
-import react.child
-import react.dom.h1
-import react.dom.p
-import recordOf
-import size
-import styled.*
+import react.*
+import styled.css
 import ui.ChakraTheme
 import ui.common.Icon
 import ui.khakra.*
-import ui.theme
 import kotlin.random.Random
 
 fun RBuilder.LandingScreen(onAuthenticate: (AuthAction.Authenticate) -> Unit) = child(landingScreen) {
@@ -58,8 +44,9 @@ val landingScreen = functionalComponent<LandingProps> { props ->
             }
         }
         Box() {
-            VStack({ spacing = arrayOf(32, 48, 64); maxW = "1280px"; alignItems = "start"; p = arrayOf("32", "48", "64"); minH = "100vh"; justifyContent = "center"; margin = "auto" }) {
+            VStack({ spacing = arrayOf(64, 96, 128); maxW = "1280px"; alignItems = "start"; px = arrayOf(32, 48, 64); py = arrayOf(64, 96, 128);justifyContent = "center"; margin = "auto" }) {
                 AppContent()
+                AboutContent()
             }
         }
     }
@@ -161,17 +148,44 @@ private fun RBuilder.BrowserPreview() {
             Circle({ boxSize = 16; bg = ChakraTheme.onBackgroundSecondary })
         }
         val image = "assets/preview/Preview" + (if (isMobile) "Mobile" else "Desktop") + (if (isDarkMode) "Dark" else "Light") + ".png"
-        styledImg(src = image) {
-            css { width = 100.pct }
+        AspectRatio({
+            ratio = if (isMobile)  (388 / 778.0) else (1245 / 778.0)
+            bg = "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)), url('$image')"
+            backgroundSize = "cover"
+            width = "100%"
+        }) {
+            VStack({ height = "100%"; justifyContent = "flex-end"; pb = 128; spacing = 16 }) {
+                SectionHeader { +"Don’t want to log in?" }
+                VStack({ spacing = 16 }) {
+                    val disclosure = useDisclosure()
+                    val (selectedGenre, setSelectedGenre) = useState<String?> { null }
+                    Button({ variant = "solid"; size = "fabStatic"; onClick = disclosure.onToggle }) { +"PLAY DEMO" }
+                    Collapse({ `in` = disclosure.isOpen; animateOpacity = true; }) {
+                        VStack({ spacing = 16 }) {
+                            HStack({ spacing = 16 }) {
+                                Button({ variant = "solidCard"; size = "fabStatic"; onClick = { setSelectedGenre("rock") }; opacity = if (selectedGenre == "rock" || selectedGenre == null) 1.0 else 0.2 }) { +"Rock" }
+                                Button({ variant = "solidCard"; size = "fabStatic"; onClick = { setSelectedGenre("pop") }; opacity = if (selectedGenre == "pop" || selectedGenre == null) 1.0 else 0.2 }) { +"Pop" }
+                                Button({ variant = "solidCard"; size = "fabStatic"; onClick = { setSelectedGenre("rap") }; opacity = if (selectedGenre == "rap" || selectedGenre == null) 1.0 else 0.2 }) { +"Rap" }
+                            }
+                            Collapse({ `in` = selectedGenre != null }) {
+                                when (selectedGenre) {
+                                    "rock" -> HStack({ spacing = 16 }) {
+                                        Button({ variant = "solidCard"; size = "fabStatic"; onClick = { window.location.hash = "demo?genre=altrock" } }) { +"Alt Rock" }
+                                    }
+                                    "pop" -> HStack({ spacing = 16 }) {
+                                        Button({ variant = "solidCard"; size = "fabStatic"; onClick = { window.location.hash = "demo?genre=pop" } }) { +"Modern Pop" }
+                                    }
+                                    "rap" -> HStack({ spacing = 16 }) {
+                                        Button({ variant = "solidCard"; size = "fabStatic"; onClick = { window.location.hash = "demo?genre=rap" } }) { +"Modern Rap" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
-}
-
-private fun RBuilder.Circle(size: LinearDimension, color: String) {
-    Circle({
-        boxSize = size.value
-        bg = color
-    })
 }
 
 private fun RBuilder.AppContent() {
@@ -202,6 +216,51 @@ private fun RBuilder.AppChip(platform: Platform, currentPlatform: Boolean) {
             Subtitle1({
                 textColor = "inherit"
             }) { +"Download for ${platform.formattedName}" }
+        }
+    }
+}
+
+private fun RBuilder.AboutContent() {
+    VStack({ spacing = 32; alignItems = "start" }) {
+        Heading1 { +"About" }
+        SimpleGrid({ columns = arrayOf(1, 2) ;spacing = arrayOf("16", "20", "24"); w = "100%" }) {
+            AboutCard(Icon.Github, "Source Code") {
+                +"Lyrical is an open-source application using Kotlin Multiplatform to share code between the web, desktop, and mobile apps.  See the source code on "
+                Link(href = "https://github.com/andb3/lyrical") { +"Github" }
+            }
+            AboutCard(Icon.Link, "Data Source") {
+                +"Lyrical uses the Spotify API and Genius API to get song data, and scrapes the Genius website to get lyrics"
+            }
+            AboutCard(Icon.Search, "Iconography") {
+                +"Lyrical uses "
+                Link(href = "https://material.io/icons") { +"Material Design Icons" }
+                +" for most of the icons in the app, with "
+                Link(href = "http://evericons.com") { +"Evericons" }
+                +" for the rest"
+            }
+            AboutCard(Icon.Typography, "Typography") {
+                +"Lyrical uses two open source fonts - "
+                Link(href = "https://rsms.me/inter/") { +"Inter" }
+                +" for body text and "
+                Link(href = "https://github.com/noirblancrouge/YoungSerif") { +"Young Serif" }
+                +" for headers"
+            }
+        }
+    }
+}
+
+private fun RBuilder.AboutCard(icon: Icon, title: String, description: Builder<RElementBuilder<TextProps>> = {}) {
+    HStack({
+        layerStyle = "card"
+        spacing = arrayOf(24, 32)
+        alignItems = "start"
+    }) {
+        Circle({ boxSize = arrayOf(40, 56, 64); bgColor = ChakraTheme.background }) {
+            Icon(icon)
+        }
+        VStack({ spacing = 0; width = "100%"; alignItems = "start" }) {
+            Subtitle1 { +title }
+            SectionHeader { description.invoke(this) }
         }
     }
 }

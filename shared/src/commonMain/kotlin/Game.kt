@@ -84,6 +84,7 @@ fun String.formatAnswer(): String = this
     .replace("&", "and")
     .filter { it in 'a'..'z' || it in '0'..'9'}
 
+@Serializable
 data class SourcedTrack(val track: Track, val sourcePlaylist: SimplePlaylist)
 
 @Serializable
@@ -92,6 +93,7 @@ sealed class LyricsState {
     @Serializable data class Available(val lyrics: List<String>) : LyricsState()
 }
 
+@Serializable
 data class TrackWithLyrics(val sourcedTrack: SourcedTrack, val lyricState: LyricsState.Available)
 
 fun List<TrackWithLyrics>.generateQuestions(config: GameConfig) = this.map { trackWithLyrics: TrackWithLyrics ->
