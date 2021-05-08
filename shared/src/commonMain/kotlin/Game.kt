@@ -75,7 +75,7 @@ object DurationAsDoubleSerializer : KSerializer<Duration> {
     override fun serialize(encoder: Encoder, value: Duration) = encoder.encodeDouble(value.inMilliseconds)
 }*/
 
-private val answerFormatRegex = Regex("( \\(.*\\))+|( -.*)|( \\[.*])|(([( ])feat.*)|(([( ])ft.*)")
+private val answerFormatRegex = Regex("( \\(.*\\))+|( -.*)|( \\[.*\\])|(([( ])feat.*)|(([( ])ft.*)")
 
 fun String.formatAnswer(): String = this
     .toLowerCase()

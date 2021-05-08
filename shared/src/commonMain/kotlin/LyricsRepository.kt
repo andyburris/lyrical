@@ -11,11 +11,13 @@ data class LyricsRepository(val httpClient: HttpClient = HttpClient {
     install(JsonFeature) {
         serializer = KotlinxSerializer()
     }
-}) {
+}, val debug: Boolean = false) {
     suspend fun getLyricsFor(tracks: List<SourcedTrack>): List<TrackWithLyrics> {
         println("getting lyrics for $tracks")
-        //val url = "http://localhost:5050/lyrics"
-        val url = "https://lyricalgame.herokuapp.com/lyrics"
+        val url = when(debug) {
+            false -> "https://lyricalgame.herokuapp.com/lyrics"
+            true -> "http://localhost:5050/lyrics"
+        }
         val responses = httpClient.get<List<LyricResponse>>(url) {
             val lyricRequests = tracks.map { LyricRequest(it.track.name.filterHeader(), it.track.artists.map { it.name.filterHeader() }, it.track.uri.uri) }
             println("lyricRequests = $lyricRequests")

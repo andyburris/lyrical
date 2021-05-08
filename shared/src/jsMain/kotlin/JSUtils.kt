@@ -80,3 +80,7 @@ fun getPlatform(): Platform {
         else -> Platform.Other
     }
 }
+
+object BuildConfig {
+    val debug get() = window.location.hostname == "localhost"
+}

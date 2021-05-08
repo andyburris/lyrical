@@ -111,18 +111,24 @@ abstract class Machine(
     private val backingGame: MutableStateFlow<GameState> = MutableStateFlow(GameState.Unstarted)
     val currentGame = backingGame.asStateFlow()
 
-    val setupMachine: SetupMachine = SetupMachine(coroutineScope, spotifyRepository.filterIsInstance<SpotifyRepository.LoggedIn>(), backingConfig, backingPlaylistURIs) { playlists, config ->
-        backingGame.value = GameState.Loading(LoadingState.LoadingSongs)
-        CoroutineScope(Dispatchers.Default).launch {
-            val spotifyRepository = spotifyRepository.value
-            if (spotifyRepository !is SpotifyRepository.LoggedIn) return@launch
-            val randomTracks = playlists.getRandomSongs(spotifyRepository, config)
-            backingGame.value = GameState.Loading(LoadingState.LoadingLyrics(0, config.amountOfSongs))
-            val tracksWithLyrics = lyricsRepository.getLyricsFor(randomTracks)
-            val game = Game(tracksWithLyrics.generateQuestions(config), config)
-            backingGame.value = GameState.Playing(game, GameScreen.Question)
+    val setupMachine: SetupMachine = SetupMachine(
+        coroutineScope = coroutineScope,
+        spotifyRepository = spotifyRepository.filterIsInstance<SpotifyRepository.LoggedIn>(),
+        backingConfig = backingConfig,
+        backingPlaylistURIs = backingPlaylistURIs,
+        onStartGame = { playlists, config ->
+            backingGame.value = GameState.Loading(LoadingState.LoadingSongs)
+            CoroutineScope(Dispatchers.Default).launch {
+                val spotifyRepository = spotifyRepository.value
+                if (spotifyRepository !is SpotifyRepository.LoggedIn) return@launch
+                val randomTracks = playlists.getRandomSongs(spotifyRepository, config)
+                backingGame.value = GameState.Loading(LoadingState.LoadingLyrics(0, config.amountOfSongs))
+                val tracksWithLyrics = lyricsRepository.getLyricsFor(randomTracks)
+                val game = Game(tracksWithLyrics.generateQuestions(config), config)
+                backingGame.value = GameState.Playing(game, GameScreen.Question)
+            }
         }
-    }
+    )
 
     val gameMachine: GameMachine = GameMachine(coroutineScope, backingGame)
 

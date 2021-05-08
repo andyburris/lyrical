@@ -9,7 +9,7 @@ import kotlin.random.Random
 
 class BrowserState(coroutineScope: CoroutineScope) : Machine(
     coroutineScope = coroutineScope,
-    lyricsRepository = LyricsRepository(),
+    lyricsRepository = LyricsRepository(debug = BuildConfig.debug),
     spotifyRepository = MutableStateFlow(SpotifyRepository.LoggedOut),
     backingConfig = SourcedMutableStateFlow(savedConfig) { savedConfig = it },
     backingPlaylistURIs = SourcedMutableStateFlow(savedPlaylistURIs) { savedPlaylistURIs = it },

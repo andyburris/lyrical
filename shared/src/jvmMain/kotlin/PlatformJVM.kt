@@ -15,7 +15,7 @@ actual suspend fun GeniusRepository.scrapeLyrics(songURL: String): String? {
                     findAll(".lyrics").first()
                 } catch (e: Exception) {
                     try {
-                        findAll(".Lyrics__Container-sc-1ynbvzw-2 jgQsqn").first()
+                        findAll("div").first { it.className.startsWith("Lyrics__Container") }
                     } catch (e: Exception) {
                         Error("Parsing failed for $songURL").printStackTrace()
                         return@htmlDocument null

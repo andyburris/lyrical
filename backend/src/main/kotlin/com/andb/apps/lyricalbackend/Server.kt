@@ -15,7 +15,7 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 fun main() {
-    val geniusAccessToken: String = System.getenv()["geniusAccessToken"] ?: File("local.properties").readText().takeLastWhile { it != '=' }
+    val geniusAccessToken: String = System.getenv()["geniusAccessToken"] ?: File("../local.properties").readText().takeLastWhile { it != '=' }
     val geniusRepository = GeniusRepository(geniusAccessToken)
     embeddedServer(Netty, port = System.getenv()["PORT"]?.toInt() ?: 5050) {
         install(ContentNegotiation) {

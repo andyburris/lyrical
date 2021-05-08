@@ -129,25 +129,27 @@ private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupActio
                             onUpdateSetup.invoke(SetupAction.RemovePlaylist(it))
                         }
                     }
-                    Button({
-                        size = "fabStatic"
-                        variant = "solidCard"
-                        onClick = {
-                            CoroutineScope(Dispatchers.Default).launch {
-                                val api = getClientAPIIfLoggedIn {  } ?: return@launch
-                                val lyricsRepository = LyricsRepository()
-                                val serialized = Json.Default.encodeToString<List<PlaylistExport>>(ListSerializer(PlaylistExport.serializer()), setupState.selectedPlaylists.map { playlist: SimplePlaylist ->
-                                    val tracks = api.playlists.getPlaylistTracks(playlist.id).getAllItemsNotNull().map { it.track }.filterIsInstance<Track>()
-                                    val sourcedTracks = tracks.toSourcedTracks(playlist)
-                                    PlaylistExport(playlist.name, lyricsRepository.getLyricsFor(sourcedTracks))
-                                })
-                                val blob = Blob(arrayOf(serialized))
-                                val url = URL.createObjectURL(blob)
-                                window.location.href = url
+                    if (BuildConfig.debug) {
+                        Button({
+                            size = "fabStatic"
+                            variant = "solidCard"
+                            onClick = {
+                                CoroutineScope(Dispatchers.Default).launch {
+                                    val api = getClientAPIIfLoggedIn {  } ?: return@launch
+                                    val lyricsRepository = LyricsRepository()
+                                    val serialized = Json.Default.encodeToString<List<PlaylistExport>>(ListSerializer(PlaylistExport.serializer()), setupState.selectedPlaylists.map { playlist: SimplePlaylist ->
+                                        val tracks = api.playlists.getPlaylistTracks(playlist.id).getAllItemsNotNull().map { it.track }.filterIsInstance<Track>()
+                                        val sourcedTracks = tracks.toSourcedTracks(playlist)
+                                        PlaylistExport(playlist.name, lyricsRepository.getLyricsFor(sourcedTracks))
+                                    })
+                                    val blob = Blob(arrayOf(serialized))
+                                    val url = URL.createObjectURL(blob)
+                                    window.location.href = url
+                                }
                             }
+                        }) {
+                            +"Export Playlists"
                         }
-                    }) {
-                        +"Export Playlists"
                     }
                 }
             }
