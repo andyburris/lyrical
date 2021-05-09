@@ -150,8 +150,10 @@ abstract class Machine(
 }
 
 suspend fun List<Track>.toSourcedTracks(sourcePlaylist: SimplePlaylist): List<SourcedTrack> {
-    return this.map { SourcedTrack(it, sourcePlaylist) }
+    return this.map { it.toSourcedTrack(sourcePlaylist) }
 }
+
+fun Track.toSourcedTrack(sourcePlaylist: SimplePlaylist) = SourcedTrack(this, sourcePlaylist)
 
 suspend fun List<SimplePlaylist>.getRandomSongs(spotifyRepository: SpotifyRepository.LoggedIn, config: GameConfig): List<SourcedTrack> {
     println("getting random songs, config = $config")
