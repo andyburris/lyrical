@@ -1,3 +1,4 @@
+import client.AuthAction
 import com.adamratzman.spotify.SpotifyImplicitGrantApi
 import com.adamratzman.spotify.models.Token
 import com.adamratzman.spotify.spotifyImplicitGrantApi
@@ -24,7 +25,7 @@ private val parser = DOMParser()
 fun statusHandler(xhr: XMLHttpRequest, coroutineContext: Continuation<Document>) {
     if (xhr.readyState == XMLHttpRequest.DONE) {
         if (xhr.status / 100 == 2) {
-            coroutineContext.resume(parser.parseFromString(xhr.responseText, "text/html"))
+            coroutineContext.resume(parser.parseFromString(xhr.responseText, "styles.text/html"))
         } else {
             coroutineContext.resumeWithException(RuntimeException("HTTP error: ${xhr.status}"))
         }
@@ -79,8 +80,4 @@ fun getPlatform(): Platform {
         window.navigator.userAgent.contains("Linux") -> Platform.Linux
         else -> Platform.Other
     }
-}
-
-object BuildConfig {
-    val debug get() = window.location.hostname == "localhost"
 }

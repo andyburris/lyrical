@@ -3,6 +3,7 @@ import it.skrape.core.htmlDocument
 import it.skrape.extract
 import it.skrape.selects.DocElement
 import it.skrape.skrape
+import java.io.File
 
 actual suspend fun GeniusRepository.scrapeLyrics(songURL: String): String? {
     return skrape(HttpFetcher) {
@@ -29,3 +30,9 @@ actual suspend fun GeniusRepository.scrapeLyrics(songURL: String): String? {
 
 actual var savedConfig: GameConfig = GameConfig()
 actual var savedPlaylistURIs: List<String> = emptyList()
+
+actual object BuildConfig {
+    actual val debug: Boolean
+        get() = File("../local.properties").exists()
+
+}

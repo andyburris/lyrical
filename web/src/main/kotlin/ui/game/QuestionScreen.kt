@@ -1,31 +1,25 @@
 package ui.game
 
-import Game
-import com.adamratzman.spotify.models.SimplePlaylist
+import client.Screen
 import com.github.mpetuska.khakra.button.Button
 import com.github.mpetuska.khakra.button.ButtonGroup
 import com.github.mpetuska.khakra.button.IconButton
-import com.github.mpetuska.khakra.image.Image
 import com.github.mpetuska.khakra.input.Input
 import com.github.mpetuska.khakra.kt.set
 import com.github.mpetuska.khakra.layout.*
 import com.github.mpetuska.khakra.tooltip.Tooltip
-import flexColumn
 import kotlinx.browser.window
 import kotlinx.css.*
-import kotlinx.html.DIV
 import kotlinx.html.js.*
 import react.*
-import size
 import styled.*
 import targetInputValue
 import ui.ChakraTheme
 import ui.common.Icon
 import ui.common.Chip
 import ui.khakra.*
-import ui.theme
 
-fun RBuilder.QuestionScreen(data: State.GameState.Question, onAnswer: (GameAction.AnswerQuestion) -> Unit) =
+fun RBuilder.QuestionScreen(data: Screen.GameScreen.Question, onAnswer: (GameAction.AnswerQuestion) -> Unit) =
     child(question) {
         attrs {
             this.state = data
@@ -34,7 +28,7 @@ fun RBuilder.QuestionScreen(data: State.GameState.Question, onAnswer: (GameActio
     }
 
 external interface QuestionProps : RProps {
-    var state: State.GameState.Question
+    var state: Screen.GameScreen.Question
     var onAnswer: (GameAction.AnswerQuestion) -> Unit
 }
 
@@ -141,7 +135,7 @@ private fun RBuilder.Bottom(onAnswer: (String, Boolean) -> Unit) {
     }
 }
 
-fun RBuilder.Header(state: State.GameState.Question, onLeaveGame: () -> Unit) {
+fun RBuilder.Header(state: Screen.GameScreen.Question, onLeaveGame: () -> Unit) {
     HStack({ spacing = 16; width = "100%" }) {
         HStack({ spacing = arrayOf(12, 16); width = "100%" }) {
             Icon(Icon.Clear, color = ChakraTheme.onBackgroundSecondary) {

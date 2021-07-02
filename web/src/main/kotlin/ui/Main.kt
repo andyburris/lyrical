@@ -1,27 +1,22 @@
 package ui
 
+import AuthAction
 import BrowserState
-import Game
-import GameAction
-import GameConfig
-import GameMachine
-import collectAsState
-import com.github.mpetuska.khakra.kt.get
+import GameScreen
 import com.github.mpetuska.khakra.react.ChakraProvider
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import react.*
-import react.dom.*
-import react.router.dom.*
+import react.dom.div
+import react.dom.render
+import react.router.dom.hashRouter
+import react.router.dom.route
+import react.router.dom.switch
 import ui.demo.DemoScreen
-import ui.demo.toDemoGenre
-import ui.game.AnswerScreen
-import ui.game.EndScreen
+import toDemoGenre
 import ui.game.GameScreen
-import ui.game.QuestionScreen
-import ui.khakra.*
+import ui.khakra.extendTheme
 import ui.landing.LandingScreen
 import ui.loading.LoadingScreen
 import ui.setup.SetupScreen
@@ -56,7 +51,7 @@ val stack = functionalComponent<RProps> {
                 emptyContent()
             }
             route<RProps>("/", exact = true) { props ->
-                if (gameState !is GameState.Unstarted) props.history.replace("/game")
+                if (gameState !is GameScreen.Unstarted) props.history.replace("/game")
                 when {
                     window.localStorage.getItem("access_token") == null -> LandingScreen() { browserState.handleAction(it) }
                     else -> SetupScreen(setupScreen) { browserState.handleAction(it) }
@@ -65,12 +60,12 @@ val stack = functionalComponent<RProps> {
 
             route<RProps>("/game") { props ->
                 when(gameState) {
-                    GameState.Unstarted -> { props.history.replace("/"); emptyContent() }
-                    is GameState.Loading -> when (loadingScreen) {
+                    GameScreen.Unstarted -> { props.history.replace("/"); emptyContent() }
+                    is GameScreen.Loading -> when (loadingScreen) {
                         null -> emptyContent()
                         else -> LoadingScreen(loadingScreen)
                     }
-                    is GameState.Playing -> when(gameScreen) {
+                    is GameScreen.Playing -> when(gameScreen) {
                         null -> emptyContent()
                         else -> GameScreen(gameScreen) { browserState.handleAction(it) }
                     }

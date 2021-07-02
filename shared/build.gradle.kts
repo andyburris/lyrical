@@ -17,7 +17,7 @@ repositories {
 
 kotlin {
     jvm()
-    js(BOTH) {
+    js(IR) {
         browser {}
     }
     val sdkName: String? = System.getenv("SDK_NAME")
@@ -39,13 +39,12 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt") {
-                    isForce = true
-                }
-                implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
-                implementation("com.adamratzman:spotify-api-kotlin-core:3.6.03")
-                implementation("io.ktor:ktor-client-core:1.5.0")
-                implementation("io.ktor:ktor-client-serialization:1.5.0")
+                implementation(Dependencies.Coroutines.core)
+                implementation (Dependencies.serialization)
+                implementation(Dependencies.spotify)
+                implementation(Dependencies.Ktor.client)
+                implementation(Dependencies.Ktor.clientAuth)
+                implementation(Dependencies.Ktor.clientSerialization)
             }
         }
         val commonTest by getting {
@@ -69,7 +68,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-js"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.4.2")
+                implementation(Dependencies.Coroutines.js)
             }
         }
 

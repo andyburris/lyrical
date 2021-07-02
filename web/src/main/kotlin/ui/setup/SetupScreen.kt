@@ -4,7 +4,6 @@ import LyricsRepository
 import ui.khakra.Heading1
 import SetupAction
 import VerticalSpacing
-import com.adamratzman.spotify.models.Playlist
 import com.adamratzman.spotify.models.SimplePlaylist
 import com.adamratzman.spotify.models.Track
 import com.github.mpetuska.khakra.button.Button
@@ -20,8 +19,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.css.*
-import kotlinx.html.js.onClickFunction
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import logout
@@ -31,11 +28,12 @@ import react.*
 import styled.*
 import toSourcedTracks
 import ui.common.Icon
-import ui.demo.PlaylistExport
+import PlaylistExport
+import client.Screen
 import ui.khakra.Subtitle1
 import ui.khakra.onClick
 
-fun RBuilder.SetupScreen(state: State.Setup, onUpdateSetup: (SetupAction) -> Unit) = child(setup) {
+fun RBuilder.SetupScreen(state: Screen.Setup, onUpdateSetup: (SetupAction) -> Unit) = child(setup) {
     attrs {
         this.state = state
         this.onUpdateSetup = onUpdateSetup
@@ -43,7 +41,7 @@ fun RBuilder.SetupScreen(state: State.Setup, onUpdateSetup: (SetupAction) -> Uni
 }
 
 external interface SetupProps : RProps {
-    var state: State.Setup
+    var state: Screen.Setup
     var onUpdateSetup: (SetupAction) -> Unit
 }
 
@@ -51,7 +49,7 @@ val setup = functionalComponent<SetupProps> { props ->
     Container({ maxW = "1280px"; p = arrayOf("32", "48", "64") }) {
         Stack({ spacing = arrayOf("32", "48", "64") }) {
             AppHeader(props.state.selectedPlaylists.isNotEmpty() && props.state.config.amountOfSongs > 0) {
-                props.onUpdateSetup.invoke(SetupAction.StartGame(props.state.selectedPlaylists, props.state.config))
+                props.onUpdateSetup.invoke(SetupAction.StartLobby(props.state.selectedPlaylists, props.state.config))
             }
             Stack({ direction = arrayOf("column", "column", "row"); spacing = arrayOf("32", "48", "64") }) {
                 Sidebar(props.state, props.onUpdateSetup)
@@ -93,7 +91,7 @@ private fun RBuilder.AppHeader(canStartGame: Boolean, onPlayGameClick: () -> Uni
     }
 }
 
-private fun RBuilder.Sidebar(setupState: State.Setup, onUpdateSetup: (SetupAction) -> Unit) {
+private fun RBuilder.Sidebar(setupState: Screen.Setup, onUpdateSetup: (SetupAction) -> Unit) {
     VStack({
         spacing = arrayOf("8", "16", "32")
         w = arrayOf("100%", "100%", "30%")

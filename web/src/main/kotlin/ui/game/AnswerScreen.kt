@@ -1,6 +1,6 @@
 package ui.game
 
-import Screen
+import client.Screen
 import com.adamratzman.spotify.models.Track
 import com.github.mpetuska.khakra.button.Button
 import com.github.mpetuska.khakra.image.Image
@@ -9,14 +9,11 @@ import com.github.mpetuska.khakra.layout.HStack
 import com.github.mpetuska.khakra.layout.VStack
 import imageUrl
 import kotlinx.browser.window
-import kotlinx.css.*
 import react.*
-import styled.*
 import ui.ChakraTheme
 import ui.khakra.*
-import ui.theme
 
-fun RBuilder.AnswerScreen(state: State.GameState.Answer, onNextScreen: () -> Unit) = child(answerScreen) {
+fun RBuilder.AnswerScreen(state: Screen.GameScreen.Answer, onNextScreen: () -> Unit) = child(answerScreen) {
     attrs {
         this.state = state
         this.onNextScreen = onNextScreen
@@ -24,7 +21,7 @@ fun RBuilder.AnswerScreen(state: State.GameState.Answer, onNextScreen: () -> Uni
 }
 
 external interface AnswerProps : RProps {
-    var state: State.GameState.Answer
+    var state: Screen.GameScreen.Answer
     var onNextScreen: () -> Unit
 }
 

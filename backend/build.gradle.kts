@@ -9,17 +9,19 @@ kotlin {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
-
-    implementation("io.ktor:ktor-server-core:1.5.1")
-    implementation("io.ktor:ktor-client-core:1.5.1")
-    implementation("io.ktor:ktor-server-netty:1.5.1")
-    implementation("io.ktor:ktor-serialization:1.5.1")
+    implementation(Dependencies.Coroutines.core)
+    implementation(Dependencies.serialization)
+    implementation(Dependencies.Ktor.server)
+    implementation(Dependencies.Ktor.netty)
+    implementation(Dependencies.Ktor.serverSerialization)
+    implementation(Dependencies.Ktor.serverAuth)
+    implementation(Dependencies.Ktor.serverAuthJWT)
+    implementation(Dependencies.Ktor.websockets)
+    implementation(Dependencies.spotify)
 
     implementation("ch.qos.logback:logback-classic:1.2.3")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.1") // JVM dependency
-    implementation("io.ktor:ktor-websockets:1.5.1")
+    implementation("io.lettuce:lettuce-core:6.1.2.RELEASE")
 
     implementation(project(":shared"))
 }

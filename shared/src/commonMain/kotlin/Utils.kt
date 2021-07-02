@@ -117,3 +117,12 @@ private val accentsMap = mapOf(
     'ż' to 'z',
 )
 fun String.stripAccents() = this.map { (accentsMap[it] ?: it) as Char }.joinToString("")
+
+expect object BuildConfig {
+    val debug: Boolean
+}
+
+val serverURL = when(BuildConfig.debug) {
+    false -> "https://lyricalgame.herokuapp.com/"
+    true -> "http://localhost:5050/"
+}

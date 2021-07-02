@@ -1,19 +1,15 @@
 package ui.setup
 
-import PlaylistSearchState
+import client.PlaylistSearchState
 import SetupAction
-import com.github.mpetuska.khakra.clickable.useClickable
-import com.github.mpetuska.khakra.icon.Icon
+import client.Screen
 import com.github.mpetuska.khakra.input.Input
 import com.github.mpetuska.khakra.input.InputGroup
 import com.github.mpetuska.khakra.input.InputLeftElement
-import com.github.mpetuska.khakra.kt.get
 import com.github.mpetuska.khakra.kt.set
 import com.github.mpetuska.khakra.layout.SimpleGrid
 import com.github.mpetuska.khakra.layout.VStack
-import flexColumn
 import flexRow
-import flexbox
 import kotlinx.css.*
 import kotlinx.css.properties.TextDecoration
 import kotlinx.css.properties.TextDecorationLine
@@ -21,7 +17,6 @@ import kotlinx.html.js.*
 import logout
 import react.*
 import react.dom.*
-import size
 import styled.*
 import targetInputValue
 import ui.ChakraTheme
@@ -30,7 +25,7 @@ import ui.khakra.SectionHeader
 import ui.khakra.onChange
 import ui.theme
 
-fun RBuilder.FindPlaylists(addPlaylistState: State.Setup.AddPlaylistState, onAction: (SetupAction) -> Unit) = child(findPlaylists) {
+fun RBuilder.FindPlaylists(addPlaylistState: Screen.Setup.AddPlaylistState, onAction: (SetupAction) -> Unit) = child(findPlaylists) {
     attrs {
         this.addPlaylistState = addPlaylistState
         this.onAction = onAction
@@ -38,7 +33,7 @@ fun RBuilder.FindPlaylists(addPlaylistState: State.Setup.AddPlaylistState, onAct
 }
 
 external interface FindPlaylistsProps : RProps {
-    var addPlaylistState: State.Setup.AddPlaylistState
+    var addPlaylistState: Screen.Setup.AddPlaylistState
     var onAction: (SetupAction) -> Unit
 }
 

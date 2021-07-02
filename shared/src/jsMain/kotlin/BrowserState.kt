@@ -1,4 +1,4 @@
-import com.adamratzman.spotify.models.SimplePlaylist
+import client.AuthAction
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.coroutines.*
@@ -16,7 +16,7 @@ class BrowserState(coroutineScope: CoroutineScope) : Machine(
 ) {
     init {
         println("initializing BrowserState")
-        spotifyRepository.value = getClientAPIIfLoggedIn { this.handleAuthAction(it) }?.let { SpotifyRepository.LoggedIn(it) } ?: SpotifyRepository.LoggedOut
+        spotifyRepository.value = getClientAPIIfLoggedIn { this.handleAuthAction(it) }?.let { SpotifyRepository.Local(it) } ?: SpotifyRepository.LoggedOut
     }
     override fun handleAuthAction(authAction: AuthAction) {
         when(authAction) {
@@ -34,7 +34,7 @@ class BrowserState(coroutineScope: CoroutineScope) : Machine(
                     localStorage["access_token_type"] = authAction.type
                     localStorage["access_token_expires_in"] = authAction.expiresIn.toString()
                     println("saved authentication")
-                    spotifyRepository.value = getClientAPIIfLoggedIn { handleAction(it) }?.let { SpotifyRepository.LoggedIn(it) } ?: SpotifyRepository.LoggedOut
+                    spotifyRepository.value = getClientAPIIfLoggedIn { handleAction(it) }?.let { SpotifyRepository.Local(it) } ?: SpotifyRepository.LoggedOut
                 }
             }
         }

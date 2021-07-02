@@ -1,6 +1,5 @@
 plugins {
     kotlin("js")
-    kotlin("plugin.serialization")
 }
 
 dependencies {
@@ -21,11 +20,13 @@ dependencies {
 
 
     implementation("com.adamratzman:spotify-api-kotlin-core:3.6.0-rc.2")
+    //implementation(compose.web.web)
+    //implementation(compose.runtime)
     implementation(project(":shared"))
 }
 
 kotlin {
-    js {
+    js(IR) {
         useCommonJs()
         binaries.executable()
         browser {

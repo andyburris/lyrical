@@ -1,17 +1,7 @@
-package ui.demo
-
-import GameConfig
-import GameQuestion
-import SourcedTrack
-import TrackWithLyrics
-import com.adamratzman.spotify.models.SimpleTrack
-import com.adamratzman.spotify.models.Track
-import generateQuestions
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.browser.window
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 
 suspend fun getDemoQuestions(genre: DemoGenre): List<GameQuestion> {
@@ -23,3 +13,28 @@ suspend fun getDemoQuestions(genre: DemoGenre): List<GameQuestion> {
 
 @Serializable
 data class PlaylistExport(val name: String, val tracks: List<TrackWithLyrics>)
+
+sealed class DemoGenre {
+    sealed class Rock : DemoGenre() {
+        object AltRock : Rock()
+    }
+    sealed class Pop : DemoGenre() {
+        object Modern : Pop()
+    }
+    sealed class Rap : DemoGenre() {
+        object Modern : Rap()
+    }
+}
+
+fun String.toDemoGenre() = when(this.toLowerCase()) {
+    "altrock" -> DemoGenre.Rock.AltRock
+    "pop" -> DemoGenre.Pop.Modern
+    "rap" -> DemoGenre.Rap.Modern
+    else -> throw Error("\"$this\" is not a properly formatted genre")
+}
+
+fun DemoGenre.urlString() = when(this) {
+    DemoGenre.Rock.AltRock -> "altrock"
+    DemoGenre.Pop.Modern -> "pop"
+    DemoGenre.Rap.Modern -> "rap"
+}

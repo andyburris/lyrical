@@ -1,3 +1,4 @@
+import com.adamratzman.spotify.utils.Language
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
@@ -6,26 +7,26 @@ import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
+import model.GenericGameTrack
+import model.GenericPlaylist
 
 data class LyricsRepository(val httpClient: HttpClient = HttpClient {
     install(JsonFeature) {
         serializer = KotlinxSerializer()
     }
 }, val debug: Boolean = false) {
-    suspend fun getLyricsFor(tracks: List<SourcedTrack>): List<TrackWithLyrics> {
+    suspend fun getLyricsFor(tracks: List<Pair<GenericTrack, GenericPlaylist>>): List<GenericGameTrack> {
         println("getting lyrics for $tracks")
-        val url = when(debug) {
-            false -> "https://lyricalgame.herokuapp.com/lyrics"
-            true -> "http://localhost:5050/lyrics"
-        }
+        val url = "$serverURL/lyrics"
         val responses = httpClient.get<List<LyricResponse>>(url) {
-            val lyricRequests = tracks.map { LyricRequest(it.track.name.filterHeader(), it.track.artists.map { it.name.filterHeader() }, it.track.uri.uri) }
+            val lyricRequests = tracks.map { track -> LyricRequest(track.first.name.filterHeader(), track.first.artists.map { it.name.filterHeader() }, track.first.id) }
             println("lyricRequests = $lyricRequests")
             header("lyricRequests", lyricRequests.encodeToString())
         }
         return responses.mapNotNull { lyricResponse ->
             if (lyricResponse.lyrics == null) return@mapNotNull null
-            TrackWithLyrics(tracks.first { it.track.uri.uri == lyricResponse.trackURI }, LyricsState.Available(lyricResponse.lyrics.filter { !it.startsWith('[') }))
+            val (track, playlist) = tracks.first { it.first.id == lyricResponse.trackURI }
+            GenericGameTrack(track, playlist, lyricResponse.lyrics.filter { !it.startsWith('[') })
         }
     }
 

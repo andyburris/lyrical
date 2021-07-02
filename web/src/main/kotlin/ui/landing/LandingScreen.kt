@@ -241,7 +241,7 @@ private fun RBuilder.AboutContent() {
             AboutCard(Icon.Typography, "Typography") {
                 +"Lyrical uses two open source fonts - "
                 Link(href = "https://rsms.me/inter/") { +"Inter" }
-                +" for body text and "
+                +" for body styles.text and "
                 Link(href = "https://github.com/noirblancrouge/YoungSerif") { +"Young Serif" }
                 +" for headers"
             }

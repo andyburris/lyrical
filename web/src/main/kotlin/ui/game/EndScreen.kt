@@ -1,6 +1,7 @@
 package ui.game
 
 import GameQuestion
+import client.Screen
 import com.github.mpetuska.khakra.button.Button
 import com.github.mpetuska.khakra.hooks.useDisclosure
 import com.github.mpetuska.khakra.image.Image
@@ -19,7 +20,7 @@ import ui.ChakraTheme
 import ui.common.Icon
 import ui.khakra.*
 
-fun RBuilder.EndScreen(state: State.GameState.End, onRestart: () -> Unit) = child(endScreen) {
+fun RBuilder.EndScreen(state: Screen.GameScreen.End, onRestart: () -> Unit) = child(endScreen) {
     attrs {
         this.state = state
         this.onRestart = onRestart
@@ -27,7 +28,7 @@ fun RBuilder.EndScreen(state: State.GameState.End, onRestart: () -> Unit) = chil
 }
 
 external interface EndScreenProps : RProps {
-    var state: State.GameState.End
+    var state: Screen.GameScreen.End
     var onRestart: () -> Unit
 }
 val endScreen = functionalComponent<EndScreenProps> { props ->
@@ -39,7 +40,7 @@ val endScreen = functionalComponent<EndScreenProps> { props ->
     }
 }
 
-private fun RBuilder.Header(gameState: State.GameState, onRestart: () -> Unit) {
+private fun RBuilder.Header(gameState: Screen.GameScreen, onRestart: () -> Unit) {
     flexRow(justifyContent = JustifyContent.spaceBetween, alignItems = Align.center) {
         flexColumn {
             SectionHeader {
@@ -68,7 +69,7 @@ private fun RBuilder.Header(gameState: State.GameState, onRestart: () -> Unit) {
     }
 }
 
-private fun RBuilder.SongList(gameState: State.GameState) {
+private fun RBuilder.SongList(gameState: Screen.GameScreen) {
     flexColumn(gap = 32.px) {
         SectionHeader { +"ANSWERS" }
         gameState.game.questions.forEachIndexed { index, gameQuestion ->

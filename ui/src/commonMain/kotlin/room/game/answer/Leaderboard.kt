@@ -1,0 +1,56 @@
+package room.game.answer
+
+import androidx.compose.runtime.Composable
+import client.Leaderboard
+import client.LeaderboardPlayer
+import jetbrains.compose.common.shapes.CircleShape
+import name
+import org.jetbrains.compose.common.foundation.layout.Box
+import org.jetbrains.compose.common.foundation.layout.Column
+import org.jetbrains.compose.common.foundation.layout.Row
+import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
+import org.jetbrains.compose.common.ui.Alignment
+import org.jetbrains.compose.common.ui.Modifier
+import org.jetbrains.compose.common.ui.background
+import org.jetbrains.compose.common.ui.draw.clip
+import org.jetbrains.compose.common.ui.size
+import org.jetbrains.compose.common.ui.unit.dp
+import platform.LyricalTheme
+import platform.Text
+
+@Composable
+fun Leaderboard(leaderboard: Leaderboard, currentQuestionIndex: Int, modifier: Modifier = Modifier) {
+    Column(modifier) { //TODO: add Arrangement.SpacedBy(16.dp)
+        Text("Leaderboard".uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimarySecondary)
+        Column { //TODO: add Arrangement.SpacedBy(12.dp)
+            leaderboard.players.sortedBy { it.points }.forEachIndexed { index, leaderboardPlayer ->
+                LeaderboardPlayerItem(player = leaderboardPlayer, position = index, answeredCurrentQuestion = leaderboardPlayer.questionsAnswered == currentQuestionIndex)
+            }
+        }
+    }
+}
+
+@Composable
+private fun LeaderboardPlayerItem(player: LeaderboardPlayer, position: Int, answeredCurrentQuestion: Boolean, modifier: Modifier = Modifier) {
+    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) { //TODO: add Arrangement.SpacedBy(16.dp)
+        val textColor = if (answeredCurrentQuestion) LyricalTheme.colors.onPrimary else LyricalTheme.colors.onPrimarySecondary
+        ProfilePictureBox(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(LyricalTheme.colors.overlay)
+                .size(32.dp)
+        ) {
+            Text(position.toString(), style = LyricalTheme.typography.subtitle1, color = textColor)
+        }
+
+        Text(player.user.name, style = LyricalTheme.typography.subtitle1, color = textColor) //TODO: add Modifier.weight(1f)
+        Text(player.points.toString(), style = LyricalTheme.typography.subtitle1, color = textColor)
+        //TODO: add loading/answered icon
+    }
+}
+
+
+@Composable
+fun ProfilePictureBox(modifier: Modifier, content: @Composable () -> Unit) {
+    Box(modifier, content = content)
+}

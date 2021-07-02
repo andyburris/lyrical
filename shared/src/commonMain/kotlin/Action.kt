@@ -1,27 +1,55 @@
-import com.adamratzman.spotify.models.SimplePlaylist
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import model.GenericPlaylist
+import server.ServerGameQuestion
+import server.UserState
 
-sealed class Action {
-/*    data class OpenScreen(val screen: Screen) : Action()
-    data class UpdateScreen(val updatedScreen: Screen) : Action()
-    data class StartGame(val playlistURIs: List<String>, val config: GameConfig = GameConfig()) : Action()*/
+@Serializable
+sealed class Action
 
+@Serializable
+sealed class UserAction : Action() {
+
+    @Serializable sealed class Host : UserAction() {
+        @Serializable object LoadGame : Host()
+    }
+    @Serializable object JoinRoom : UserAction()
+    @Serializable object LeaveRoom : UserAction()
 }
 
-sealed class GameAction : Action() {
-    data class AnswerQuestion(val answer: UserAnswer) : GameAction()
-    object NextQuestion : GameAction()
-    object RestartGame : GameAction()
+
+@Serializable
+sealed class LobbyAction : UserAction() {
+
+    @Serializable sealed class Host : LobbyAction() {
+        @Serializable data class UpdateConfig(val updatedConfig: GameConfig) : Host()
+        @Serializable data class KickUser(val kicking: User) : Host()
+        @Serializable data class UpdatePlaylists(val playlists: List<GenericPlaylist>) : Host()
+    }
 }
 
-sealed class SetupAction : Action() {
-    data class AddPlaylist(val playlist: SimplePlaylist) : SetupAction()
-    data class RemovePlaylist(val playlist: SimplePlaylist) : SetupAction()
-    data class UpdateConfig(val updatedConfig: GameConfig) : SetupAction()
-    data class UpdateSearch(val searchTerm: String) : SetupAction()
-    data class StartGame(val playlists: List<SimplePlaylist>, val config: GameConfig) : SetupAction()
+@Serializable
+sealed class GameAction : UserAction() {
+    @Serializable sealed class Question : GameAction() {
+        abstract val questionIndex: Int
+        @Serializable data class AnswerQuestion(override val questionIndex: Int, val answer: UserAnswer) : Question()
+        @Serializable data class RequestHint(override val questionIndex: Int, val hint: Hint) : Question()
+    }
+
+    @Serializable sealed class Answer : GameAction() {
+        @Serializable object NextScreen : Answer()
+    }
 }
 
-sealed class AuthAction : Action() {
-    data class Authenticate(val state: String) : AuthAction()
-    data class CheckAuthentication(val token: String, val type: String, val expiresIn: Int, val state: String) : AuthAction()
+@Serializable
+sealed class ServerAction : Action() {
+    @Serializable data class StartGame(val questions: List<ServerGameQuestion>, val config: GameConfig, val userStates: Map<User, UserState>) : ServerAction()
+    @Serializable data class RanOutOfTime(val unansweredUsers: Map<User, UserState>) : ServerAction()
 }
+
+
+
+@Serializable
+data class ActionWithUser(val action: Action, val user: User)
+
+fun UserAction.serialize() = Json.encodeToString(UserAction.serializer(), this)

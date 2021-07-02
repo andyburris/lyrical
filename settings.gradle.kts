@@ -1,3 +1,11 @@
 rootProject.name = "LyricGuesser"
-enableFeaturePreview("GRADLE_METADATA")
-include("backend", "shared", "web")
+include("backend", "shared", "web", "ui")
+
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    }
+}
+include("mosaic")
+include("test")
