@@ -22,7 +22,7 @@ fun jwtRefreshVerifier() = jwtVerifier()
     .withClaim("isAccessToken", false)
     .build()
 
-fun generateToken(userID: String, isAccessToken: Boolean): String = JWT.create()
+fun generateJWT(userID: String, isAccessToken: Boolean): String = JWT.create()
     .withSubject("Authentication")
     .withIssuer(Keys.JWT.domain)
     .withClaim("userID", userID)

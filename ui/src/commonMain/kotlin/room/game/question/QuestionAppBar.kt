@@ -5,7 +5,7 @@ import client.SourcePlaylist
 import org.jetbrains.compose.common.ui.Modifier
 import platform.LyricalTheme
 import platform.Text
-import room.AppBar
+import common.AppBar
 import room.lobby.name
 
 @Composable

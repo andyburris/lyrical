@@ -128,7 +128,7 @@ suspend fun Room.Server.applyAction(action: Action, user: User): RoomResult {
                     is RoomState.Lobby -> this.state
                     !is RoomState.Lobby -> return RoomResult.Error(ServerError.NotInLobby)
                 }
-                if (lobby.playlists.sumOf { it.trackCount } < 10) return RoomResult.Error(ServerError.NotEnoughPlaylists)
+                if (!lobby.isValid) return RoomResult.Error(ServerError.NotEnoughPlaylists)
                 val applied = RoomResult.Applied(this.copy(state = RoomState.Loading(lobby.joinedUsers)))
                 return RoomResult.SideEffect.LoadGame(lobby, applied)
             }

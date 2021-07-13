@@ -11,7 +11,7 @@ object Keys {
     }
     object JWT {
         val audience = getEnvironmentalVariable("jwtAudience")
-        val realm = getEnvironmentalVariable("realm")
+        val realm = getEnvironmentalVariable("jwtRealm")
         val secret = getEnvironmentalVariable("jwtSecret")
         val domain = getEnvironmentalVariable("jwtDomain")
     }

@@ -13,8 +13,8 @@ import server.RoomCode
 import server.RoomState
 
 @Composable
-fun RoomRouter(user: User, code: RoomCode, modifier: Modifier = Modifier) {
-    val roomMachine = remember { ClientRoomMachine(code, Client()) }
+fun RoomRouter(user: User, code: RoomCode, client: Client, modifier: Modifier = Modifier) {
+    val roomMachine = remember { ClientRoomMachine(code, client) }
     val room = roomMachine.roomFlow.collectAsState(null).value
     when(val state = room?.state) {
         null -> LoadingScreen("Loading into room", modifier)

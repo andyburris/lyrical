@@ -7,6 +7,7 @@ sealed class Screen {
     object Home : Screen()
     object Join : Screen()
     data class Room(val roomCode: RoomCode) : Screen()
+    object Test : Screen()
 }
 
 

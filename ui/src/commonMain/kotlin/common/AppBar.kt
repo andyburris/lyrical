@@ -1,4 +1,4 @@
-package room
+package common
 
 import androidx.compose.runtime.Composable
 import platform.LyricalTheme

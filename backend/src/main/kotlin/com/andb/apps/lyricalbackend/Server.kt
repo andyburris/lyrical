@@ -1,8 +1,6 @@
 import client.serialize
 import com.adamratzman.spotify.spotifyAppApi
 import com.andb.apps.lyricalbackend.*
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -22,7 +20,6 @@ import kotlinx.serialization.json.Json
 import server.RoomCode
 import server.RoomMachine
 import java.util.*
-import kotlin.time.*
 
 fun main() {
     val geniusRepository = GeniusRepository(Keys.geniusAccessToken)
@@ -31,7 +28,7 @@ fun main() {
     val spotifyRepository = LocalSpotifyRepository(api)
     val lyricsRepository = LyricsRepository()
     val coroutineScope = CoroutineScope(Dispatchers.IO)
-    embeddedServer(Netty, port = System.getenv()["PORT"]?.toInt() ?: 5050) {
+    embeddedServer(Netty, port = System.getenv()["PORT"]?.toInt() ?: 5050, host = "localhost") {
         install(ContentNegotiation) {
             json()
         }
@@ -77,23 +74,26 @@ fun main() {
             }
             route("/auth") {
                 get("/anonymous") {
+                    println("/auth/anonymous called")
                     val anonymousUserID = UUID.randomUUID().toString()
-                    val accessToken = generateToken(anonymousUserID, isAccessToken = true)
-                    val refreshToken = generateToken(anonymousUserID, isAccessToken = false)
-                    call.respond(Pair(accessToken, refreshToken))
+                    val accessJWT = generateJWT(anonymousUserID, isAccessToken = true)
+                    val refreshJWT = generateJWT(anonymousUserID, isAccessToken = false)
+                    call.respond(Pair(accessJWT, refreshJWT))
                 }
                 authenticate("refresh") {
                     get("/refresh") {
+                        println("/auth/refresh called")
                         val savedUserID = call.authentication.principal<JWTPrincipal>()?.get("userID") ?: return@get
-                        val newAccessToken = generateToken(savedUserID, isAccessToken = true)
-                        val newRefreshToken = generateToken(savedUserID, isAccessToken = false)
-                        call.respond(Pair(newAccessToken, newRefreshToken))
+                        val newAccessJWT = generateJWT(savedUserID, isAccessToken = true)
+                        val newRefreshJWT = generateJWT(savedUserID, isAccessToken = false)
+                        call.respond(Pair(newAccessJWT, newRefreshJWT))
                     }
                 }
             }
 
             authenticate {
                 post<RoomCode>("/creategame") {
+                    println("/creategame called")
                     val user = call.authentication.principal<JWTPrincipal>()?.toUser() ?: return@post
                     val code = roomRepository.generateCode()
                     val roomMachine = RoomMachine(code, user, spotifyRepository, lyricsRepository, coroutineScope)

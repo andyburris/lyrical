@@ -2,7 +2,6 @@ package room.game.summary
 
 import GameAction
 import androidx.compose.runtime.Composable
-import client.ClientGameQuestion
 import client.totalPoints
 import common.LyricalScaffold
 import org.jetbrains.compose.common.foundation.layout.Column
@@ -10,7 +9,7 @@ import org.jetbrains.compose.common.ui.Modifier
 import platform.Button
 import platform.LyricalTheme
 import platform.Text
-import room.AppBar
+import common.AppBar
 import room.game.answer.Leaderboard
 import server.RoomState
 

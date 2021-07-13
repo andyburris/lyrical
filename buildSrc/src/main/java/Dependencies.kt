@@ -8,7 +8,7 @@ object Versions {
     const val compose = "1.0.0-beta08"
     const val activity = "1.3.0-alpha08"
     const val serialization = "1.2.0"
-    const val ktor = "1.6.0"
+    const val ktor = "1.6.1"
     const val spotify = "3.6.03"
     const val mosaic = "0.1.0"
 }

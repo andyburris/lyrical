@@ -571,7 +571,7 @@ inline class Key(val keyCode: Long) {
     }
 
     override fun toString(): String {
-        return "Key: ${KeyEvent.getKeyText(nativeKeyCode)}"
+        return KeyEvent.getKeyText(nativeKeyCode)
     }
 }
 
@@ -596,6 +596,14 @@ fun Key(nativeKeyCode: Int, nativeKeyLocation: Int = KEY_LOCATION_STANDARD): Key
  */
 val Key.nativeKeyCode: Int
     get() = unpackInt1(keyCode)
+
+
+/**
+ * Unpacks the first Int value in [packInts] from its returned ULong.
+ */
+inline fun unpackInt1(value: Long): Int {
+    return value.shr(32).toInt()
+}
 
 /**
  * The native location corresponding to this [Key].

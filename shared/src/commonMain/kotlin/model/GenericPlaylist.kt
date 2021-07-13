@@ -29,6 +29,16 @@ sealed class GenericPlaylist {
     ) : GenericPlaylist()
 }
 
+val GenericPlaylist.name get() = when(this) {
+    is GenericPlaylist.Playlist -> this.name
+    is GenericPlaylist.Artist -> this.artist.name
+}
+
+val GenericPlaylist.subtitle get() = when(this) {
+    is GenericPlaylist.Playlist -> this.user
+    is GenericPlaylist.Artist -> "Artist"
+}
+
 
 suspend fun List<GenericPlaylist>.getRandomSongs(spotifyRepository: SpotifyRepository, config: GameConfig): List<Pair<GenericTrack, GenericPlaylist>> {
     println("getting random songs, config = $config")

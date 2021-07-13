@@ -17,7 +17,10 @@ import serialize
 import server.RoomCode
 import serverURL
 
-data class Client(val httpClient: HttpClient = defaultHttpClient()) {
+data class Client(
+    private val tokenStorage: TokenStorage = MemoryTokenStorage(),
+    val httpClient: HttpClient = defaultHttpClient(tokenStorage),
+) {
     suspend fun createRoom(): RoomCode = httpClient.post("$serverURL/createGame")
     fun subscribeToRoom(code: RoomCode, userActions: Flow<UserAction>): Flow<ClientResponse> = flow<ClientResponse> {
         httpClient.webSocket("$serverURL/play/$code") {
@@ -36,9 +39,10 @@ data class Client(val httpClient: HttpClient = defaultHttpClient()) {
     }
 }
 
-fun defaultHttpClient(): HttpClient {
-    lateinit var client: HttpClient
-    client = HttpClient {
+fun defaultHttpClient(tokenStorage: TokenStorage): HttpClient {
+    val httpClientNoAuth = HttpClient()
+    val httpClientRefreshAuth = HttpClient()
+    return HttpClient {
         install(JsonFeature) {
             serializer = KotlinxSerializer()
         }
@@ -46,15 +50,23 @@ fun defaultHttpClient(): HttpClient {
             bearer {
                 realm = "com.andb.apps.lyrical"
                 loadTokens {
-                    val (accessToken, refreshToken) = client.get<Pair<String, String>>("/auth/anonymous")
-                    BearerTokens(accessToken, refreshToken)
+                    val saved = tokenStorage.getSavedTokens()
+                    if (saved != null) return@loadTokens saved
+                    val (accessJWT, refreshJWT) = httpClientNoAuth.get<Pair<String, String>>("/auth/anonymous")
+                    val tokens = BearerTokens(accessJWT, refreshJWT)
+                    tokenStorage.saveTokens(tokens)
+                    tokens
                 }
                 refreshTokens { response ->
-                    val (accessToken, refreshToken) = client.get<Pair<String, String>>("/auth/refresh")
-                    BearerTokens(accessToken, refreshToken)
+                    val saved = tokenStorage.getSavedTokens() ?: return@refreshTokens null
+                    val (accessJWT, refreshJWT) = httpClientRefreshAuth.get<Pair<String, String>>("/auth/refresh") {
+                        header("Authorization: Bearer", saved.refreshToken)
+                    }
+                    val tokens = BearerTokens(accessJWT, refreshJWT)
+                    tokenStorage.saveTokens(tokens)
+                    tokens
                 }
             }
         }
     }
-    return client
 }

@@ -13,7 +13,7 @@ import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.padding
 import org.jetbrains.compose.common.ui.unit.dp
-import room.AppBar
+import common.AppBar
 
 @Composable
 fun LobbyHeader(code: String, isHost: Boolean, playlists: List<GenericPlaylist>, modifier: Modifier = Modifier, onClickPlaylist: (playlist: GenericPlaylist) -> Unit) {

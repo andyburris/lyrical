@@ -8,10 +8,11 @@ import platform.Text
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
 import org.jetbrains.compose.common.ui.Modifier
+import server.RoomCode
 import server.RoomState
 
 @Composable
-fun LobbyScreen(code: String, isHost: Boolean, state: RoomState.Lobby, modifier: Modifier = Modifier, onUserAction: (UserAction) -> Unit) {
+fun LobbyScreen(code: RoomCode, isHost: Boolean, state: RoomState.Lobby, modifier: Modifier = Modifier, onUserAction: (UserAction) -> Unit) {
     Column(modifier) { //TODO: turn into BottomSheetScaffold
         LobbyHeader(code, isHost, state.playlists, onClickPlaylist = { onUserAction.invoke(LobbyAction.Host.UpdatePlaylists(state.playlists - it)) })
         if (isHost) {
@@ -23,7 +24,7 @@ fun LobbyScreen(code: String, isHost: Boolean, state: RoomState.Lobby, modifier:
         }
         when(isHost) {
             true -> ChoosePlaylists(state.playlists)
-            false -> PlayerLobbyInfo()
+            false -> PlayerLobbyInfo(state.config)
         }
     }
 }

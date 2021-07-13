@@ -51,6 +51,8 @@ sealed class RoomState {
 
 }
 
+val RoomState.Lobby.isValid get() = this.playlists.sumOf { it.trackCount } >= 10
+
 fun RoomState.Game.withScreen(gameScreen: GameScreen) = when(this) {
     is RoomState.Game.Server -> this.copy(gameScreen = gameScreen)
     is RoomState.Game.Client -> this.copy(gameScreen = gameScreen)
