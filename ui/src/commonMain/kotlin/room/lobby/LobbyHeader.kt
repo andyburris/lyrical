@@ -17,7 +17,7 @@ import common.AppBar
 
 @Composable
 fun LobbyHeader(code: String, isHost: Boolean, playlists: List<GenericPlaylist>, modifier: Modifier = Modifier, onClickPlaylist: (playlist: GenericPlaylist) -> Unit) {
-    Column(modifier.padding(32.dp),) { //TODO: Add Arrangement.SpacedBy(32.dp), add 32.dp bottom padding if (isHost)
+    Column(modifier.background(LyricalTheme.colors.backgroundDark).padding(32.dp),) { //TODO: Add Arrangement.SpacedBy(32.dp), add 32.dp bottom padding if (isHost)
         AppBar("Lobby") {
             ShareRoom(code)
         }
@@ -35,9 +35,9 @@ fun LobbyHeader(code: String, isHost: Boolean, playlists: List<GenericPlaylist>,
 
 @Composable
 private fun ShareRoom(code: String, modifier: Modifier = Modifier) {
-    Row(modifier.background(LyricalTheme.colors.background).padding(16.dp)) { //TODO: Add CircleShape to background
+    Row(modifier.background(LyricalTheme.colors.background).padding(16.dp)) { //TODO: Add CircleShape to background, vertical 4.dp padding
         Text(code, style = LyricalTheme.typography.subtitle1)
-        //TODO: Add share icon
+        //TODO: Add share icon, right 12.dp padding
     }
 }
 
@@ -51,7 +51,7 @@ private fun NoPlaylists(isHost: Boolean, modifier: Modifier = Modifier) {
         }
         Column {
             Text(
-                text = if (isHost) "Add Playlists" else "No Playlist",
+                text = if (isHost) "Add Playlists" else "No Playlists",
                 style = LyricalTheme.typography.subtitle1,
                 color = LyricalTheme.colors.onBackground
             )

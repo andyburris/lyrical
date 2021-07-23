@@ -2,14 +2,14 @@ object Versions {
     const val minSDK = 23
     const val targetSDK = 29
     const val compileSDK = 29
-    const val kotlin = "1.5.10"
+    const val kotlin = "1.5.21"
     const val kotlinCoroutines = "1.5.0"
     const val koin = "2.1.5"
     const val compose = "1.0.0-beta08"
     const val activity = "1.3.0-alpha08"
-    const val serialization = "1.2.0"
+    const val serialization = "1.2.2"
     const val ktor = "1.6.1"
-    const val spotify = "3.6.03"
+    const val spotify = "3.8.0"
     const val mosaic = "0.1.0"
 }
 
@@ -47,5 +47,6 @@ object Dependencies {
         const val clientSerialization = "io.ktor:ktor-client-serialization:${Versions.ktor}"
         const val clientAuth = "io.ktor:ktor-client-auth:${Versions.ktor}"
         const val websockets = "io.ktor:ktor-websockets:${Versions.ktor}"
+        const val clientWebsockets = "io.ktor:ktor-client-websockets:${Versions.ktor}"
     }
 }

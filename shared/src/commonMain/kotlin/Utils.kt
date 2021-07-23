@@ -12,37 +12,6 @@ fun Int.distributeInto(amount: Int): List<Int> {
     return (0 until this).mapIndexed { index, i -> if (index < remainder) base + 1 else base }
 }
 
-class SourcedMutableStateFlow<T>(initialValue: T, private val updateSource: (T) -> Unit) : MutableStateFlow<T> {
-    private val backingStateFlow = MutableStateFlow(initialValue)
-    override val replayCache: List<T> = backingStateFlow.replayCache
-    override val subscriptionCount: StateFlow<Int> = backingStateFlow.subscriptionCount
-    override var value: T
-        get() = backingStateFlow.value
-        set(value) {
-            updateSource.invoke(value)
-            backingStateFlow.value = value
-        }
-
-    @InternalCoroutinesApi
-    override suspend fun collect(collector: FlowCollector<T>) = backingStateFlow.collect(collector)
-
-    override fun compareAndSet(expect: T, update: T): Boolean = backingStateFlow.compareAndSet(expect, update)
-
-    override suspend fun emit(value: T) {
-        updateSource.invoke(value)
-        backingStateFlow.emit(value)
-    }
-
-    @ExperimentalCoroutinesApi
-    override fun resetReplayCache() = backingStateFlow.resetReplayCache()
-
-    override fun tryEmit(value: T): Boolean {
-        val success = backingStateFlow.tryEmit(value)
-        if (success) updateSource.invoke(value)
-        return success
-    }
-}
-
 private val accentsMap = mapOf(
     'À' to 'A',
     'Á' to 'A',
@@ -122,7 +91,14 @@ expect object BuildConfig {
     val debug: Boolean
 }
 
+val serverHost = when(BuildConfig.debug) {
+    //false -> "lyricalgame.herokuapp.com"
+    false -> "localhost:5050"
+    true -> "localhost:5050"
+}
+
 val serverURL = when(BuildConfig.debug) {
-    false -> "https://lyricalgame.herokuapp.com/"
-    true -> "http://localhost:5050/"
+    //false -> "https://lyricalgame.herokuapp.com"
+    false -> "http://localhost:5050"
+    true -> "http://localhost:5050"
 }

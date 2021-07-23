@@ -7,18 +7,21 @@ import org.jetbrains.compose.common.ui.unit.TextUnit
 import org.jetbrains.compose.common.ui.unit.TextUnitType
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Span
+import styles.text.FontStyle
 import styles.text.TextStyle
 
 @Composable
-actual fun Text(text: String, modifier: Modifier, style: TextStyle?, color: Color?) {
+actual fun ActualText(text: String, modifier: Modifier, style: TextStyle?, color: Color?) {
     Span(
         attrs = {
             style {
-                fontSize(style.fontSize.cssValue())
-                style.fontWeight?.let { this.property("font-weight", StylePropertyValue(it.weight)) }
-                style.fontStyle?.let { this.property("font-style", StylePropertyValue(it.name.lowercase())) }
-                this.property("letter-spacing", StylePropertyValue(style.letterSpacing.cssValue()))
-                this.property("line-height", StylePropertyValue(style.lineHeight.cssValue()))
+                if (style != null) {
+                    fontSize(style.fontSize.cssValue())
+                    style.fontWeight?.let { this.property("font-weight", it.weight) }
+                    style.fontStyle?.let { this.property("font-style", it.name) }
+                    this.property("letter-spacing", style.letterSpacing.cssValue())
+                    this.property("line-height", style.lineHeight.cssValue())
+                }
             }
         },
         content = {
@@ -27,8 +30,13 @@ actual fun Text(text: String, modifier: Modifier, style: TextStyle?, color: Colo
     )
 }
 
-fun TextUnit.cssValue(): CSSSizeValue = when (this.unitType) {
+fun TextUnit.cssValue(): CSSSizeValue<*> = when (this.unitType) {
     TextUnitType.Unspecified -> this.value.px
     TextUnitType.Em -> this.value.em
     TextUnitType.Sp -> this.value.px
+}
+
+val FontStyle.name get() = when(this) {
+    FontStyle.Italic -> "italic"
+    else -> "normal"
 }

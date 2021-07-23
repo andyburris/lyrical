@@ -4,20 +4,26 @@ import Room
 import User
 import UserAction
 import joinedUsers
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import server.*
 import withGame
 import withLobby
 
-class ClientRoomMachine(val code: RoomCode, val client: Client) {
+class ClientRoomMachine(
+    val code: RoomCode,
+    val client: Client,
+    val coroutineScope: CoroutineScope,
+) {
     private val actionFlow: MutableSharedFlow<UserAction> = MutableSharedFlow()
-    val roomFlow: Flow<Room.Client> = client.subscribeToRoom(code, actionFlow).runningRoomFold()
-    fun handleAction(action: UserAction) = actionFlow.tryEmit(action)
+    val roomFlow: SharedFlow<Room.Client> = client.subscribeToRoom(code, actionFlow).runningRoomFold().shareIn(coroutineScope, SharingStarted.Eagerly)
+    suspend fun handleAction(action: UserAction) = actionFlow.emit(action)
 }
 
 fun Flow<ClientResponse>.runningRoomFold(): Flow<Room.Client> {
     var room: Room.Client? = null
     return transform { response ->
+        println("runningRoomFold transform, response = $response")
         when(response) {
             is ClientResponse.Error -> TODO()
             is ClientResponse.Joined -> room = response.currentRoom
@@ -25,6 +31,7 @@ fun Flow<ClientResponse>.runningRoomFold(): Flow<Room.Client> {
             ClientResponse.Kicked -> TODO()
             is ClientResponse.Room -> room = room?.applyResponse(response)
         }
+        println("applied transform, room = $room")
         emit(room)
     }.filterNotNull()
 }
@@ -32,7 +39,7 @@ fun Flow<ClientResponse>.runningRoomFold(): Flow<Room.Client> {
 fun Room.Client.applyResponse(response: ClientResponse.Room): Room.Client = when(response) {
     is ClientResponse.Room.UsersUpdated -> this.copy(state = this.state.withUsers(response.users))
     is ClientResponse.Room.Lobby -> this.withLobby { it.applyLobbyResponse(response) }
-    ClientResponse.Room.Loading -> this.copy(state = RoomState.Loading(this.joinedUsers))
+    ClientResponse.Room.Loading -> this.copy(state = RoomState.Loading(this.joinedUsers, this.state.config))
     is ClientResponse.Room.Game -> this.withGame { it.applyGameResponse(response) }
 }
 
@@ -46,8 +53,8 @@ private fun ClientRoomState.withUsers(users: List<User>) = when(this) {
 }
 
 private fun RoomState.Lobby.applyLobbyResponse(response: ClientResponse.Room.Lobby): RoomState.Lobby = when(response) {
-    is ClientResponse.Room.Lobby.PlaylistsUpdated -> this.copy(playlists = playlists)
-    is ClientResponse.Room.Lobby.ConfigUpdated -> this.copy(config = config)
+    is ClientResponse.Room.Lobby.PlaylistsUpdated -> this.copy(playlists = response.playlists)
+    is ClientResponse.Room.Lobby.ConfigUpdated -> this.copy(config = response.config)
 }
 
 private fun RoomState.Game.Client.applyGameResponse(response: ClientResponse.Room.Game): RoomState.Game.Client = when(response) {

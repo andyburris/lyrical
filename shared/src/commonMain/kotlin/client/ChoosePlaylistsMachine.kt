@@ -11,7 +11,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
 
 class ChoosePlaylistsMachine(
-    private val spotifyRepository: StateFlow<SpotifyRepository>,
+    private val spotifyRepository: Flow<SpotifyRepository>,
     private val selectedPlaylists: Flow<List<GenericPlaylist>>,
     private val coroutineScope: CoroutineScope,
 ) {

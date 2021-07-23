@@ -1,3 +1,4 @@
+@file:JvmName("PlatformHorizontalOverflow")
 package platform
 
 import FlowRow
@@ -9,7 +10,7 @@ import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.implementation
 
 @Composable
-actual fun HorizontalOverflowRow(
+actual fun ActualHorizontalOverflowRow(
     modifier: Modifier,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
@@ -26,6 +27,7 @@ actual fun HorizontalOverflowRow(
             androidx.compose.foundation.layout.Arrangement.SpaceEvenly -> MainAxisAlignment.SpaceEvenly
             else -> MainAxisAlignment.Start
         },
-        mainAxisSpacing = horizontalArrangement.implementation.spacing
+        mainAxisSpacing = horizontalArrangement.implementation.spacing,
+        content = content
     )
 }

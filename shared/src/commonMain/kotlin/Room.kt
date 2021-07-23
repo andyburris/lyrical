@@ -1,8 +1,7 @@
+import client.ClientGameQuestion
+import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
-import server.ClientRoomState
-import server.RoomState
-import server.ServerRoomState
-import server.toClientRoomState
+import server.*
 
 
 @Serializable
@@ -20,7 +19,7 @@ sealed class Room {
     data class Client(
         override val code: String,
         override val host: User,
-        val state: ClientRoomState
+        @Polymorphic val state: ClientRoomState
     ) : Room()
 }
 
@@ -40,9 +39,14 @@ fun Room.Client.withLobby(transform: (RoomState.Lobby) -> RoomState.Lobby): Room
 }
 
 fun Room.Client.withGame(transform: (RoomState.Game.Client) -> RoomState.Game.Client): Room.Client {
-    val gameState = this.state as RoomState.Game.Client
+    val gameState = this.state as? RoomState.Game.Client ?: when(this.state) {
+        is RoomState.Loading -> emptyGameState(this.state.config, this.state.users)
+        else -> throw Error("Creating empty game state should only be called when room.state is RoomState.Loading")
+    }
     return this.copy(state = transform(gameState))
 }
+
+fun emptyGameState(config: GameConfig, users: List<User>) = RoomState.Game.Client(config = config, questions = (0 until config.amountOfSongs).map { ClientGameQuestion.NotReached }, gameScreen = GameScreen.Answer(questionIndex = -1), leaderboard = users.associateWith { UserState(true, emptyList()) }.toLeaderboard())
 
 
 val Room.Server.joinedUsers: List<User> get() = when(this.state) {

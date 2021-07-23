@@ -1,5 +1,5 @@
 import com.adamratzman.spotify.*
-import com.adamratzman.spotify.endpoints.public.SearchApi
+import com.adamratzman.spotify.endpoints.pub.SearchApi
 import com.adamratzman.spotify.models.*
 import io.ktor.client.*
 import io.ktor.client.request.*

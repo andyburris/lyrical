@@ -1,14 +1,14 @@
+@file:JvmName("PlatformButton")
 package platform
 
 import androidx.compose.runtime.Composable
-import jetbrains.compose.common.shapes.CircleShape
 import jetbrains.compose.common.shapes.Shape
 import jetbrains.compose.common.shapes.implementation
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.implementation
 
 @Composable
-actual fun Button(onClick: () -> Unit, modifier: Modifier, isEnabled: Boolean, shape: Shape, content: () -> Unit) {
+actual fun ActualButton(onClick: () -> Unit, modifier: Modifier, isEnabled: Boolean, shape: Shape, content: @Composable () -> Unit) {
     androidx.compose.material.Button(
         onClick = onClick,
         modifier = modifier.implementation,

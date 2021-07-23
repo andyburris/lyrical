@@ -1,9 +1,7 @@
 package room.game.answer
 
-import GameConfig
 import androidx.compose.runtime.Composable
 import client.ClientGameQuestion
-import client.Leaderboard
 import client.SourcePlaylist
 import client.totalPoints
 import common.LyricalScaffold

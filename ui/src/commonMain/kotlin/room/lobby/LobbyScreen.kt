@@ -1,6 +1,7 @@
 package room.lobby
 
 import LobbyAction
+import SpotifyRepository
 import UserAction
 import androidx.compose.runtime.Composable
 import platform.Button
@@ -12,7 +13,7 @@ import server.RoomCode
 import server.RoomState
 
 @Composable
-fun LobbyScreen(code: RoomCode, isHost: Boolean, state: RoomState.Lobby, modifier: Modifier = Modifier, onUserAction: (UserAction) -> Unit) {
+fun LobbyScreen(code: RoomCode, isHost: Boolean, state: RoomState.Lobby, spotifyRepository: SpotifyRepository, modifier: Modifier = Modifier, onUserAction: (UserAction) -> Unit) {
     Column(modifier) { //TODO: turn into BottomSheetScaffold
         LobbyHeader(code, isHost, state.playlists, onClickPlaylist = { onUserAction.invoke(LobbyAction.Host.UpdatePlaylists(state.playlists - it)) })
         if (isHost) {
@@ -23,7 +24,13 @@ fun LobbyScreen(code: RoomCode, isHost: Boolean, state: RoomState.Lobby, modifie
             )
         }
         when(isHost) {
-            true -> ChoosePlaylists(state.playlists)
+            true -> ChoosePlaylists(state.playlists, spotifyRepository) {
+                val newPlaylists = when {
+                    it in state.playlists -> state.playlists - it
+                    else -> state.playlists + it
+                }
+                onUserAction.invoke(LobbyAction.Host.UpdatePlaylists(newPlaylists))
+            }
             false -> PlayerLobbyInfo(state.config)
         }
     }
@@ -35,7 +42,7 @@ private fun ButtonRow(state: RoomState.Lobby, onStartGame: () -> Unit, onOpenOpt
     Row {
         Button(
             isEnabled = state.playlists.isNotEmpty(),
-            onClick = { }
+            onClick = onStartGame
         ) {
             Text("Start Game".uppercase())
         }

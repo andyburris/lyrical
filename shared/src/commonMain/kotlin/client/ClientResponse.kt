@@ -6,8 +6,13 @@ import User
 import server.ServerError
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import model.GenericGameTrack
 import model.GenericPlaylist
+import server.ClientRoomState
+import server.RoomState
 
 @Serializable
 sealed class ClientResponse {
@@ -35,4 +40,13 @@ sealed class ClientResponse {
     }
 }
 
-fun ClientResponse.serialize() = Json.encodeToString(ClientResponse.serializer(), this)
+private val module = SerializersModule {
+    polymorphic(ClientRoomState::class) {
+        subclass(RoomState.Lobby::class)
+        subclass(RoomState.Loading::class)
+        subclass(RoomState.Game.Client::class)
+    }
+}
+private val jsonWithInterfaceSerializer = Json { serializersModule = module }
+fun ClientResponse.serialize() = jsonWithInterfaceSerializer.encodeToString(ClientResponse.serializer(), this) //TODO: once sealed interfaces are automatically converted by kotlinx.serialization, replace
+fun String.deserializeToClientResponse() = jsonWithInterfaceSerializer.decodeFromString(ClientResponse.serializer(), this)

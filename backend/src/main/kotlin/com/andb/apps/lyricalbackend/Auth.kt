@@ -25,11 +25,12 @@ fun jwtRefreshVerifier() = jwtVerifier()
 fun generateJWT(userID: String, isAccessToken: Boolean): String = JWT.create()
     .withSubject("Authentication")
     .withIssuer(Keys.JWT.domain)
+    .withAudience(Keys.JWT.audience)
     .withClaim("userID", userID)
     .withClaim("isAnonymous", true)
     .withClaim("isAccessToken", isAccessToken)
     .withExpiresAt(if (isAccessToken) getAccessTokenExpirationDate() else getRefreshTokenExpirationDate())
-    .sign(Algorithm.HMAC256(userID))
+    .sign(Algorithm.HMAC256(Keys.JWT.secret))
 
 @OptIn(ExperimentalTime::class) private val accessTokenExpirationMillis = 10.minutes.inWholeMilliseconds
 @OptIn(ExperimentalTime::class) private val refreshTokenExpirationMillis = 30.days.inWholeMilliseconds

@@ -5,6 +5,8 @@ import platform.LyricalTheme
 import platform.Text
 import jetbrains.compose.common.shapes.CircleShape
 import model.GenericPlaylist
+import model.name
+import model.subtitle
 import org.jetbrains.compose.common.foundation.layout.Box
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.ui.Modifier
@@ -18,7 +20,7 @@ fun VerticalPlaylistItem(playlist: GenericPlaylist, modifier: Modifier = Modifie
     Column(modifier) { //TODO: Add Arrangement.SpacedBy(12.dp)
         Box(
             modifier = Modifier
-                .clip(LyricalTheme.shapes.small)
+                //.clip(LyricalTheme.shapes.small) TODO: readd once shapes are supported
                 .background(LyricalTheme.colors.overlay)
                 .size(128.dp)
         ) {
@@ -39,7 +41,7 @@ fun VerticalPlaylistPlaceholderSmall(modifier: Modifier = Modifier) {
     Column(modifier) { //TODO: Add Arrangement.SpacedBy(12.dp)
         Box(
             modifier = Modifier
-                .clip(LyricalTheme.shapes.small)
+                //.clip(LyricalTheme.shapes.small) TODO: readd once shapes are supported
                 .background(LyricalTheme.colors.overlay)
                 .size(72.dp)
         ) {}
@@ -53,7 +55,12 @@ fun VerticalPlaylistPlaceholderSmall(modifier: Modifier = Modifier) {
 @Composable
 fun VerticalPlaylistPlaceholderLarge(modifier: Modifier = Modifier) {
     Column(modifier) { //TODO: Add Arrangement.SpacedBy(12.dp)
-        Box(Modifier.clip(LyricalTheme.shapes.small).background(LyricalTheme.colors.overlay).size(128.dp)) {}
+        Box(
+            modifier = Modifier
+                //.clip(LyricalTheme.shapes.small) TODO: readd once shapes are supported
+                .background(LyricalTheme.colors.overlay)
+                .size(128.dp)
+        ) {}
         Column {
             Box(Modifier.clip(CircleShape).background(LyricalTheme.colors.overlay).size(width = 72.dp, height = 16.dp)) {}
             Box(Modifier.clip(CircleShape).background(LyricalTheme.colors.overlay).size(width = 64.dp, height = 16.dp)) {}

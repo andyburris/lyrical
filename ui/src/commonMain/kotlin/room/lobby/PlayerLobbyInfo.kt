@@ -17,7 +17,7 @@ fun PlayerLobbyInfo(config: GameConfig, modifier: Modifier = Modifier) {
         UneditableOptions(
             config = config,
             modifier = Modifier
-                .clip(LyricalTheme.shapes.medium)
+                //.clip(LyricalTheme.shapes.medium) TODO: readd once shapes are supported
                 .background(LyricalTheme.colors.backgroundDark)
                 .padding(24.dp)
         )

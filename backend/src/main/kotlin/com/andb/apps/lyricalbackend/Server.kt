@@ -91,7 +91,7 @@ fun main() {
                 }
             }
 
-            authenticate {
+            authenticate() {
                 post<RoomCode>("/creategame") {
                     println("/creategame called")
                     val user = call.authentication.principal<JWTPrincipal>()?.toUser() ?: return@post
@@ -101,10 +101,21 @@ fun main() {
                     call.respond(roomMachine.code)
                 }
                 webSocket("/play/{gameCode}") {
+                    println("/play called")
                     val code = call.parameters["gameCode"]!!
+                    println("/play/$code opened")
                     val user = call.authentication.principal<JWTPrincipal>()?.toUser() ?: return@webSocket
+                    println("authenticated, user = $user")
                     val roomMachine = roomRepository.connectToRoom(code, user)
+                    println("roomMachine = $roomMachine")
+                    this.launch {
+                        roomMachine.responses.collect {
+                            println("sending $it")
+                            outgoing.send(Frame.Text(it.serialize()))
+                        }
+                    }
                     for (frame in incoming) {
+                        println("received frame = ${(frame as? Frame.Text)?.readText()}")
                         when(frame) {
                             is Frame.Text -> {
                                 val action = Json.decodeFromString(UserAction.serializer(), frame.readText())
@@ -114,9 +125,6 @@ fun main() {
 
                             }
                         }
-                    }
-                    roomMachine.responses.collect {
-                        outgoing.send(Frame.Text(it.serialize()))
                     }
                 }
             }

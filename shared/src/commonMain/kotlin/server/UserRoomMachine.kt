@@ -14,8 +14,9 @@ import toClientRoom
 import totalPoints
 
 data class UserRoomMachine(val roomMachine: RoomMachine, val user: User) {
-    fun handleAction(action: UserAction) = roomMachine.handleAction(action, user)
+    suspend fun handleAction(action: UserAction) = roomMachine.handleAction(action, user)
     val responses = roomMachine.actionResultFlow.transform { result ->
+        println("transforming actionResults, result = $result")
         when(result) {
             is ActionResult.Applied -> {
                 val (room, action, actionUser) = result

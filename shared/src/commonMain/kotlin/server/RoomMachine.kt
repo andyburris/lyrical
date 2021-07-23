@@ -13,10 +13,8 @@ import ActionWithUser
 import GameAnswer
 import GameScreen
 import joinedUsers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import model.getRandomSongs
 import randomLyricIndex
@@ -38,11 +36,13 @@ class RoomMachine(
     private val rawActionFlow = MutableSharedFlow<ActionWithUser>()
     val actionResultFlow: SharedFlow<ActionResult> = rawActionFlow.applyActions().shareIn(coroutineScope, SharingStarted.Eagerly)
 
-    fun handleAction(action: UserAction, user: User) {
-        rawActionFlow.tryEmit(ActionWithUser(action, user))
+    suspend fun handleAction(action: UserAction, user: User) {
+        println("handling action = $action for user = $user")
+        rawActionFlow.emit(ActionWithUser(action, user))
     }
 
-    fun Flow<ActionWithUser>.applyActions(): Flow<ActionResult> = transform { (action, user) ->
+    private fun Flow<ActionWithUser>.applyActions(): Flow<ActionResult> = transform { (action, user) ->
+        println("applyActions transforming action = $action for user = $user")
         suspend fun onLoadGame(lobby: RoomState.Lobby) {
             val usersInLoading = (room.state as RoomState.Loading).users
             val randomTracks = lobby.playlists.getRandomSongs(spotifyRepository, lobby.config)
@@ -50,7 +50,13 @@ class RoomMachine(
             val questions = withLyrics.map { gameTrack -> ServerGameQuestion(gameTrack, gameTrack.lyrics.randomLyricIndex(lobby.config.difficulty, gameTrack.track.name)) }
             val userStates = lobby.joinedUsers.associateWith { user -> UserState(connected = user in usersInLoading, answers = (0 until lobby.config.amountOfSongs).map { GameAnswer.Unanswered(emptyList()) }) }
             val startGameAction = ServerAction.StartGame(questions, lobby.config, userStates)
-            emit(room.applyAction(startGameAction, user).toActionResult(user, startGameAction))
+            val roomResult = room.applyAction(startGameAction, user)
+            room = when(roomResult) {
+                is RoomResult.Applied -> roomResult.room
+                is RoomResult.SideEffect -> roomResult.applied.room
+                is RoomResult.Error -> room
+            }
+            emit(roomResult.toActionResult(user, startGameAction))
         }
         suspend fun onStartTimer(time: Duration) {
             delay(time)
@@ -58,18 +64,42 @@ class RoomMachine(
             val gameState = roomState.gameScreen as GameScreen.Question
             val unansweredUsers = roomState.userStates.filter { it.value.answers[gameState.questionIndex] is GameAnswer.Unanswered }
             val outOfTimeAction = ServerAction.RanOutOfTime(unansweredUsers)
-            emit(room.applyAction(outOfTimeAction, user).toActionResult(user, outOfTimeAction))
+            val roomResult = room.applyAction(outOfTimeAction, user)
+            room = when(roomResult) {
+                is RoomResult.Applied -> roomResult.room
+                is RoomResult.SideEffect -> roomResult.applied.room
+                is RoomResult.Error -> room
+            }
+            emit(roomResult.toActionResult(user, outOfTimeAction))
         }
+
         val roomResult = room.applyAction(action, user)
+        println("new roomResult = $roomResult")
+        room = when(roomResult) {
+            is RoomResult.Applied -> roomResult.room
+            is RoomResult.SideEffect -> roomResult.applied.room
+            is RoomResult.Error -> room
+        }
+        emit(roomResult.toActionResult(user, action))
         if (roomResult is RoomResult.SideEffect) {
-            coroutineScope.launch {
+/*            coroutineScope { this }.launch {
                 when(roomResult) {
                     is RoomResult.SideEffect.LoadGame -> onLoadGame(roomResult.lobby)
                     is RoomResult.SideEffect.StartTimer -> onStartTimer(roomResult.time)
                 }
+            }*/
+            //TODO: run side effect in coroutine
+            when(roomResult) {
+                is RoomResult.SideEffect.LoadGame -> onLoadGame(roomResult.lobby)
+                is RoomResult.SideEffect.StartTimer -> onStartTimer(roomResult.time)
             }
+/*            coroutineScope.launch {
+                when(roomResult) {
+                    is RoomResult.SideEffect.LoadGame -> onLoadGame(roomResult.lobby)
+                    is RoomResult.SideEffect.StartTimer -> onStartTimer(roomResult.time)
+                }
+            }*/
         }
-        emit(roomResult.toActionResult(user, action))
     }
 
 }
@@ -128,8 +158,9 @@ suspend fun Room.Server.applyAction(action: Action, user: User): RoomResult {
                     is RoomState.Lobby -> this.state
                     !is RoomState.Lobby -> return RoomResult.Error(ServerError.NotInLobby)
                 }
+                println("loading game, current playlists = ${lobby.playlists}")
                 if (!lobby.isValid) return RoomResult.Error(ServerError.NotEnoughPlaylists)
-                val applied = RoomResult.Applied(this.copy(state = RoomState.Loading(lobby.joinedUsers)))
+                val applied = RoomResult.Applied(this.copy(state = RoomState.Loading(lobby.joinedUsers, lobby.config)))
                 return RoomResult.SideEffect.LoadGame(lobby, applied)
             }
             else -> return RoomResult.Error(ServerError.NotAHost)
@@ -188,8 +219,12 @@ fun RoomState.Game.Server.applyAction(action: GameAction, user: User, host: User
                 is GameAction.Question.AnswerQuestion -> when(val serverUserAnswer = this.userStates.getValue(host).answers[action.questionIndex]) {
                     !is GameAnswer.Unanswered -> GameResult.Error(ServerError.AlreadyAnswered)
                     else -> {
-                        val isLastAnswer = this.userStates.all { it.value.answers[action.questionIndex] is GameAnswer.Answered }
-                        GameResult.Applied(this.withAnswer(host, action.questionIndex, this.questions[action.questionIndex].check(action.answer, serverUserAnswer)).let { if (isLastAnswer) this.withNextAnswerScreen() else this })
+                        val answered: GameAnswer.Answered = this.questions[action.questionIndex].check(action.answer, serverUserAnswer)
+                        val gameState: RoomState.Game.Server = this.withAnswer(host, action.questionIndex, answered)
+                        val isLastAnswer = gameState.userStates.all { it.value.answers[action.questionIndex] is GameAnswer.Answered }
+                        val applied = GameResult.Applied(gameState.let { if (isLastAnswer) it.withNextAnswerScreen() else it })
+                        println("applied GameAction.Question.AnswerQuestion, isLastAnswer = $isLastAnswer, answered = $answered, gameState = $gameState, applied = $applied")
+                        applied
                     }
                 }
                 is GameAction.Question.RequestHint -> {

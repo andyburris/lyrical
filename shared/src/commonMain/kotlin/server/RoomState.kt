@@ -14,20 +14,24 @@ import replace
 import totalPoints
 import withAnswer
 
-sealed interface ServerRoomState
-sealed interface ClientRoomState
+sealed interface BaseRoomState {
+    val config: GameConfig
+}
+sealed interface ServerRoomState : BaseRoomState
+sealed interface ClientRoomState : BaseRoomState
 
 @Serializable
 sealed class RoomState {
+    abstract val config: GameConfig
     @Serializable
     data class Lobby(
         val playlists: List<GenericPlaylist> = emptyList(),
-        val config: GameConfig = GameConfig(),
+        override val config: GameConfig = GameConfig(),
         val joinedUsers: List<User> = emptyList()
     ) : ServerRoomState, ClientRoomState
 
     @Serializable
-    data class Loading(val users: List<User>) : ServerRoomState, ClientRoomState
+    data class Loading(val users: List<User>, override val config: GameConfig) : ServerRoomState, ClientRoomState
 
     @Serializable sealed class Game {
         abstract val config: GameConfig

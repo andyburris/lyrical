@@ -8,10 +8,7 @@ import jetbrains.compose.common.shapes.CircleShape
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
 import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.draw.clip
-import org.jetbrains.compose.common.ui.padding
-import org.jetbrains.compose.common.ui.unit.dp
 import platform.Button
 import platform.LyricalTheme
 import platform.RectangleShape
@@ -50,10 +47,18 @@ private fun CombinedButton(
     onClickIcon: () -> Unit,
 ) {
     Row(modifier.clip(CircleShape)) {
-        Button(isEnabled = isTextEnabled, onClick = onClickText, shape = RectangleShape) { //TODO: add weight(1f) modifier, colors, etc.
+        Button(
+            isEnabled = isTextEnabled,
+            onClick = onClickText,
+            //shape = RectangleShape TODO: readd once shapes are supported
+        ) { //TODO: add weight(1f) modifier, colors, etc.
             text()
         }
-        Button(isEnabled = isIconEnabled, onClick = onClickIcon, shape = RectangleShape) {
+        Button(
+            isEnabled = isIconEnabled,
+            onClick = onClickIcon,
+            //shape = RectangleShape TODO: readd once shapes are supported
+        ) {
             icon()
         }
     }

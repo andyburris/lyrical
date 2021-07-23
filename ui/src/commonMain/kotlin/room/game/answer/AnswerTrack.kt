@@ -21,7 +21,12 @@ fun AnswerTrack(
     answer: GameAnswer.Answered,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier.clip(LyricalTheme.shapes.medium).background(LyricalTheme.colors.overlay).padding(24.dp)) {
+    Column(
+        modifier = modifier
+            //.clip(LyricalTheme.shapes.medium) TODO: readd once shapes are supported
+            .background(LyricalTheme.colors.overlay)
+            .padding(24.dp)
+    ) {
         if (answer is GameAnswer.Answered.Incorrect) {
             YourAnswer(answer)
         }

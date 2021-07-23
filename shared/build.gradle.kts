@@ -40,11 +40,12 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-common"))
                 implementation(Dependencies.Coroutines.core)
-                implementation (Dependencies.serialization)
+                implementation(Dependencies.serialization)
                 implementation(Dependencies.spotify)
                 implementation(Dependencies.Ktor.client)
                 implementation(Dependencies.Ktor.clientAuth)
                 implementation(Dependencies.Ktor.clientSerialization)
+                implementation(Dependencies.Ktor.clientWebsockets)
             }
         }
         val commonTest by getting {
@@ -61,7 +62,7 @@ kotlin {
 
         val jvmTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.21")
+                implementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.10")
             }
         }
 
@@ -72,7 +73,11 @@ kotlin {
             }
         }
 
-        val jsTest by getting {}
+        val jsTest by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test-js:1.5.10")
+            }
+        }
 
         val iOSMain by getting {
         }

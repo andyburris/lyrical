@@ -6,7 +6,7 @@ import org.jetbrains.compose.common.ui.Modifier
 import platform.LyricalTheme
 import platform.Text
 import common.AppBar
-import room.lobby.name
+import model.name
 
 @Composable
 fun QuestionAppBar(

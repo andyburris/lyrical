@@ -25,6 +25,7 @@ fun main() = runMosaic {
         val coroutineScope = rememberCoroutineScope()
         val terminal = LocalTerminal.current
         ProvideLocalEffect(effects) {
+/*
             when (navigation.value) {
                 Screen.Home -> HomeScreen(
                     onCreateGame = {
@@ -44,7 +45,8 @@ fun main() = runMosaic {
                 is Screen.Room -> TODO()
                 is Screen.Test -> Test()
             }
-            //Test()
+*/
+            Test()
         }
     }
     withContext(IO) {

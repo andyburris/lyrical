@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "0.5.0-build228"
+    id("org.jetbrains.compose") version "0.5.0-build262"
     //id("com.android.library")
 }
 
@@ -29,6 +29,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-common"))
                 implementation(Dependencies.Coroutines.core)
+                implementation(Dependencies.Ktor.client)
                 implementation(compose.runtime)
                 implementation(compose.web.widgets)
                 implementation(project(":shared"))
