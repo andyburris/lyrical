@@ -17,7 +17,7 @@ fun RoomRouter(code: RoomCode, client: Client, modifier: Modifier = Modifier, on
     val coroutineScope = rememberCoroutineScope()
     val roomMachine = remember { ClientRoomMachine(code, client, coroutineScope) }
     val room = roomMachine.roomFlow.collectAsState(null).value
-    val user = client.tokenStorage.currentUser.collectAsState(initial = null)
+    val user = client.tokenStorage.currentUser.collectAsState(initial = null).value
     println("user = $user, roomHost = ${room?.host}, isHost = ${user == room?.host}")
     when(val state = room?.state) {
         null -> LoadingScreen("Loading into room", modifier)

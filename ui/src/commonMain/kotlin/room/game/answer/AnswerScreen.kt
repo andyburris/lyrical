@@ -39,22 +39,24 @@ fun AnswerScreen(
             )
         },
         title = {
-            Text(
-                text = when(answeredQuestion.answer) {
-                    is GameAnswer.Answered.Correct -> "Correct!"
-                    is GameAnswer.Answered.Incorrect -> "Incorrect"
-                    is GameAnswer.Answered.Skipped -> "Skipped"
-                    is GameAnswer.Answered.Missed -> "Missed"
-                },
-                style = LyricalTheme.typography.h1,
-                color = LyricalTheme.colors.onPrimary,
-            )
-            if (answeredQuestion.answer.isRight) {
+            Column {
                 Text(
-                    text = (answeredQuestion.answer as GameAnswer.Answered.Correct).points.toString(),
-                    style = LyricalTheme.typography.subtitle1,
-                    color = LyricalTheme.colors.onPrimarySecondary
+                    text = when(answeredQuestion.answer) {
+                        is GameAnswer.Answered.Correct -> "Correct!"
+                        is GameAnswer.Answered.Incorrect -> "Incorrect"
+                        is GameAnswer.Answered.Skipped -> "Skipped"
+                        is GameAnswer.Answered.Missed -> "Missed"
+                    },
+                    style = LyricalTheme.typography.h1,
+                    color = LyricalTheme.colors.onPrimary,
                 )
+                if (answeredQuestion.answer.isRight) {
+                    Text(
+                        text = (answeredQuestion.answer as GameAnswer.Answered.Correct).points.toString(),
+                        style = LyricalTheme.typography.subtitle1,
+                        color = LyricalTheme.colors.onPrimarySecondary
+                    )
+                }
             }
         },
         actionButton = {

@@ -1,6 +1,7 @@
 package platform
 
 import androidx.compose.runtime.Composable
+import org.jetbrains.compose.common.core.graphics.Color
 import org.jetbrains.compose.common.foundation.layout.Box
 import org.jetbrains.compose.common.ui.Modifier
 import styles.text.TextStyle
@@ -12,9 +13,20 @@ fun TextField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     textStyle: TextStyle? = null,
+    textColor: Color? = null,
     placeholder: String = "",
+    placeholderColor: Color? = null,
 ) {
-    BaseTextField(value, onValueChange, modifier, enabled, textStyle = textStyle, placeholder = placeholder)
+    BaseTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier,
+        enabled = enabled,
+        textStyle = textStyle,
+        textColor = textColor,
+        placeholder = placeholder,
+        placeholderColor = placeholderColor
+    )
 }
 
 @Composable
@@ -24,8 +36,10 @@ fun BaseTextField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     textStyle: TextStyle? = null,
+    textColor: Color? = null,
     placeholder: String = "",
-) = ActualBaseTextField(value, onValueChange, modifier, enabled, textStyle, placeholder)
+    placeholderColor: Color? = null,
+) = ActualBaseTextField(value, onValueChange, modifier, enabled, textStyle, textColor, placeholder, placeholderColor)
 
 @Composable
 expect fun ActualBaseTextField(
@@ -34,5 +48,7 @@ expect fun ActualBaseTextField(
     modifier: Modifier,
     enabled: Boolean,
     textStyle: TextStyle?,
+    textColor: Color? = null,
     placeholder: String,
+    placeholderColor: Color? = null,
 )

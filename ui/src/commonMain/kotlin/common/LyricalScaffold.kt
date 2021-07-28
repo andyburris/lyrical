@@ -19,7 +19,7 @@ fun LyricalScaffold(
 ) {
     val width = 720.dp //TODO: add BoxWithConstraints
     //val isMobileLayout = width > 720.dp //TODO: [Compose] add compareTo to Dp class
-    val isMobileLayout = true
+    val isMobileLayout = false
     Column(modifier) {
         appBar()
         Row {
