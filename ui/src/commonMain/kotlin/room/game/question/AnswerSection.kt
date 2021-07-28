@@ -9,10 +9,7 @@ import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.draw.clip
-import platform.Button
-import platform.LyricalTheme
-import platform.RectangleShape
-import platform.Text
+import platform.*
 
 @Composable
 fun AnswerSection(modifier: Modifier = Modifier, onAnswer: (UserAnswer) -> Unit) {
@@ -20,7 +17,7 @@ fun AnswerSection(modifier: Modifier = Modifier, onAnswer: (UserAnswer) -> Unit)
         val answerInput = remember { mutableStateOf("") }
         Column {
             Text("Answer".uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onBackgroundSecondary)
-            //TODO: TextInput w/ fillMaxWidth()
+            TextField(answerInput.value, onValueChange = answerInput.component2(), textStyle = LyricalTheme.typography.h1)
         }
         CombinedButton(
             text = {

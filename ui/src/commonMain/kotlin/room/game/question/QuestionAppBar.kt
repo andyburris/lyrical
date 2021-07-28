@@ -15,6 +15,7 @@ fun QuestionAppBar(
     sourcePlaylist: SourcePlaylist,
     currentPoints: Double,
     modifier: Modifier = Modifier,
+    onNavigateBack: () -> Unit
 ) {
     AppBar(
         title = "Question ${questionIndex + 1}/$amountOfSongs",
@@ -22,7 +23,8 @@ fun QuestionAppBar(
             is SourcePlaylist.Shown -> sourcePlaylist.playlist.name
             else -> null
         },
-        modifier = modifier
+        modifier = modifier,
+        onNavigateBack = onNavigateBack
     ) {
         Text("$currentPoints/$questionIndex pts", style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onBackgroundSecondary) //TODO: create AnnotatedString with different colors for "/n pts"
     }

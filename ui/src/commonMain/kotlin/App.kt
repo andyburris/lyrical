@@ -6,6 +6,7 @@ import client.Client
 import client.Screen
 import client.decodeUser
 import home.HomeScreen
+import join.JoinScreen
 import kotlinx.coroutines.launch
 import platform.LyricalTheme
 import room.RoomRouter
@@ -13,32 +14,30 @@ import room.RoomRouter
 @Composable
 fun App() {
     val navigation = remember { mutableStateOf<Screen>(Screen.Home) }
+    //val spotifyRepository = remember { SpotifyLogin() }
     val client = remember { Client() }
     val coroutineScope = rememberCoroutineScope()
     LyricalTheme {
-        when(val screen = navigation.value) {
+        when (val screen = navigation.value) {
             Screen.Home -> HomeScreen(
                 onCreateGame = {
-                    println("Clicked create game")
                     coroutineScope.launch {
-                        println("before create room")
                         val code = client.createRoom()
                         println("code = $code")
                         navigation.value = Screen.Room(code)
                     }
-               },
-                onJoinRoom = { println("clicked join room") }
+                },
+                onJoinRoom = { navigation.value = Screen.Join }
             )
-            Screen.Join -> {
-
-            }
-            is Screen.Room -> {
-                RoomRouter(
-                    user = client.tokenStorage.getSavedTokens()!!.decodeUser(),
-                    code = screen.roomCode,
-                    client = client,
-                )
-            }
+            Screen.Join -> JoinScreen(
+                onBackHome = { navigation.value = Screen.Home },
+                onJoinRoom = { navigation.value = Screen.Room(it) }
+            )
+            is Screen.Room -> RoomRouter(
+                code = screen.roomCode,
+                client = client,
+                onNavigateBack = { navigation.value = Screen.Home }
+            )
         }
     }
 }

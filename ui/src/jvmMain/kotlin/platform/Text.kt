@@ -12,5 +12,10 @@ import styles.text.TextStyle
 
 @Composable
 actual fun ActualText(text: String, modifier: Modifier, style: TextStyle?, color: Color?) {
-    androidx.compose.material.Text(text, modifier = modifier.implementation, style = style?.implementation ?: LocalTextStyle.current, color = color?.implementation ?: androidx.compose.ui.graphics.Color.Unspecified)
+    androidx.compose.material.Text(
+        text = text,
+        modifier = modifier.implementation,
+        style = style?.implementation ?: LocalTextStyle.current,
+        color = color?.implementation ?: androidx.compose.ui.graphics.Color.Unspecified
+    )
 }

@@ -13,7 +13,9 @@ import org.jetbrains.compose.common.ui.unit.dp
 fun ActionCard(title: String, summary: String, modifier: Modifier = Modifier) {
     Column(modifier.padding(32.dp)) {
         //TODO: Icon
-        Text(title, Modifier.fillMaxWidth(), LyricalTheme.typography.subtitle1)
-        Text(summary, Modifier.fillMaxWidth(), LyricalTheme.typography.body1)
+        Column {
+            Text(title, style = LyricalTheme.typography.subtitle1)
+            Text(summary, style = LyricalTheme.typography.body1)
+        }
     }
 }

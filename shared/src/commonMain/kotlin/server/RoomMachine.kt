@@ -107,6 +107,7 @@ class RoomMachine(
 
 @Serializable
 sealed class ServerError {
+    @Serializable object InvalidCode : ServerError()
     @Serializable object WrongQuestion : ServerError()
     @Serializable object AlreadyAnswered : ServerError()
     @Serializable object NotInLobby : ServerError()

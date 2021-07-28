@@ -23,7 +23,8 @@ fun AnswerScreen(
     answeredQuestion: ClientGameQuestion.Answered,
     game: RoomState.Game.Client,
     modifier: Modifier = Modifier,
-    onAnswerAction: (GameAction.Answer) -> Unit
+    onAnswerAction: (GameAction.Answer) -> Unit,
+    onNavigateBack: () -> Unit
 ) {
     LyricalScaffold(
         modifier = modifier.background(if (answeredQuestion.answer.isRight) LyricalTheme.colors.primary else LyricalTheme.colors.background),
@@ -33,7 +34,8 @@ fun AnswerScreen(
                 amountOfSongs = game.config.amountOfSongs,
                 sourcePlaylist = if (game.config.showSourcePlaylist) SourcePlaylist.Shown(answeredQuestion.track.sourcePlaylist) else SourcePlaylist.NotShown,
                 currentPoints = game.questions.totalPoints(),
-                modifier = Modifier.padding(32.dp)
+                modifier = Modifier.padding(32.dp),
+                onNavigateBack = onNavigateBack
             )
         },
         title = {

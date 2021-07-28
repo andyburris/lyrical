@@ -1,13 +1,16 @@
 package platform
 
 import org.jetbrains.compose.common.ui.unit.sp
+import styles.text.FontFamily
 import styles.text.FontWeight
 import styles.text.TextStyle
 import styles.text.sp
 
 actual fun lyricalPlatformTypography() = LyricalTypography(
+    displayFont = FontFamily(alias = "YoungSerif", "/assets/fonts/YoungSerif.otf"),
+    bodyFont = FontFamily(alias = "Inter", "/assets/fonts/InterVariable.ttf"),
     h1 = TextStyle(
-        fontWeight = FontWeight.Light,
+        fontWeight = FontWeight.Normal,
         fontSize = 96.sp,
         letterSpacing = (-1.5).sp
     ),

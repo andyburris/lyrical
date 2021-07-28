@@ -20,7 +20,8 @@ fun QuestionScreen(
     question: ClientGameQuestion.Unanswered,
     game: RoomState.Game.Client,
     modifier: Modifier = Modifier,
-    onQuestionAction: (GameAction.Question) -> Unit
+    onQuestionAction: (GameAction.Question) -> Unit,
+    onNavigateBack: () -> Unit
 ) {
     Column(modifier) {
         Column(Modifier.background(LyricalTheme.colors.backgroundDark).padding(32.dp)) { //TODO: add Arrangement.SpacedBy(24.dp)
@@ -28,7 +29,8 @@ fun QuestionScreen(
                 questionIndex = gameScreen.questionIndex,
                 amountOfSongs = game.config.amountOfSongs,
                 sourcePlaylist = question.sourcePlaylist,
-                currentPoints = game.questions.totalPoints()
+                currentPoints = game.questions.totalPoints(),
+                onNavigateBack = onNavigateBack
             )
             LyricSection(question, gameScreen.questionIndex, onQuestionAction = onQuestionAction)
         }

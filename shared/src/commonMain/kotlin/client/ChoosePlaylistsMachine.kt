@@ -17,6 +17,8 @@ class ChoosePlaylistsMachine(
 ) {
     private val backingSearchTerm = MutableStateFlow("")
 
+    val searchTerm: StateFlow<String> = backingSearchTerm
+
     @OptIn(ExperimentalTime::class, FlowPreview::class)
     val searchedSpotifyPlaylists: StateFlow<PlaylistSearchState> = combine(spotifyRepository, selectedPlaylists, backingSearchTerm.debounce(500.milliseconds)) { repository, selected, term ->
         val playlists = when {

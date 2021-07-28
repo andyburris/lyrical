@@ -7,7 +7,7 @@ import server.UserRoomMachine
 
 interface RoomRepository {
     fun addRoom(machine: RoomMachine)
-    fun connectToRoom(code: String, user: User): UserRoomMachine
+    fun connectToRoom(code: String, user: User): UserRoomMachine?
     fun generateCode(): RoomCode
 }
 
@@ -18,8 +18,9 @@ class MemoryRoomRepository() : RoomRepository {
         rooms += machine.code to machine
     }
 
-    override fun connectToRoom(code: String, user: User): UserRoomMachine {
-        return UserRoomMachine(rooms.getValue(code), user)
+    override fun connectToRoom(code: String, user: User): UserRoomMachine? {
+        val roomMachine = rooms[code] ?: return null
+        return UserRoomMachine(roomMachine, user)
     }
 
     override fun generateCode(): RoomCode {

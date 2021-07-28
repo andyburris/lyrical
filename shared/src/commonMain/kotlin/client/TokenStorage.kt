@@ -4,6 +4,8 @@ import User
 import com.adamratzman.spotify.utils.Language
 import io.ktor.client.features.auth.providers.*
 import io.ktor.util.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
@@ -15,16 +17,20 @@ fun BearerTokens.toAuthTokens() = AuthTokens(accessToken, refreshToken)
 fun AuthTokens.toBearerTokens() = BearerTokens(accessToken, refreshToken)
 
 interface TokenStorage {
+    val currentUser: Flow<User?>
     fun getSavedTokens(): AuthTokens?
     fun saveTokens(tokens: AuthTokens)
 }
 
 class MemoryTokenStorage : TokenStorage {
-    var token: AuthTokens? = null
+    private var token: AuthTokens? = null
+    private val userFlow = MutableStateFlow<User?>(null)
     override fun getSavedTokens(): AuthTokens? = token
+    override val currentUser: Flow<User?> = userFlow
 
     override fun saveTokens(tokens: AuthTokens) {
         token = tokens
+        userFlow.value = tokens.decodeUser()
     }
 
 }

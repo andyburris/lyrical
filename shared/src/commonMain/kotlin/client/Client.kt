@@ -24,8 +24,8 @@ import serverURL
 data class Client(
     val tokenStorage: TokenStorage = MemoryTokenStorage(),
     val httpClient: HttpClient = defaultHttpClient(tokenStorage),
-) {
     val spotifyRepository: SpotifyRepository = RemoteSpotifyRepository(httpClient)
+) {
     suspend fun createRoom(): RoomCode {
         val url = "$serverURL/creategame"
         println("creating game at $url")
@@ -52,7 +52,6 @@ data class Client(
                     }
                 }
             }
-
         }
     }
 }

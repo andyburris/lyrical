@@ -16,9 +16,19 @@ import org.jetbrains.compose.common.ui.unit.dp
 import common.AppBar
 
 @Composable
-fun LobbyHeader(code: String, isHost: Boolean, playlists: List<GenericPlaylist>, modifier: Modifier = Modifier, onClickPlaylist: (playlist: GenericPlaylist) -> Unit) {
-    Column(modifier.background(LyricalTheme.colors.backgroundDark).padding(32.dp),) { //TODO: Add Arrangement.SpacedBy(32.dp), add 32.dp bottom padding if (isHost)
-        AppBar("Lobby") {
+fun LobbyHeader(
+    code: String,
+    isHost: Boolean,
+    playlists: List<GenericPlaylist>,
+    modifier: Modifier = Modifier,
+    onClickPlaylist: (playlist: GenericPlaylist) -> Unit,
+    onNavigateBack: () -> Unit
+) {
+    Column(modifier.background(LyricalTheme.colors.backgroundDark).padding(32.dp)) { //TODO: Add Arrangement.SpacedBy(32.dp), add 32.dp bottom padding if (isHost)
+        AppBar(
+            title = "Lobby",
+            onNavigateBack = onNavigateBack
+        ) {
             ShareRoom(code)
         }
         when {

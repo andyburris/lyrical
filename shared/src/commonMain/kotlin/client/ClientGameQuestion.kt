@@ -20,7 +20,9 @@ sealed class ClientGameQuestion {
         val track: GenericGameTrack,
         val startingLineIndex: Int,
         val answer: GameAnswer.Answered,
-    ) : ClientGameQuestion()
+    ) : ClientGameQuestion() {
+        val allLyrics = track.lyrics[startingLineIndex] + if (Hint.NextLyric in answer.hintsUsed) "/ ${track.lyrics[startingLineIndex + 1]}" else ""
+    }
 }
 
 @Serializable

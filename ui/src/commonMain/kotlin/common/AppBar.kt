@@ -8,7 +8,13 @@ import org.jetbrains.compose.common.foundation.layout.Row
 import org.jetbrains.compose.common.ui.Modifier
 
 @Composable
-fun AppBar(title: String, subtitle: String? = null, modifier: Modifier = Modifier, widget: (@Composable () -> Unit)? = null) {
+fun AppBar(
+    title: String,
+    subtitle: String? = null,
+    modifier: Modifier = Modifier,
+    onNavigateBack: () -> Unit,
+    widget: (@Composable () -> Unit)? = null
+) {
     Row(modifier) {
         //TODO: Add navigation icon
         Column(/*TODO: add Modifier.weight(1f)*/) {

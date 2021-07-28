@@ -1,51 +1,57 @@
 package platform
 
 import org.jetbrains.compose.common.ui.unit.sp
+import styles.text.FontFamily
 import styles.text.FontWeight
 import styles.text.TextStyle
 import styles.text.sp
 
+private val displayFont = FontFamily(alias = "YoungSerif", "ui/src/jvmMain/resources/fonts/YoungSerif.otf")
+private val bodyFont = FontFamily(alias = "Inter", "ui/src/jvmMain/resources/fonts/InterVariable.ttf")
 actual fun lyricalPlatformTypography() = LyricalTypography(
+    displayFont = displayFont,
+    bodyFont = bodyFont,
     h1 = TextStyle(
-        fontWeight = FontWeight.Light,
-        fontSize = 96.sp,
-        letterSpacing = (-1.5).sp
+        fontWeight = FontWeight.Normal,
+        fontSize = 42.sp,
+        fontFamily = displayFont,
     ),
     h2 = TextStyle(
-        fontWeight = FontWeight.Light,
-        fontSize = 60.sp,
-        letterSpacing = (-0.5).sp
+        fontWeight = FontWeight.Normal,
+        fontSize = 24.sp,
+        fontFamily = displayFont,
     ),
     h3 = TextStyle(
         fontWeight = FontWeight.Normal,
-        fontSize = 48.sp,
-        letterSpacing = 0.sp
+        fontSize = 24.sp,
+        fontFamily = displayFont,
     ),
     subtitle1 = TextStyle(
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        letterSpacing = 0.15.sp
+        fontWeight = FontWeight.Medium,
+        fontSize = 18.sp,
+        letterSpacing = 0.15.sp,
+        //fontFamily = bodyFont, TODO: variable fonts
     ),
     subtitle2 = TextStyle(
         fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
-        letterSpacing = 0.1.sp
+        fontSize = 18.sp,
+        //fontFamily = bodyFont, TODO: variable fonts
     ),
     body1 = TextStyle(
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        letterSpacing = 0.5.sp
+        fontSize = 18.sp,
+        //fontFamily = bodyFont, TODO: variable fonts
     ),
     body2 = TextStyle(
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        letterSpacing = 0.25.sp
+        fontSize = 18.sp,
+        //fontFamily = bodyFont, TODO: variable fonts
     ),
     caption = TextStyle(
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp,
-        letterSpacing = 0.4.sp
-    )
+        fontSize = 14.sp,
+        //fontFamily = bodyFont, TODO: variable fonts
+    ),
 )
 
 actual fun lyricalPlatformShapes() = LyricalShapes(

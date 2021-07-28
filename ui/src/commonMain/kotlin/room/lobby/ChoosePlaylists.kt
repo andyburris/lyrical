@@ -5,19 +5,17 @@ import androidx.compose.runtime.*
 import client.ChoosePlaylistsMachine
 import client.PlaylistSearchState
 import client.SelectedPlaylist
-import platform.Button
-import platform.HorizontalOverflowRow
-import platform.LyricalTheme
-import platform.Text
 import kotlinx.coroutines.flow.Flow
 import model.GenericPlaylist
 import org.jetbrains.compose.common.foundation.clickable
+import org.jetbrains.compose.common.foundation.layout.Box
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.padding
 import org.jetbrains.compose.common.ui.unit.dp
+import platform.*
 
 @Composable
 fun ChoosePlaylists(selectedPlaylists: List<GenericPlaylist>, spotifyRepository: SpotifyRepository, modifier: Modifier = Modifier, onSelect: (GenericPlaylist) -> Unit) {
@@ -25,11 +23,12 @@ fun ChoosePlaylists(selectedPlaylists: List<GenericPlaylist>, spotifyRepository:
     val spotifyRepositoryFlow: Flow<SpotifyRepository> = snapshotFlow { spotifyRepository }
     val coroutineScope = rememberCoroutineScope()
     val choosePlaylistsMachine = remember { ChoosePlaylistsMachine(spotifyRepositoryFlow, selectedPlaylistsFlow, coroutineScope) }
+    val searchTerm = choosePlaylistsMachine.searchTerm.collectAsState()
     val userPlaylists = choosePlaylistsMachine.filteredUserPlaylists.collectAsState()
     val spotifyPlaylists = choosePlaylistsMachine.searchedSpotifyPlaylists.collectAsState()
 
     Column(modifier) { //TODO: add Arrangement.SpacedBy(32.dp)
-        //TODO: Search bar
+        SearchBar(term = searchTerm.value) { choosePlaylistsMachine.handleSearchUpdate(it) }
         PlaylistSection(
             name = "My Playlists",
             searchState = userPlaylists.value,
@@ -42,6 +41,13 @@ fun ChoosePlaylists(selectedPlaylists: List<GenericPlaylist>, spotifyRepository:
             onLoginClick = { },
             onSelect = onSelect
         )
+    }
+}
+
+@Composable
+private fun SearchBar(term: String, modifier: Modifier = Modifier, onTermUpdate: (String) -> Unit) {
+    Box(modifier = modifier.padding(16.dp)) {
+        TextField(term, onTermUpdate, placeholder = "Search playlists, artists...")
     }
 }
 

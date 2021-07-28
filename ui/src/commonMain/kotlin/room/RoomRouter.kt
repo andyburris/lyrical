@@ -1,12 +1,10 @@
 package room
 
 import User
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import client.Client
 import client.ClientRoomMachine
+import client.decodeUser
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.common.ui.Modifier
 import room.game.GameRouter
@@ -15,10 +13,11 @@ import server.RoomCode
 import server.RoomState
 
 @Composable
-fun RoomRouter(user: User, code: RoomCode, client: Client, modifier: Modifier = Modifier) {
+fun RoomRouter(code: RoomCode, client: Client, modifier: Modifier = Modifier, onNavigateBack: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
     val roomMachine = remember { ClientRoomMachine(code, client, coroutineScope) }
     val room = roomMachine.roomFlow.collectAsState(null).value
+    val user = client.tokenStorage.currentUser.collectAsState(initial = null)
     println("user = $user, roomHost = ${room?.host}, isHost = ${user == room?.host}")
     when(val state = room?.state) {
         null -> LoadingScreen("Loading into room", modifier)
@@ -28,9 +27,21 @@ fun RoomRouter(user: User, code: RoomCode, client: Client, modifier: Modifier = 
             state = state,
             spotifyRepository = client.spotifyRepository,
             modifier = modifier,
-            onUserAction = { coroutineScope.launch { roomMachine.handleAction(it) } }
+            onUserAction = { coroutineScope.launch { roomMachine.handleAction(it) } },
+            onNavigateBack = onNavigateBack
         )
         is RoomState.Loading -> LoadingScreen("Loading Game", modifier)
-        is RoomState.Game.Client -> GameRouter(state, modifier) { coroutineScope.launch { roomMachine.handleAction(it) } }
+        is RoomState.Game.Client -> GameRouter(
+            game = state,
+            modifier = modifier,
+            onGameAction = { coroutineScope.launch { roomMachine.handleAction(it) } },
+            onNavigateBack = {
+                coroutineScope.launch { roomMachine.handleAction(UserAction.LeaveRoom) }
+                onNavigateBack.invoke()
+            }
+        )
+    }
+    DisposableEffect(roomMachine) {
+        onDispose { coroutineScope.launch { roomMachine.handleAction(UserAction.LeaveRoom) } }
     }
 }

@@ -40,7 +40,7 @@ private fun LeaderboardPlayerItem(player: LeaderboardPlayer, position: Int, answ
                 .background(LyricalTheme.colors.overlay)
                 .size(32.dp)
         ) {
-            Text(position.toString(), style = LyricalTheme.typography.subtitle1, color = textColor)
+            Text((position + 1).toString(), style = LyricalTheme.typography.subtitle1, color = textColor)
         }
 
         Text(player.user.name, style = LyricalTheme.typography.subtitle1, color = textColor) //TODO: add Modifier.weight(1f)

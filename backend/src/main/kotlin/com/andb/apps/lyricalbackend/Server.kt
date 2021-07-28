@@ -1,3 +1,4 @@
+import client.ClientResponse
 import client.serialize
 import com.adamratzman.spotify.spotifyAppApi
 import com.andb.apps.lyricalbackend.*
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.serialization.json.Json
 import server.RoomCode
 import server.RoomMachine
+import server.ServerError
 import java.util.*
 
 fun main() {
@@ -107,6 +109,10 @@ fun main() {
                     val user = call.authentication.principal<JWTPrincipal>()?.toUser() ?: return@webSocket
                     println("authenticated, user = $user")
                     val roomMachine = roomRepository.connectToRoom(code, user)
+                    if (roomMachine == null) {
+                        //outgoing.send(Frame.Text(ClientResponse.Error(ServerError.InvalidCode).serialize()))
+                        return@webSocket
+                    }
                     println("roomMachine = $roomMachine")
                     this.launch {
                         roomMachine.responses.collect {

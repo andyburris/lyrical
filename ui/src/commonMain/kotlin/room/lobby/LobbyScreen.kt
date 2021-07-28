@@ -13,9 +13,23 @@ import server.RoomCode
 import server.RoomState
 
 @Composable
-fun LobbyScreen(code: RoomCode, isHost: Boolean, state: RoomState.Lobby, spotifyRepository: SpotifyRepository, modifier: Modifier = Modifier, onUserAction: (UserAction) -> Unit) {
+fun LobbyScreen(
+    code: RoomCode,
+    isHost: Boolean,
+    state: RoomState.Lobby,
+    spotifyRepository: SpotifyRepository,
+    modifier: Modifier = Modifier,
+    onUserAction: (UserAction) -> Unit,
+    onNavigateBack: () -> Unit
+) {
     Column(modifier) { //TODO: turn into BottomSheetScaffold
-        LobbyHeader(code, isHost, state.playlists, onClickPlaylist = { onUserAction.invoke(LobbyAction.Host.UpdatePlaylists(state.playlists - it)) })
+        LobbyHeader(
+            code = code,
+            isHost = isHost,
+            playlists = state.playlists,
+            onClickPlaylist = { onUserAction.invoke(LobbyAction.Host.UpdatePlaylists(state.playlists - it)) },
+            onNavigateBack = onNavigateBack
+        )
         if (isHost) {
             ButtonRow(
                 state = state,
@@ -23,7 +37,7 @@ fun LobbyScreen(code: RoomCode, isHost: Boolean, state: RoomState.Lobby, spotify
                 onOpenOptions = {} //TODO: open BottomSheet in BottomSheetScaffold
             )
         }
-        when(isHost) {
+        when (isHost) {
             true -> ChoosePlaylists(state.playlists, spotifyRepository) {
                 val newPlaylists = when {
                     it in state.playlists -> state.playlists - it
