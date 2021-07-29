@@ -12,6 +12,7 @@ import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.draw.clip
 import org.jetbrains.compose.common.ui.padding
 import org.jetbrains.compose.common.ui.unit.dp
+import platform.CurrentPalette
 import platform.LyricalTheme
 import platform.Text
 
@@ -24,7 +25,7 @@ fun AnswerTrack(
     Column(
         modifier = modifier
             //.clip(LyricalTheme.shapes.medium) TODO: readd once shapes are supported
-            .background(LyricalTheme.colors.overlay)
+            .background(CurrentPalette.backgroundDark)
             .padding(24.dp)
     ) {
         if (answer is GameAnswer.Answered.Incorrect) {
@@ -32,7 +33,7 @@ fun AnswerTrack(
         }
         Column { //TODO: Add Arrangement.SpacedBy(8.dp)
             if (answer.isWrong) {
-                Text("Correct Answer".uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onBackgroundSecondary)
+                Text("Correct Answer".uppercase(), style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
             }
             SongItem(gameTrack.track)
         }
@@ -45,8 +46,8 @@ private fun YourAnswer(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Text("Your Answer".uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onBackgroundSecondary)
-        Text(answer.answer, style = LyricalTheme.typography.h2, color = LyricalTheme.colors.onBackground)
+        Text("Your Answer".uppercase(), style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
+        Text(answer.answer, style = LyricalTheme.typography.h2, color = CurrentPalette.contentPrimary)
     }
 }
 
@@ -55,8 +56,8 @@ private fun SongItem(track: GenericTrack, modifier: Modifier = Modifier) {
     Row(modifier) { //TODO: add Arrangement.SpacedBy(16.dp)
         //TODO: Add Image(track.imageURL)
         Column {
-            Text(track.name, style = LyricalTheme.typography.h2, color = LyricalTheme.colors.onPrimary)
-            Text(track.artists.joinToString { it.name }, style = LyricalTheme.typography.h2, color = LyricalTheme.colors.onPrimarySecondary)
+            Text(track.name, style = LyricalTheme.typography.h2, color = CurrentPalette.contentPrimary)
+            Text(track.artists.joinToString { it.name }, style = LyricalTheme.typography.h2, color = CurrentPalette.contentSecondary)
         }
     }
 }

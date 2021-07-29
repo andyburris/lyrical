@@ -7,6 +7,8 @@ import platform.LyricalTheme
 import platform.Text
 import common.AppBar
 import model.name
+import platform.CurrentPalette
+import platform.LocalPalette
 
 @Composable
 fun QuestionAppBar(
@@ -26,6 +28,6 @@ fun QuestionAppBar(
         modifier = modifier,
         onNavigateBack = onNavigateBack
     ) {
-        Text("$currentPoints/$questionIndex pts", style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onBackgroundSecondary) //TODO: create AnnotatedString with different colors for "/n pts"
+        Text("$currentPoints/$questionIndex pts", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary) //TODO: create AnnotatedString with different colors for "/n pts"
     }
 }
