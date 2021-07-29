@@ -36,8 +36,8 @@ private fun AnswerSummaryItem(question: ClientGameQuestion.Answered, index: Int,
     Column(
         modifier = modifier
             .clickable { setExpanded(!expanded) }
-            .padding(padding)
-            .border(1.dp, if (expanded) LyricalTheme.colors.onPrimaryTernary else LyricalTheme.colors.primary) //TODO: add animation, change else to Color.Transparent, LyricalTheme.shapes.medium
+            .border(1.dp, if (expanded) LyricalTheme.colors.onPrimaryTernary else LyricalTheme.colors.primary)
+            .padding(padding) //TODO: add animation, change else to Color.Transparent, LyricalTheme.shapes.medium
     ) {
         AnswerSummaryItemHeader(question, index, expanded, Modifier.fillMaxWidth())
         if (expanded) { //TODO: switch with AnimatedVisibility(expanded)

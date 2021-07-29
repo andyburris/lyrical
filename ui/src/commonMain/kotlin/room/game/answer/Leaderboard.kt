@@ -20,19 +20,28 @@ import platform.LyricalTheme
 import platform.Text
 
 @Composable
-fun Leaderboard(leaderboard: Leaderboard, currentQuestionIndex: Int, modifier: Modifier = Modifier) {
+fun Leaderboard(
+    leaderboard: Leaderboard,
+    currentQuestionIndex: Int,
+    modifier: Modifier = Modifier
+) {
     Column(modifier) { //TODO: add Arrangement.SpacedBy(16.dp)
         Text("Leaderboard".uppercase(), style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
         Column { //TODO: add Arrangement.SpacedBy(12.dp)
             leaderboard.players.sortedBy { it.points }.forEachIndexed { index, leaderboardPlayer ->
-                LeaderboardPlayerItem(player = leaderboardPlayer, position = index, answeredCurrentQuestion = leaderboardPlayer.questionsAnswered == currentQuestionIndex)
+                LeaderboardPlayerItem(player = leaderboardPlayer, position = index, answeredCurrentQuestion = leaderboardPlayer.questionsAnswered == currentQuestionIndex + 1)
             }
         }
     }
 }
 
 @Composable
-private fun LeaderboardPlayerItem(player: LeaderboardPlayer, position: Int, answeredCurrentQuestion: Boolean, modifier: Modifier = Modifier) {
+private fun LeaderboardPlayerItem(
+    player: LeaderboardPlayer,
+    position: Int,
+    answeredCurrentQuestion: Boolean,
+    modifier: Modifier = Modifier
+) {
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) { //TODO: add Arrangement.SpacedBy(16.dp)
         val contentColor = if (answeredCurrentQuestion) CurrentPalette.contentPrimary else CurrentPalette.contentSecondary
         ProfilePictureBox(
@@ -45,7 +54,7 @@ private fun LeaderboardPlayerItem(player: LeaderboardPlayer, position: Int, answ
         }
 
         Text(player.user.name, style = LyricalTheme.typography.subtitle1, color = contentColor) //TODO: add Modifier.weight(1f)
-        Text(player.points.toString(), style = LyricalTheme.typography.subtitle1, color = contentColor)
+        Text("${player.points} / ${player.questionsAnswered}", style = LyricalTheme.typography.subtitle1, color = contentColor)
         //TODO: add loading/answered icon
     }
 }

@@ -22,16 +22,17 @@ import serverHost
 import serverURL
 
 data class Client(
-    val tokenStorage: TokenStorage = MemoryTokenStorage(),
-    val httpClient: HttpClient = defaultHttpClient(tokenStorage),
+    val userMachine: UserMachine,
+    val httpClient: HttpClient = defaultHttpClient(userMachine),
     val spotifyRepository: SpotifyRepository = RemoteSpotifyRepository(httpClient)
 ) {
     suspend fun createRoom(): RoomCode {
         val url = "$serverURL/creategame"
         println("creating game at $url")
-        println("current tokens = ${tokenStorage.getSavedTokens()}")
+        println("current tokens = ${userMachine.tokenStorage.getSavedTokens()}")
         return httpClient.post(url)
     }
+
     fun subscribeToRoom(code: RoomCode, userActions: Flow<UserAction>): Flow<ClientResponse> = flow<ClientResponse> {
         httpClient.webSocket("ws://$serverHost/play/$code") {
             outgoing.send(Frame.Text(UserAction.JoinRoom.serialize()))
@@ -56,40 +57,16 @@ data class Client(
     }
 }
 
-fun defaultHttpClient(tokenStorage: TokenStorage): HttpClient {
-    val httpClientNoAuth = HttpClient {
-        install(JsonFeature) {
-            serializer = KotlinxSerializer()
+fun defaultHttpClient(userMachine: UserMachine): HttpClient = HttpClient {
+    install(JsonFeature) {
+        serializer = KotlinxSerializer()
+    }
+    install(Auth) {
+        bearer {
+            realm = "com.andb.apps.lyrical"
+            loadTokens { userMachine.loadTokens() }
+            refreshTokens { response -> userMachine.refreshTokens() }
         }
     }
-    return HttpClient {
-        install(JsonFeature) {
-            serializer = KotlinxSerializer()
-        }
-        install(Auth) {
-            bearer {
-                realm = "com.andb.apps.lyrical"
-                loadTokens {
-                    val saved = tokenStorage.getSavedTokens()
-                    if (saved != null) return@loadTokens saved.toBearerTokens()
-                    val (accessJWT, refreshJWT) = httpClientNoAuth.get<Pair<String, String>>("$serverURL/auth/anonymous")
-                    val tokens = BearerTokens(accessJWT, refreshJWT)
-                    tokenStorage.saveTokens(tokens.toAuthTokens())
-                    println("saved new tokens = ${tokenStorage.getSavedTokens()}")
-                    tokens
-                }
-                refreshTokens { response ->
-                    val saved = tokenStorage.getSavedTokens() ?: return@refreshTokens null
-                    val (accessJWT, refreshJWT) = httpClientNoAuth.get<Pair<String, String>>("$serverURL/auth/refresh") {
-                        header("Authorization: Bearer", saved.refreshToken)
-                    }
-                    val tokens = BearerTokens(accessJWT, refreshJWT)
-                    tokenStorage.saveTokens(tokens.toAuthTokens())
-                    println("saved refreshed tokens = ${tokenStorage.getSavedTokens()}")
-                    tokens
-                }
-            }
-        }
-        install(WebSockets)
-    }
+    install(WebSockets)
 }

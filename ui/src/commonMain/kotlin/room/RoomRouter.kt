@@ -14,10 +14,23 @@ import server.RoomState
 
 @Composable
 fun RoomRouter(code: RoomCode, client: Client, modifier: Modifier = Modifier, onNavigateBack: () -> Unit) {
+    val user = client.userMachine.currentUser.collectAsState(initial = null).value
+    when(user) {
+        null -> NotLoggedInRoomRouter(modifier)
+        else -> LoggedInRoomRouter(code, user, client, modifier, onNavigateBack)
+    }
+}
+
+@Composable
+fun NotLoggedInRoomRouter(modifier: Modifier = Modifier) {
+    LoadingScreen("Loading into room", modifier)
+}
+
+@Composable
+fun LoggedInRoomRouter(code: RoomCode, user: User, client: Client, modifier: Modifier = Modifier, onNavigateBack: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
-    val roomMachine = remember { ClientRoomMachine(code, client, coroutineScope) }
+    val roomMachine = remember { ClientRoomMachine(code, user, client, coroutineScope) }
     val room = roomMachine.roomFlow.collectAsState(null).value
-    val user = client.tokenStorage.currentUser.collectAsState(initial = null).value
     println("user = $user, roomHost = ${room?.host}, isHost = ${user == room?.host}")
     when(val state = room?.state) {
         null -> LoadingScreen("Loading into room", modifier)

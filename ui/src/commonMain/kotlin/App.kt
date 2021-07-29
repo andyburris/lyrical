@@ -4,6 +4,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import client.Client
 import client.Screen
+import client.UserMachine
 import client.decodeUser
 import home.HomeScreen
 import join.JoinScreen
@@ -15,7 +16,8 @@ import room.RoomRouter
 fun App() {
     val navigation = remember { mutableStateOf<Screen>(Screen.Home) }
     //val spotifyRepository = remember { SpotifyLogin() }
-    val client = remember { Client() }
+    val userMachine = remember { UserMachine() }
+    val client = remember { Client(userMachine) }
     val coroutineScope = rememberCoroutineScope()
     LyricalTheme {
         when (val screen = navigation.value) {
