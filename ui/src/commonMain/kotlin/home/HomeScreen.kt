@@ -23,17 +23,17 @@ fun HomeScreen(
             ActionCard(
                 title = "Start Game",
                 summary = "Pick playlists and artists to play a single or multiplayer game",
+                palette = LyricalTheme.colors.primaryPalette,
                 modifier = Modifier //TODO: add shadow, weight, fillMaxHeight Modifier
                     //.clip(LyricalTheme.shapes.medium) TODO: readd once shapes are supported
-                    .background(LyricalTheme.colors.primary)
                     .clickable(onClick = onCreateGame)
             )
             ActionCard(
                 title = "Join Room",
                 summary = "Have a code? Join someone else’s multiplayer lobby",
+                palette = LyricalTheme.colors.backgroundPalette,
                 modifier = Modifier //TODO: add shadow, weight, fillMaxHeight Modifier
                     //.clip(LyricalTheme.shapes.medium) TODO: readd once shapes are supported
-                    .background(LyricalTheme.colors.primary)
                     .clickable(onClick = onJoinRoom)
             )
         }

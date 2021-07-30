@@ -54,7 +54,7 @@ private fun LeaderboardPlayerItem(
         }
 
         Text(player.user.name, style = LyricalTheme.typography.subtitle1, color = contentColor) //TODO: add Modifier.weight(1f)
-        Text("${player.points} / ${player.questionsAnswered}", style = LyricalTheme.typography.subtitle1, color = contentColor)
+        Text("${player.points} pts", style = LyricalTheme.typography.subtitle1, color = contentColor)
         //TODO: add loading/answered icon
     }
 }
