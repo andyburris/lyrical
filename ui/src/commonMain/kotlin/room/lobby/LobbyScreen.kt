@@ -38,12 +38,17 @@ fun LobbyScreen(
             )
         }
         when (isHost) {
-            true -> ChoosePlaylists(state.playlists, spotifyRepository) {
-                val newPlaylists = when {
-                    it in state.playlists -> state.playlists - it
-                    else -> state.playlists + it
+            true -> Column {
+                EditableOptions(state.config) {
+                    onUserAction.invoke(LobbyAction.Host.UpdateConfig(it))
                 }
-                onUserAction.invoke(LobbyAction.Host.UpdatePlaylists(newPlaylists))
+                ChoosePlaylists(state.playlists, spotifyRepository) {
+                    val newPlaylists = when {
+                        it in state.playlists -> state.playlists - it
+                        else -> state.playlists + it
+                    }
+                    onUserAction.invoke(LobbyAction.Host.UpdatePlaylists(newPlaylists))
+                }
             }
             false -> PlayerLobbyInfo(state.config)
         }
