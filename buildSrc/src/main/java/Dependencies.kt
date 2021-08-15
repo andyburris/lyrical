@@ -11,12 +11,14 @@ object Versions {
     const val ktor = "1.6.1"
     const val spotify = "3.8.0"
     const val mosaic = "0.1.0"
+    const val kamel = "0.2.2"
 }
 
 object Dependencies {
 
     const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.serialization}"
     const val spotify = "com.adamratzman:spotify-api-kotlin-core:${Versions.spotify}"
+    const val kamel = "com.alialbaali.kamel:kamel-image:${Versions.kamel}"
 
     object Activity {
         const val core = "androidx.activity:activity:${Versions.activity}"

@@ -4,10 +4,7 @@ import androidx.compose.ui.text.platform.Typeface
 import org.jetbrains.compose.common.ui.unit.TextUnit
 import org.jetbrains.compose.common.ui.unit.implementation
 import org.jetbrains.skija.Typeface
-import styles.text.FontFamily
-import styles.text.FontStyle
-import styles.text.FontWeight
-import styles.text.TextStyle
+import styles.text.*
 import java.io.File
 
 val TextStyle.implementation
@@ -35,3 +32,9 @@ val FontFamily.implementation
             alias = alias
         )
     )
+
+val TextOverflow.implementation get() = when(this) {
+    TextOverflow.Clip -> androidx.compose.ui.text.style.TextOverflow.Clip
+    TextOverflow.Ellipsis -> androidx.compose.ui.text.style.TextOverflow.Ellipsis
+    TextOverflow.Visible -> androidx.compose.ui.text.style.TextOverflow.Visible
+}

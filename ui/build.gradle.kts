@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "1.0.0-alpha1-rc5"
+    id("org.jetbrains.compose") version "1.0.0-alpha3"
     //id("com.android.library")
 }
 
@@ -45,6 +45,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+                implementation(Dependencies.kamel)
             }
         }
         val jvmTest by getting {

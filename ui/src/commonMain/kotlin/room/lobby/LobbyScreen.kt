@@ -9,6 +9,7 @@ import platform.Text
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
 import org.jetbrains.compose.common.ui.Modifier
+import platform.verticalScroll
 import server.RoomCode
 import server.RoomState
 
@@ -22,7 +23,7 @@ fun LobbyScreen(
     onUserAction: (UserAction) -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    Column(modifier) { //TODO: turn into BottomSheetScaffold
+    Column(modifier.verticalScroll()) { //TODO: turn into BottomSheetScaffold
         LobbyHeader(
             code = code,
             isHost = isHost,

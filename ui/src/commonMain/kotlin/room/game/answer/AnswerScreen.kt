@@ -27,7 +27,10 @@ fun AnswerScreen(
 ) {
     ProvidePalette(if (answeredQuestion.answer.isRight) LyricalTheme.colors.primaryPalette else LyricalTheme.colors.backgroundPalette) {
         LyricalScaffold(
-            modifier = modifier.background(CurrentPalette.background).padding(32.dp),
+            modifier = modifier
+                .verticalScroll()
+                .background(CurrentPalette.background)
+                .padding(32.dp),
             appBar = {
                 QuestionAppBar(
                     questionIndex = gameScreen.questionIndex,

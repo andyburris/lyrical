@@ -12,6 +12,7 @@ import org.jetbrains.compose.common.foundation.clickable
 import org.jetbrains.compose.common.foundation.layout.*
 import org.jetbrains.compose.common.ui.*
 import org.jetbrains.compose.common.ui.unit.dp
+import platform.Image
 import platform.LyricalTheme
 import platform.Text
 import points
@@ -58,7 +59,11 @@ private fun AnswerSummaryItemHeader(question: ClientGameQuestion.Answered, index
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(Modifier.size(32.dp)) {
-                //TODO: add image
+                Image(
+                    uri = question.track.track.album.imageURL,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxWidth().fillMaxHeight(1f) //TODO: add Modifier.fillMaxSize()
+                )
                 Box(Modifier.fillMaxWidth().fillMaxHeight(1f).background(LyricalTheme.colors.overlayDark)) {}
                 Text((index + 1).toString(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimary) //TODO: add Modifier.align(Alignment.Center)
             }

@@ -15,16 +15,18 @@ import toGenericTrack
 
 @Serializable
 sealed class GenericPlaylist {
+    abstract val imageURL: String?
     abstract val trackCount: Int
     @Serializable data class Playlist(
         val id: String,
         val name: String,
         val user: String,
-        val imageURL: String?,
+        override val imageURL: String?,
         override val trackCount: Int
     ) : GenericPlaylist()
     @Serializable data class Artist(
         val artist: GenericArtist,
+        override val imageURL: String?,
         override val trackCount: Int
     ) : GenericPlaylist()
 }
@@ -38,7 +40,6 @@ val GenericPlaylist.subtitle get() = when(this) {
     is GenericPlaylist.Playlist -> this.user
     is GenericPlaylist.Artist -> "Artist"
 }
-
 
 suspend fun List<GenericPlaylist>.getRandomSongs(spotifyRepository: SpotifyRepository, config: GameConfig): List<Pair<GenericTrack, GenericPlaylist>> {
     println("getting random songs, config = $config")

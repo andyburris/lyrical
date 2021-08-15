@@ -7,13 +7,14 @@ import jetbrains.compose.common.shapes.CircleShape
 import model.GenericPlaylist
 import model.name
 import model.subtitle
-import org.jetbrains.compose.common.foundation.layout.Box
-import org.jetbrains.compose.common.foundation.layout.Column
+import org.jetbrains.compose.common.foundation.layout.*
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.draw.clip
 import org.jetbrains.compose.common.ui.size
 import org.jetbrains.compose.common.ui.unit.dp
+import platform.Image
+import styles.text.TextOverflow
 
 @Composable
 fun VerticalPlaylistItem(playlist: GenericPlaylist, modifier: Modifier = Modifier, selected: Boolean = false) {
@@ -24,14 +25,30 @@ fun VerticalPlaylistItem(playlist: GenericPlaylist, modifier: Modifier = Modifie
                 .background(LyricalTheme.colors.overlay)
                 .size(128.dp)
         ) {
-            //TODO: Add Image
+            Image(
+                uri = playlist.imageURL ?: "", //TODO: replace with file path of placeholder
+                contentDescription = null,
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(1f) //TODO: replace with fillMaxSize()
+            )
             if (selected) {
                 //TODO: Add check icon
             }
         }
         Column {
-            Text(playlist.name, style = LyricalTheme.typography.subtitle2)
-            Text(playlist.subtitle, style = LyricalTheme.typography.body2)
+            Text(
+                text = playlist.name,
+                style = LyricalTheme.typography.subtitle2,
+                modifier = Modifier.width(128.dp),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = playlist.subtitle,
+                style = LyricalTheme.typography.body2,
+                modifier = Modifier.width(128.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
     }
 }

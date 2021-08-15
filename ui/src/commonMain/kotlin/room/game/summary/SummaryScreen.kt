@@ -9,6 +9,8 @@ import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.ui.Modifier
 import common.AppBar
 import org.jetbrains.compose.common.ui.background
+import org.jetbrains.compose.common.ui.padding
+import org.jetbrains.compose.common.ui.unit.dp
 import platform.*
 import room.game.answer.Leaderboard
 import server.RoomState
@@ -22,7 +24,10 @@ fun SummaryScreen(
 ) {
     ProvidePalette(LyricalTheme.colors.primaryPalette) {
         LyricalScaffold(
-            modifier = modifier.background(CurrentPalette.background),
+            modifier = modifier
+                .verticalScroll()
+                .background(CurrentPalette.background)
+                .padding(32.dp),
             appBar = {
                 AppBar(
                     title = "Summary",

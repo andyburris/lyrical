@@ -11,6 +11,7 @@ import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.padding
 import org.jetbrains.compose.common.ui.unit.dp
 import platform.LyricalTheme
+import platform.verticalScroll
 import server.RoomState
 
 
@@ -23,8 +24,13 @@ fun QuestionScreen(
     onQuestionAction: (GameAction.Question) -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    Column(modifier) {
-        Column(Modifier.background(LyricalTheme.colors.backgroundDark).padding(32.dp)) { //TODO: add Arrangement.SpacedBy(24.dp)
+    Column(modifier.verticalScroll()) {
+        Column(
+            //TODO: add Arrangement.SpacedBy(24.dp)
+            modifier = Modifier
+                .background(LyricalTheme.colors.backgroundDark)
+                .padding(32.dp)
+        ) {
             QuestionAppBar(
                 questionIndex = gameScreen.questionIndex,
                 amountOfSongs = game.config.amountOfSongs,

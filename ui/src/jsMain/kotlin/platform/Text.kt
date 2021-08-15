@@ -1,7 +1,6 @@
 package platform
 
 import androidx.compose.runtime.Composable
-import kotlinx.browser.document
 import org.jetbrains.compose.common.core.graphics.Color
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.unit.TextUnit
@@ -10,17 +9,27 @@ import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Span
 import styles.text.FontFamily
 import styles.text.FontStyle
+import styles.text.TextOverflow
 import styles.text.TextStyle
 import kotlin.js.Promise
 
 @Composable
-actual fun ActualText(text: String, modifier: Modifier, style: TextStyle?, color: Color?) {
+actual fun ActualText(
+    text: String,
+    modifier: Modifier,
+    style: TextStyle?,
+    color: Color?,
+    maxLines: Int,
+    overflow: TextOverflow,
+) {
     Span(
         attrs = {
             style {
                 if (style != null) {
                     applyTextStyle(style)
                 }
+                maxLines(maxLines)
+                textOverflow(overflow)
             }
         },
         content = {
@@ -47,6 +56,30 @@ fun StyleBuilder.applyTextStyle(style: TextStyle) {
     this.property("letter-spacing", style.letterSpacing.cssValue())
     this.property("line-height", style.lineHeight.cssValue())
     style.fontFamily?.let { this.fontFamily(it.alias) }
+}
+
+fun StyleBuilder.maxLines(lines: Int) {
+    property("word-wrap", "break-word")
+    property("overflow-wrap", "anywhere")
+    property("display", "-webkit-box")
+    property("-webkit-line-clamp", lines.toString())
+    property("-webkit-box-orient", "vertical")
+}
+
+fun StyleBuilder.textOverflow(overflow: TextOverflow) {
+    when(overflow) {
+        TextOverflow.Clip -> {
+            overflow("hidden")
+            property("text-overflow", "clip")
+        }
+        TextOverflow.Ellipsis -> {
+            overflow("hidden")
+            property("text-overflow", "ellipsis")
+        }
+        TextOverflow.Visible -> {
+            overflow("visible")
+        }
+    }
 }
 
 external class FontFace(family: String, src: String) {
