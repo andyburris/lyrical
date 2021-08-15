@@ -283,5 +283,5 @@ fun RoomState.Lobby.applyAction(action: LobbyAction, user: User, host: User): Lo
 
 fun GameConfig.isValid(lobby: RoomState.Lobby): Boolean {
     val validSongs = this.amountOfSongs in 1..100 && this.amountOfSongs <= lobby.playlists.sumOf { it.trackCount }
-    return validSongs
+    return true
 }

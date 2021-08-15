@@ -12,6 +12,7 @@ import org.jetbrains.compose.common.foundation.clickable
 import org.jetbrains.compose.common.foundation.layout.*
 import org.jetbrains.compose.common.ui.*
 import org.jetbrains.compose.common.ui.unit.dp
+import platform.CurrentPalette
 import platform.Image
 import platform.LyricalTheme
 import platform.Text
@@ -65,11 +66,17 @@ private fun AnswerSummaryItemHeader(question: ClientGameQuestion.Answered, index
                     modifier = Modifier.fillMaxWidth().fillMaxHeight(1f) //TODO: add Modifier.fillMaxSize()
                 )
                 Box(Modifier.fillMaxWidth().fillMaxHeight(1f).background(LyricalTheme.colors.overlayDark)) {}
-                Text((index + 1).toString(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimary) //TODO: add Modifier.align(Alignment.Center)
+                Text((index + 1).toString(), style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary) //TODO: add Modifier.align(Alignment.Center)
             }
-            Text(question.track.track.name, style = LyricalTheme.typography.h2, color = LyricalTheme.colors.onPrimary)
+            Text(question.track.track.name, style = LyricalTheme.typography.h2, color = CurrentPalette.contentPrimary)
         }
-        Text(question.answer.points.toString(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimary)
+        when(question.answer) {
+            is GameAnswer.Answered.Correct -> Text("+${question.answer.points} pts", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary)
+            is GameAnswer.Answered.Incorrect -> Text("Incorrect", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
+            is GameAnswer.Answered.Skipped -> Text("Skipped", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
+            is GameAnswer.Answered.Missed -> Text("Missed", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
+        }
+
         //TODO: add expanded/collapsed icon
     }
 }
@@ -82,32 +89,32 @@ private fun AnswerSummaryInfo(question: ClientGameQuestion.Answered, modifier: M
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 //TODO: add Quote icon
-                Text("\"${question.allLyrics}\"", style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimary)
+                Text("\"${question.allLyrics}\"", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary)
             }
             Row( //TODO: add Arrangement.SpacedBy(16.dp)
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 //TODO: add Person icon
-                Text(question.track.track.artists.joinToString { it.name }, style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimary)
+                Text(question.track.track.artists.joinToString { it.name }, style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary)
             }
             Row(//TODO: add Arrangement.SpacedBy(16.dp)
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 //TODO: add Note icon
-                Text("from ${question.track.sourcePlaylist.name}", style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimary) //TODO: add AnnotatedString for colors
+                Text("from ${question.track.sourcePlaylist.name}", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary) //TODO: add AnnotatedString for colors
             }
         }
-        Divider(LyricalTheme.colors.onPrimaryTernary)
+        Divider(CurrentPalette.contentTernary)
         Column() { //TODO: add Arrangement.SpacedBy(16.dp)
             if (question.answer is GameAnswer.Answered.Incorrect) {
                 Column {
-                    Text("You Said", style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimarySecondary)
-                    Text((question.answer as GameAnswer.Answered.Incorrect).answer, style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimary)
+                    Text("You Said", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
+                    Text((question.answer as GameAnswer.Answered.Incorrect).answer, style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary)
                 }
             }
             //TODO: add timer
             Column {
-                Text("Hints Used", style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimarySecondary)
+                Text("Hints Used", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
                 val hints = question.answer.hintsUsed.map { hint ->
                     when(hint) {
                         Hint.NextLyric -> "Next Line"
@@ -118,7 +125,7 @@ private fun AnswerSummaryInfo(question: ClientGameQuestion.Answered, modifier: M
                     hints.isNotEmpty() -> hints.joinToString()
                     else -> "None"
                 }
-                Text(text, style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimary)
+                Text(text, style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary)
             }
         }
     }
