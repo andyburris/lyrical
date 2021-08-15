@@ -7,4 +7,3 @@ fun main() = application {
         App()
     }
 }
-
