@@ -1,6 +1,7 @@
 package home
 
 import androidx.compose.runtime.Composable
+import common.Icon
 import platform.LyricalTheme
 import platform.Text
 import org.jetbrains.compose.common.foundation.layout.Column
@@ -13,9 +14,9 @@ import platform.CurrentPalette
 import platform.Palette
 
 @Composable
-fun ActionCard(title: String, summary: String, palette: Palette = CurrentPalette, modifier: Modifier = Modifier) {
+fun ActionCard(title: String, summary: String, icon: Icon, palette: Palette = CurrentPalette, modifier: Modifier = Modifier) {
     Column(modifier.background(palette.backgroundLight).padding(32.dp)) {
-        //TODO: Icon
+        Icon(icon = icon, contentDescription = null, tint = palette.contentPrimary)
         Column {
             Text(title, style = LyricalTheme.typography.subtitle1, color = palette.contentPrimary)
             Text(summary, style = LyricalTheme.typography.body1, color = palette.contentSecondary)

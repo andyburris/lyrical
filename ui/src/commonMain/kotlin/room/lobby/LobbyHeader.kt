@@ -14,6 +14,7 @@ import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.padding
 import org.jetbrains.compose.common.ui.unit.dp
 import common.AppBar
+import common.Icon
 
 @Composable
 fun LobbyHeader(
@@ -45,9 +46,9 @@ fun LobbyHeader(
 
 @Composable
 private fun ShareRoom(code: String, modifier: Modifier = Modifier) {
-    Row(modifier.background(LyricalTheme.colors.background).padding(16.dp)) { //TODO: Add CircleShape to background, vertical 4.dp padding
+    Row(modifier.background(LyricalTheme.colors.background).padding(16.dp)) { //TODO: Add CircleShape to background, vertical 4.dp padding, right 12.dp padding
         Text(code, style = LyricalTheme.typography.subtitle1)
-        //TODO: Add share icon, right 12.dp padding
+        Icon(icon = Icon.Share, contentDescription = "Share room code")
     }
 }
 

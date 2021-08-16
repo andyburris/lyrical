@@ -4,6 +4,7 @@ import UserAnswer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import common.Icon
 import jetbrains.compose.common.shapes.CircleShape
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
@@ -26,7 +27,7 @@ fun AnswerSection(modifier: Modifier = Modifier, onAnswer: (UserAnswer) -> Unit)
             isTextEnabled = answerInput.value.isNotBlank(),
             onClickText = { onAnswer.invoke(UserAnswer.Answer(answerInput.value)) },
             icon = {
-                //TODO: add Skip Icon
+                Icon(icon = Icon.Skip, contentDescription = "Skip question")
             },
             onClickIcon = { onAnswer.invoke(UserAnswer.Skipped) }
         )
@@ -51,9 +52,10 @@ private fun CombinedButton(
         ) { //TODO: add weight(1f) modifier, colors, etc.
             text()
         }
-        Button(
+        FloatingActionButton(
             isEnabled = isIconEnabled,
             onClick = onClickIcon,
+            palette = CurrentPalette.invert().copy(background = CurrentPalette.invert().backgroundDark)
             //shape = RectangleShape TODO: readd once shapes are supported
         ) {
             icon()

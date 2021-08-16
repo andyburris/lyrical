@@ -5,14 +5,19 @@ import androidx.compose.runtime.*
 import client.ChoosePlaylistsMachine
 import client.PlaylistSearchState
 import client.SelectedPlaylist
+import common.Icon
+import jetbrains.compose.common.shapes.CircleShape
 import kotlinx.coroutines.flow.Flow
 import model.GenericPlaylist
 import org.jetbrains.compose.common.foundation.clickable
 import org.jetbrains.compose.common.foundation.layout.Box
 import org.jetbrains.compose.common.foundation.layout.Column
+import org.jetbrains.compose.common.foundation.layout.Row
 import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
+import org.jetbrains.compose.common.ui.Alignment
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.background
+import org.jetbrains.compose.common.ui.draw.clip
 import org.jetbrains.compose.common.ui.padding
 import org.jetbrains.compose.common.ui.unit.dp
 import platform.*
@@ -46,7 +51,16 @@ fun ChoosePlaylists(selectedPlaylists: List<GenericPlaylist>, spotifyRepository:
 
 @Composable
 private fun SearchBar(term: String, modifier: Modifier = Modifier, onTermUpdate: (String) -> Unit) {
-    Box(modifier = modifier.padding(16.dp)) {
+    Row(
+        modifier = modifier
+            .clip(CircleShape)
+            .background(CurrentPalette.backgroundDark)
+            .padding(16.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        //TODO: add Arrangement.SpacedBy(16.dp)
+    ) {
+        Icon(Icon.Search, contentDescription = null, tint = CurrentPalette.contentSecondary)
         TextField(term, onTermUpdate, placeholder = "Search playlists, artists...")
     }
 }

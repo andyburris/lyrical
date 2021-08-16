@@ -7,3 +7,7 @@ expect fun Modifier.weight(weight: Float = 1f): Modifier
 
 @Composable
 expect fun Modifier.verticalScroll(): Modifier
+
+expect fun Modifier.graphicsLayer(
+    rotationZ: Float
+): Modifier

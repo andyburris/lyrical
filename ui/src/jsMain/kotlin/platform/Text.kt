@@ -30,6 +30,9 @@ actual fun ActualText(
                 }
                 maxLines(maxLines)
                 textOverflow(overflow)
+                if (color != null) {
+                    color(rgb(color.red, color.blue, color.green)) //TODO: replace with rgba, Color.implementation
+                }
             }
         },
         content = {

@@ -1,6 +1,7 @@
 package room.lobby
 
 import androidx.compose.runtime.Composable
+import common.Icon
 import platform.LyricalTheme
 import platform.Text
 import jetbrains.compose.common.shapes.CircleShape
@@ -14,6 +15,7 @@ import org.jetbrains.compose.common.ui.draw.clip
 import org.jetbrains.compose.common.ui.size
 import org.jetbrains.compose.common.ui.unit.dp
 import platform.Image
+import platform.Resource
 import styles.text.TextOverflow
 
 @Composable
@@ -26,12 +28,16 @@ fun VerticalPlaylistItem(playlist: GenericPlaylist, modifier: Modifier = Modifie
                 .size(128.dp)
         ) {
             Image(
-                uri = playlist.imageURL ?: "", //TODO: replace with file path of placeholder
+                resource = Resource.Url(playlist.imageURL ?: ""), //TODO: replace with file path of placeholder
                 contentDescription = null,
                 modifier = Modifier.fillMaxWidth().fillMaxHeight(1f) //TODO: replace with fillMaxSize()
             )
             if (selected) {
-                //TODO: Add check icon
+                Icon(
+                    icon = Icon.Check,
+                    contentDescription = "Selected",
+                    //TODO: add Modifier.align(Alignment.Center)
+                )
             }
         }
         Column {

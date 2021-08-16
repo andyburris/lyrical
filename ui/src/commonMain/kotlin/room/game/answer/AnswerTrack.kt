@@ -13,10 +13,7 @@ import org.jetbrains.compose.common.ui.draw.clip
 import org.jetbrains.compose.common.ui.padding
 import org.jetbrains.compose.common.ui.size
 import org.jetbrains.compose.common.ui.unit.dp
-import platform.CurrentPalette
-import platform.Image
-import platform.LyricalTheme
-import platform.Text
+import platform.*
 
 @Composable
 fun AnswerTrack(
@@ -56,7 +53,7 @@ private fun YourAnswer(
 @Composable
 private fun SongItem(track: GenericTrack, modifier: Modifier = Modifier) {
     Row(modifier) { //TODO: add Arrangement.SpacedBy(16.dp)
-        Image(track.album.imageURL, contentDescription = null, modifier = Modifier.size(48.dp))
+        Image(Resource.Url(track.album.imageURL), contentDescription = null, modifier = Modifier.size(48.dp))
         Column {
             Text(track.name, style = LyricalTheme.typography.h2, color = CurrentPalette.contentPrimary)
             Text(track.artists.joinToString { it.name }, style = LyricalTheme.typography.h2, color = CurrentPalette.contentSecondary)

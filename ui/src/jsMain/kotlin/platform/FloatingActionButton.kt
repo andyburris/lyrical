@@ -6,7 +6,7 @@ import org.jetbrains.compose.common.material.ButtonActual
 import org.jetbrains.compose.common.ui.Modifier
 
 @Composable
-actual fun ActualButton(
+actual fun ActualFloatingActionButton(
     onClick: () -> Unit,
     modifier: Modifier,
     isEnabled: Boolean,
@@ -14,9 +14,13 @@ actual fun ActualButton(
     palette: Palette,
     content: @Composable () -> Unit
 ) {
-    val enabledPalette = when(isEnabled) {
-        true -> palette
-        false -> palette.copy(contentPrimary = palette.contentTernary, contentSecondary = palette.contentTernary)
+    ButtonActual(modifier = modifier, onClick = onClick) {
+        val enabledPalette = when(isEnabled) {
+            true -> palette
+            false -> palette.copy(contentPrimary = palette.contentTernary, contentSecondary = palette.contentTernary)
+        }
+        ProvidePalette(enabledPalette) {
+            content()
+        }
     }
-    ButtonActual(modifier = modifier, onClick = onClick, content = content)
 }

@@ -1,20 +1,28 @@
 package platform
 
 import androidx.compose.runtime.Composable
+import org.jetbrains.compose.common.core.graphics.Color
 import org.jetbrains.compose.common.ui.Modifier
 
 @Composable
 fun Image(
-    uri: String,
+    resource: Resource,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    placeholderURI: String? = null
-) = ActualImage(uri, contentDescription, modifier, placeholderURI)
+    placeholder: Resource? = null,
+    tint: Color? = null,
+) = ActualImage(resource, contentDescription, modifier, placeholder, tint)
 
 @Composable
 expect fun ActualImage(
-    uri: String,
+    resource: Resource,
     contentDescription: String?,
     modifier: Modifier,
-    placeholderURI: String?
+    placeholder: Resource?,
+    tint: Color? = null,
 )
+
+sealed class Resource {
+    data class File(val path: String) : Resource()
+    data class Url(val url: String) : Resource()
+}

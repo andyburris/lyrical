@@ -13,9 +13,9 @@ fun TextField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     textStyle: TextStyle? = null,
-    textColor: Color? = null,
+    textColor: Color? = CurrentPalette.contentPrimary,
     placeholder: String = "",
-    placeholderColor: Color? = null,
+    placeholderColor: Color? = CurrentPalette.contentTernary,
 ) {
     BaseTextField(
         value = value,

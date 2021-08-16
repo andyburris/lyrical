@@ -6,16 +6,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import client.ClientGameQuestion
 import common.Divider
+import common.Icon
 import model.name
 import org.jetbrains.compose.common.foundation.border
 import org.jetbrains.compose.common.foundation.clickable
 import org.jetbrains.compose.common.foundation.layout.*
 import org.jetbrains.compose.common.ui.*
 import org.jetbrains.compose.common.ui.unit.dp
-import platform.CurrentPalette
-import platform.Image
-import platform.LyricalTheme
-import platform.Text
+import platform.*
 import points
 
 @Composable
@@ -24,7 +22,7 @@ fun AnswerSummary(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) { //TODO: add Arrangement.SpacedBy(32.dp)
-        Text("Subtitle", style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimarySecondary)
+        Text("Answers".uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimarySecondary)
         questions.forEachIndexed { index, question ->
             AnswerSummaryItem(question, index)
         }
@@ -61,7 +59,7 @@ private fun AnswerSummaryItemHeader(question: ClientGameQuestion.Answered, index
         ) {
             Box(Modifier.size(32.dp)) {
                 Image(
-                    uri = question.track.track.album.imageURL,
+                    resource = Resource.Url(question.track.track.album.imageURL),
                     contentDescription = null,
                     modifier = Modifier.fillMaxWidth().fillMaxHeight(1f) //TODO: add Modifier.fillMaxSize()
                 )
@@ -77,7 +75,13 @@ private fun AnswerSummaryItemHeader(question: ClientGameQuestion.Answered, index
             is GameAnswer.Answered.Missed -> Text("Missed", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
         }
 
-        //TODO: add expanded/collapsed icon
+        val rotation = if (expanded) 90f else 0f //TODO: add animation
+        Icon(
+            icon = Icon.Arrow.Right,
+            contentDescription = if (expanded) "Collapse" else "Expand",
+            modifier = Modifier.graphicsLayer(rotationZ = rotation),
+            tint = CurrentPalette.contentSecondary,
+        )
     }
 }
 
@@ -88,19 +92,19 @@ private fun AnswerSummaryInfo(question: ClientGameQuestion.Answered, modifier: M
             Row( //TODO: add Arrangement.SpacedBy(16.dp)
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                //TODO: add Quote icon
+                Icon(icon = Icon.Quote, contentDescription = null)
                 Text("\"${question.allLyrics}\"", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary)
             }
             Row( //TODO: add Arrangement.SpacedBy(16.dp)
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                //TODO: add Person icon
+                Icon(icon = Icon.Person, contentDescription = null)
                 Text(question.track.track.artists.joinToString { it.name }, style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary)
             }
             Row(//TODO: add Arrangement.SpacedBy(16.dp)
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                //TODO: add Note icon
+                Icon(icon = Icon.Playlist, contentDescription = null)
                 Text("from ${question.track.sourcePlaylist.name}", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary) //TODO: add AnnotatedString for colors
             }
         }

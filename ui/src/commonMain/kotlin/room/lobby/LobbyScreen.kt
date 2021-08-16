@@ -4,11 +4,14 @@ import LobbyAction
 import SpotifyRepository
 import UserAction
 import androidx.compose.runtime.Composable
+import common.Icon
 import platform.Button
 import platform.Text
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
+import org.jetbrains.compose.common.ui.Alignment
 import org.jetbrains.compose.common.ui.Modifier
+import platform.FloatingActionButton
 import platform.verticalScroll
 import server.RoomCode
 import server.RoomState
@@ -64,8 +67,15 @@ private fun ButtonRow(state: RoomState.Lobby, onStartGame: () -> Unit, onOpenOpt
             isEnabled = state.playlists.isNotEmpty(),
             onClick = onStartGame
         ) {
-            Text("Start Game".uppercase())
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                //TODO: add Arrangement.SpacedBy(16.dp)
+            ) {
+                Icon(Icon.Play, contentDescription = null)
+                Text("Start Game".uppercase())
+            }
         }
+        //FloatingActionButton()
         //TODO: add FAB
     }
 }

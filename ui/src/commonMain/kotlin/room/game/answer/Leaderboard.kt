@@ -3,6 +3,7 @@ package room.game.answer
 import androidx.compose.runtime.Composable
 import client.Leaderboard
 import client.LeaderboardPlayer
+import common.Icon
 import jetbrains.compose.common.shapes.CircleShape
 import name
 import org.jetbrains.compose.common.foundation.layout.Box
@@ -55,6 +56,18 @@ private fun LeaderboardPlayerItem(
 
         Text(player.user.name, style = LyricalTheme.typography.subtitle1, color = contentColor) //TODO: add Modifier.weight(1f)
         Text("${player.points} pts", style = LyricalTheme.typography.subtitle1, color = contentColor)
+        when(answeredCurrentQuestion) {
+            true -> Icon(
+                icon = Icon.CheckCircle,
+                contentDescription = "Answered"
+            )
+            false -> Icon(
+                icon = Icon.Hourglass,
+                contentDescription = "Not answered yet",
+                tint = CurrentPalette.contentSecondary
+            )
+        }
+
         //TODO: add loading/answered icon
     }
 }
