@@ -19,7 +19,7 @@ class MemoryRoomRepository() : RoomRepository {
     }
 
     override fun connectToRoom(code: String, user: User): UserRoomMachine? {
-        val roomMachine = rooms[code] ?: return null
+        val roomMachine = rooms[code.uppercase()] ?: return null
         return UserRoomMachine(roomMachine, user)
     }
 
