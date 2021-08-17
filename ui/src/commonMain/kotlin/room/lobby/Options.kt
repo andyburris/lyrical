@@ -5,11 +5,9 @@ import androidx.compose.runtime.Composable
 import common.Chip
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
+import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
 import org.jetbrains.compose.common.ui.Modifier
-import platform.CurrentPalette
-import platform.LyricalTheme
-import platform.SegmentedControl
-import platform.Text
+import platform.*
 
 @Composable
 fun EditableOptions(
@@ -23,7 +21,14 @@ fun EditableOptions(
                 selected = config.difficulty,
                 options = Difficulty.values().toList(),
                 stringify = { this.name },
-                onSelect = { onEdit.invoke(config.copy(difficulty = it)) }
+                onSelect = { onEdit.invoke(config.copy(difficulty = it)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        HorizontalOptionItem("Show source playlist") {
+            Switch(
+                checked = config.showSourcePlaylist,
+                onCheckedChange = { onEdit.invoke(config.copy(showSourcePlaylist = it)) },
             )
         }
     }

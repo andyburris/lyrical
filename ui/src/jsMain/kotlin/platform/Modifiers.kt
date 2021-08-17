@@ -7,12 +7,6 @@ import org.jetbrains.compose.web.css.deg
 import org.jetbrains.compose.web.css.flexGrow
 import org.jetbrains.compose.web.css.overflowY
 
-actual fun Modifier.weight(weight: Float): Modifier = castOrCreate().apply {
-    add {
-        flexGrow(weight)
-    }
-}
-
 @Composable
 actual fun Modifier.verticalScroll(): Modifier = castOrCreate().apply {
     add {

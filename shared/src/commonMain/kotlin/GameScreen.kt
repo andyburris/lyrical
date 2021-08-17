@@ -2,7 +2,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class GameScreen {
-    data class Question(val questionIndex: Int) : GameScreen()
-    data class Answer(val questionIndex: Int) : GameScreen()
-    object Summary : GameScreen()
+    @Serializable data class Question(val questionIndex: Int) : GameScreen()
+    @Serializable data class Answer(val questionIndex: Int) : GameScreen()
+    @Serializable object Summary : GameScreen()
 }
