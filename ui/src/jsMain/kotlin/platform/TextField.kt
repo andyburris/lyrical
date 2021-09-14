@@ -3,12 +3,14 @@ package platform
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.common.core.graphics.Color
 import org.jetbrains.compose.common.foundation.layout.Box
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.web.attributes.disabled
 import org.jetbrains.compose.web.attributes.placeholder
 import org.jetbrains.compose.web.dom.TextInput
 import styles.text.TextStyle
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 actual fun ActualBaseTextField(
     value: String,

@@ -5,6 +5,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import jetbrains.compose.common.shapes.Shape
 import org.jetbrains.compose.common.core.graphics.Color
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import styles.text.FontFamily
 import styles.text.TextStyle
 import toColor
@@ -32,6 +33,7 @@ fun LyricalTheme(
     CompositionLocalProvider(LocalColors provides colors, LocalTypography provides typography, LocalShapes provides shapes, LocalPalette provides colors.backgroundPalette, content = content)
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 data class LyricalColors(
     val backgroundPalette: Palette,
     val primaryPalette: Palette,
@@ -51,6 +53,7 @@ data class LyricalColors(
     val onPrimaryTernary: Color = primaryPalette.contentTernary
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 data class Palette(
     val background: Color,
     val backgroundDark: Color,
@@ -69,6 +72,7 @@ fun ProvidePalette(palette: Palette, content: @Composable () -> Unit) {
 @Composable
 fun Palette.invert() = if (this == LyricalTheme.colors.backgroundPalette) LyricalTheme.colors.primaryPalette else LyricalTheme.colors.backgroundPalette
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 fun lightColors() = LyricalColors(
     //background = 0xFFFFFFFF.toColor(),
     //backgroundDark = 0xFFF0F0F0.toColor(),
@@ -114,11 +118,12 @@ data class LyricalTypography(
     val caption: TextStyle,
 )
 
-
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 data class LyricalShapes(
     val small: Shape,
     val medium: Shape,
     val large: Shape,
 )
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 object RectangleShape : Shape

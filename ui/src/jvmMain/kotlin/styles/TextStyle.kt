@@ -1,12 +1,14 @@
 package styles
 
 import androidx.compose.ui.text.platform.Typeface
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.unit.TextUnit
 import org.jetbrains.compose.common.ui.unit.implementation
 import org.jetbrains.skija.Typeface
 import styles.text.*
 import java.io.File
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 val TextStyle.implementation
     get() = androidx.compose.ui.text.TextStyle(
         fontSize = fontSize.implementation,

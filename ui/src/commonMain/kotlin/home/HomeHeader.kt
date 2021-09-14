@@ -8,6 +8,7 @@ import jetbrains.compose.common.shapes.CircleShape
 import org.jetbrains.compose.common.foundation.layout.Box
 import org.jetbrains.compose.common.foundation.layout.Row
 import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.draw.clip
@@ -16,6 +17,7 @@ import org.jetbrains.compose.common.ui.unit.dp
 import platform.Image
 import platform.Resource
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun HomeHeader(modifier: Modifier = Modifier) {
     Row(modifier.fillMaxWidth()) { //TODO: add Arrangement.SpaceBetween()
@@ -26,6 +28,7 @@ fun HomeHeader(modifier: Modifier = Modifier) {
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun ProfilePicture(modifier: Modifier = Modifier) {
     Box(modifier.clip(CircleShape).background(LyricalTheme.colors.overlay)) {

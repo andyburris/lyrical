@@ -11,10 +11,12 @@ import org.jetbrains.compose.common.foundation.layout.Arrangement
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
 import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import platform.LyricalTheme
 import platform.Text
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun LyricSection(question: ClientGameQuestion.Unanswered, questionIndex: Int, modifier: Modifier = Modifier, onQuestionAction: (GameAction.Question) -> Unit) {
     Column(modifier = modifier) { //TODO: add Arrangement.SpacedBy(16.dp)

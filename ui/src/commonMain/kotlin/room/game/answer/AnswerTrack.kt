@@ -7,14 +7,12 @@ import isWrong
 import model.GenericGameTrack
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.ui.background
+import org.jetbrains.compose.common.ui.*
 import org.jetbrains.compose.common.ui.draw.clip
-import org.jetbrains.compose.common.ui.padding
-import org.jetbrains.compose.common.ui.size
 import org.jetbrains.compose.common.ui.unit.dp
 import platform.*
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun AnswerTrack(
     gameTrack: GenericGameTrack,
@@ -39,6 +37,7 @@ fun AnswerTrack(
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun YourAnswer(
     answer: GameAnswer.Answered.Incorrect,
@@ -50,6 +49,7 @@ private fun YourAnswer(
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun SongItem(track: GenericTrack, modifier: Modifier = Modifier) {
     Row(modifier) { //TODO: add Arrangement.SpacedBy(16.dp)

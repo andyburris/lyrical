@@ -1,5 +1,6 @@
 package platform
 
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.unit.sp
 import styles.text.FontFamily
 import styles.text.FontWeight
@@ -8,6 +9,7 @@ import styles.text.sp
 
 private val displayFont = FontFamily(alias = "YoungSerif", "ui/src/jvmMain/resources/fonts/YoungSerif.otf")
 private val bodyFont = FontFamily(alias = "Inter", "ui/src/jvmMain/resources/fonts/InterVariable.ttf")
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 actual fun lyricalPlatformTypography() = LyricalTypography(
     displayFont = displayFont,
     bodyFont = bodyFont,

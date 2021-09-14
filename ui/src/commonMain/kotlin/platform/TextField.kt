@@ -3,9 +3,11 @@ package platform
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.common.core.graphics.Color
 import org.jetbrains.compose.common.foundation.layout.Box
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import styles.text.TextStyle
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun TextField(
     value: String,
@@ -29,6 +31,7 @@ fun TextField(
     )
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun BaseTextField(
     value: String,
@@ -41,6 +44,7 @@ fun BaseTextField(
     placeholderColor: Color? = null,
 ) = ActualBaseTextField(value, onValueChange, modifier, enabled, textStyle, textColor, placeholder, placeholderColor)
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 expect fun ActualBaseTextField(
     value: String,

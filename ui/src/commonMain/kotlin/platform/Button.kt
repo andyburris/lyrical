@@ -3,8 +3,10 @@ package platform
 import androidx.compose.runtime.Composable
 import jetbrains.compose.common.shapes.CircleShape
 import jetbrains.compose.common.shapes.Shape
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun Button(
     onClick: () -> Unit,
@@ -15,6 +17,7 @@ fun Button(
     content: @Composable () -> Unit,
 ) = ActualButton(onClick, modifier, isEnabled, shape, palette, content)
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 expect fun ActualButton(
     onClick: () -> Unit,

@@ -3,12 +3,14 @@ package room.game
 import GameAction
 import androidx.compose.runtime.Composable
 import client.ClientGameQuestion
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import room.game.answer.AnswerScreen
 import room.game.question.QuestionScreen
 import room.game.summary.SummaryScreen
 import server.RoomState
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun GameRouter(
     game: RoomState.Game.Client,

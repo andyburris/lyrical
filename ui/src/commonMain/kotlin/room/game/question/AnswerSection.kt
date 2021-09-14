@@ -8,10 +8,12 @@ import common.Icon
 import jetbrains.compose.common.shapes.CircleShape
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.draw.clip
 import platform.*
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun AnswerSection(modifier: Modifier = Modifier, onAnswer: (UserAnswer) -> Unit) {
     Column(modifier) { //TODO: Add Arrangement.SpacedBy(24.dp)
@@ -34,6 +36,7 @@ fun AnswerSection(modifier: Modifier = Modifier, onAnswer: (UserAnswer) -> Unit)
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun CombinedButton(
     modifier: Modifier = Modifier,

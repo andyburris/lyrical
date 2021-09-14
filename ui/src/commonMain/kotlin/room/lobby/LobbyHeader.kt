@@ -15,7 +15,9 @@ import org.jetbrains.compose.common.ui.padding
 import org.jetbrains.compose.common.ui.unit.dp
 import common.AppBar
 import common.Icon
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun LobbyHeader(
     code: String,
@@ -44,6 +46,7 @@ fun LobbyHeader(
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun ShareRoom(code: String, modifier: Modifier = Modifier) {
     Row(modifier.background(LyricalTheme.colors.background).padding(16.dp)) { //TODO: Add CircleShape to background, vertical 4.dp padding, right 12.dp padding
@@ -52,6 +55,7 @@ private fun ShareRoom(code: String, modifier: Modifier = Modifier) {
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun NoPlaylists(isHost: Boolean, modifier: Modifier = Modifier) {
     Column(modifier) { //TODO: Add Arrangement.SpacedBy(32.dp)

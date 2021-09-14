@@ -10,16 +10,14 @@ import org.jetbrains.compose.common.foundation.layout.Box
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
 import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
-import org.jetbrains.compose.common.ui.Alignment
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.ui.background
+import org.jetbrains.compose.common.ui.*
 import org.jetbrains.compose.common.ui.draw.clip
-import org.jetbrains.compose.common.ui.size
 import org.jetbrains.compose.common.ui.unit.dp
 import platform.CurrentPalette
 import platform.LyricalTheme
 import platform.Text
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun Leaderboard(
     leaderboard: Leaderboard,
@@ -36,6 +34,7 @@ fun Leaderboard(
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun LeaderboardPlayerItem(
     player: LeaderboardPlayer,
@@ -73,6 +72,7 @@ private fun LeaderboardPlayerItem(
 }
 
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun ProfilePictureBox(modifier: Modifier, content: @Composable () -> Unit) {
     Box(modifier, content = content)

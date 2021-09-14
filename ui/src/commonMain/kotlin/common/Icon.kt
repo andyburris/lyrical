@@ -2,6 +2,7 @@ package common
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.common.core.graphics.Color
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.size
 import org.jetbrains.compose.common.ui.unit.Dp
@@ -10,6 +11,7 @@ import platform.CurrentPalette
 import platform.Image
 import platform.Resource
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun Icon(
     icon: Icon,

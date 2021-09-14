@@ -5,10 +5,12 @@ import androidx.compose.runtime.tooling.LocalInspectionTables
 import org.jetbrains.compose.common.foundation.layout.Box
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.padding
 import org.jetbrains.compose.common.ui.unit.dp
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun LyricalScaffold(
     modifier: Modifier = Modifier,

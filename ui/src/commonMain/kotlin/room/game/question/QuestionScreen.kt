@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import client.ClientGameQuestion
 import client.totalPoints
 import org.jetbrains.compose.common.foundation.layout.Column
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.padding
@@ -15,6 +16,7 @@ import platform.verticalScroll
 import server.RoomState
 
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun QuestionScreen(
     gameScreen: GameScreen.Question,

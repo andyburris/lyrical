@@ -7,10 +7,12 @@ import platform.Text
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
 import org.jetbrains.compose.common.ui.Alignment
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import platform.CurrentPalette
 import platform.LocalPalette
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun AppBar(
     title: String,

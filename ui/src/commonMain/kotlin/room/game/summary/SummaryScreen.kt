@@ -8,6 +8,7 @@ import common.LyricalScaffold
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.ui.Modifier
 import common.AppBar
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.padding
 import org.jetbrains.compose.common.ui.unit.dp
@@ -15,6 +16,7 @@ import platform.*
 import room.game.answer.Leaderboard
 import server.RoomState
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun SummaryScreen(
     game: RoomState.Game.Client,

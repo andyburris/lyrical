@@ -5,8 +5,10 @@ import platform.LyricalTheme
 import platform.Text
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun LoadingScreen(loadingDescription: String, modifier: Modifier = Modifier) {
     Column(modifier) { //TODO: add Arrangement.SpacedBy(32.dp, Alignment.CenterVertically)

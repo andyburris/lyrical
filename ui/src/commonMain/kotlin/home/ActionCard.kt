@@ -6,6 +6,7 @@ import platform.LyricalTheme
 import platform.Text
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.padding
@@ -13,6 +14,7 @@ import org.jetbrains.compose.common.ui.unit.dp
 import platform.CurrentPalette
 import platform.Palette
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun ActionCard(title: String, summary: String, icon: Icon, palette: Palette = CurrentPalette, modifier: Modifier = Modifier) {
     Column(modifier.background(palette.backgroundLight).padding(32.dp)) {

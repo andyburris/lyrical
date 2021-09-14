@@ -3,8 +3,10 @@ package platform
 import androidx.compose.runtime.Composable
 import jetbrains.compose.common.shapes.Shape
 import org.jetbrains.compose.common.material.ButtonActual
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 actual fun ActualButton(
     onClick: () -> Unit,

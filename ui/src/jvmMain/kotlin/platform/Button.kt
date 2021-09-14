@@ -13,10 +13,12 @@ import androidx.compose.ui.unit.dp
 import jetbrains.compose.common.shapes.Shape
 import jetbrains.compose.common.shapes.implementation
 import org.jetbrains.compose.common.core.graphics.implementation
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.implementation
 import styles.implementation
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 actual fun ActualButton(
     onClick: () -> Unit,
@@ -45,6 +47,7 @@ actual fun ActualButton(
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun lyricalButtonColors(palette: Palette) = buttonColors(
     backgroundColor = palette.background.implementation,

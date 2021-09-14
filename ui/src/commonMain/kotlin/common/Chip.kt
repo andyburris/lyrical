@@ -3,6 +3,7 @@ package common
 import androidx.compose.runtime.Composable
 import jetbrains.compose.common.shapes.CircleShape
 import org.jetbrains.compose.common.foundation.layout.Box
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.draw.clip
@@ -11,6 +12,7 @@ import org.jetbrains.compose.common.ui.unit.dp
 import platform.CurrentPalette
 import platform.Text
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun Chip(text: String, modifier: Modifier = Modifier, selected: Boolean = false) { //TODO: add color schemes
     Box(

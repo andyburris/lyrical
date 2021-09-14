@@ -4,9 +4,11 @@ package platform
 import androidx.compose.material.SwitchDefaults
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.common.core.graphics.implementation
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.implementation
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 actual fun ActualSwitch(
     checked: Boolean,

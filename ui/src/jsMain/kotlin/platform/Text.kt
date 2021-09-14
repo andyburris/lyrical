@@ -2,6 +2,7 @@ package platform
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.common.core.graphics.Color
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.unit.TextUnit
 import org.jetbrains.compose.common.ui.unit.TextUnitType
@@ -13,6 +14,7 @@ import styles.text.TextOverflow
 import styles.text.TextStyle
 import kotlin.js.Promise
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 actual fun ActualText(
     text: String,
@@ -41,6 +43,7 @@ actual fun ActualText(
     )
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 fun TextUnit.cssValue(): CSSSizeValue<*> = when (this.unitType) {
     TextUnitType.Unspecified -> this.value.px
     TextUnitType.Em -> this.value.em

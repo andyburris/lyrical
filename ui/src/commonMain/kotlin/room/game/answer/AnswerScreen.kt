@@ -8,6 +8,7 @@ import common.LyricalScaffold
 import isRight
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.padding
@@ -16,6 +17,7 @@ import platform.*
 import room.game.question.QuestionAppBar
 import server.RoomState
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun AnswerScreen(
     gameScreen: GameScreen.Answer,

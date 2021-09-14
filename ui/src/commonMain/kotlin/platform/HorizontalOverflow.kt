@@ -4,6 +4,7 @@ package platform
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.common.foundation.layout.Arrangement
 import org.jetbrains.compose.common.ui.Alignment
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 
 /**
@@ -11,6 +12,7 @@ import org.jetbrains.compose.common.ui.Modifier
  * Mobile: horizontal scroll
  * Desktop: wrap items to next line
  */
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun HorizontalOverflowRow(
     modifier: Modifier = Modifier,
@@ -24,6 +26,7 @@ fun HorizontalOverflowRow(
  * Mobile: horizontal scroll
  * Desktop: wrap items to next line
  */
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 expect fun ActualHorizontalOverflowRow(
     modifier: Modifier,

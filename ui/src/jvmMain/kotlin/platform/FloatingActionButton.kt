@@ -6,9 +6,11 @@ import androidx.compose.runtime.Composable
 import jetbrains.compose.common.shapes.Shape
 import jetbrains.compose.common.shapes.implementation
 import org.jetbrains.compose.common.core.graphics.implementation
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.implementation
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 actual fun ActualFloatingActionButton(
     onClick: () -> Unit,

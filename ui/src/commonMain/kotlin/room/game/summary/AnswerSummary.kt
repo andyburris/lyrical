@@ -16,6 +16,7 @@ import org.jetbrains.compose.common.ui.unit.dp
 import platform.*
 import points
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun AnswerSummary(
     questions: List<ClientGameQuestion.Answered>,
@@ -29,6 +30,7 @@ fun AnswerSummary(
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun AnswerSummaryItem(question: ClientGameQuestion.Answered, index: Int, modifier: Modifier = Modifier) {
     val (expanded, setExpanded) = remember { mutableStateOf(false) }
@@ -46,6 +48,7 @@ private fun AnswerSummaryItem(question: ClientGameQuestion.Answered, index: Int,
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun AnswerSummaryItemHeader(question: ClientGameQuestion.Answered, index: Int, expanded: Boolean, modifier: Modifier = Modifier) {
     Row(
@@ -85,6 +88,7 @@ private fun AnswerSummaryItemHeader(question: ClientGameQuestion.Answered, index
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun AnswerSummaryInfo(question: ClientGameQuestion.Answered, modifier: Modifier = Modifier) {
     Column(modifier) { //TODO: add Arrangement.SpacedBy(24.dp)

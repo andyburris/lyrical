@@ -9,6 +9,7 @@ import model.GenericPlaylist
 import model.name
 import model.subtitle
 import org.jetbrains.compose.common.foundation.layout.*
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.draw.clip
@@ -18,6 +19,7 @@ import platform.Image
 import platform.Resource
 import styles.text.TextOverflow
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun VerticalPlaylistItem(playlist: GenericPlaylist, modifier: Modifier = Modifier, selected: Boolean = false) {
     Column(modifier) { //TODO: Add Arrangement.SpacedBy(12.dp)
@@ -59,6 +61,7 @@ fun VerticalPlaylistItem(playlist: GenericPlaylist, modifier: Modifier = Modifie
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun VerticalPlaylistPlaceholderSmall(modifier: Modifier = Modifier) {
     Column(modifier) { //TODO: Add Arrangement.SpacedBy(12.dp)
@@ -75,6 +78,7 @@ fun VerticalPlaylistPlaceholderSmall(modifier: Modifier = Modifier) {
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun VerticalPlaylistPlaceholderLarge(modifier: Modifier = Modifier) {
     Column(modifier) { //TODO: Add Arrangement.SpacedBy(12.dp)

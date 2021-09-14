@@ -2,6 +2,7 @@ package platform
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.common.core.graphics.Color
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.asAttributeBuilderApplier
 import org.jetbrains.compose.web.css.*
@@ -15,6 +16,7 @@ import org.jetbrains.compose.web.dom.Img
 import org.jetbrains.compose.web.dom.TagElement
 import org.w3c.dom.css.CSSStyleSheet
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 actual fun ActualImage(
     resource: Resource,

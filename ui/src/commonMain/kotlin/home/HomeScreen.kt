@@ -7,6 +7,7 @@ import org.jetbrains.compose.common.foundation.clickable
 import org.jetbrains.compose.common.foundation.layout.Column
 import org.jetbrains.compose.common.foundation.layout.Row
 import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.background
 import org.jetbrains.compose.common.ui.draw.clip
@@ -14,6 +15,7 @@ import org.jetbrains.compose.common.ui.padding
 import org.jetbrains.compose.common.ui.unit.dp
 import platform.verticalScroll
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun HomeScreen(
     onCreateGame: () -> Unit,

@@ -7,9 +7,11 @@ import platform.LyricalTheme
 import platform.Text
 import common.AppBar
 import model.name
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import platform.CurrentPalette
 import platform.LocalPalette
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun QuestionAppBar(
     questionIndex: Int,

@@ -2,8 +2,10 @@ package platform
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.common.core.graphics.Color
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun Image(
     resource: Resource,
@@ -13,6 +15,7 @@ fun Image(
     tint: Color? = null,
 ) = ActualImage(resource, contentDescription, modifier, placeholder, tint)
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 expect fun ActualImage(
     resource: Resource,

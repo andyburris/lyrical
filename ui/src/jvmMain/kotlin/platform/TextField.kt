@@ -8,11 +8,13 @@ import androidx.compose.runtime.Composable
 import org.jetbrains.compose.common.core.graphics.Color
 import org.jetbrains.compose.common.core.graphics.implementation
 import org.jetbrains.compose.common.foundation.layout.Box
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.implementation
 import styles.implementation
 import styles.text.TextStyle
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 actual fun ActualBaseTextField(
     value: String,

@@ -6,9 +6,11 @@ import androidx.compose.runtime.Composable
 import org.jetbrains.compose.common.foundation.layout.Arrangement
 import org.jetbrains.compose.common.foundation.layout.implementation
 import org.jetbrains.compose.common.ui.Alignment
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.implementation
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 actual fun ActualHorizontalOverflowRow(
     modifier: Modifier,

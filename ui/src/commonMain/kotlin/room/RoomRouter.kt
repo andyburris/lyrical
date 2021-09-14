@@ -6,12 +6,14 @@ import client.Client
 import client.ClientRoomMachine
 import client.decodeUser
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import room.game.GameRouter
 import room.lobby.LobbyScreen
 import server.RoomCode
 import server.RoomState
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun RoomRouter(code: RoomCode, client: Client, modifier: Modifier = Modifier, onNavigateBack: () -> Unit) {
     val user = client.userMachine.currentUser.collectAsState(initial = null).value
@@ -21,11 +23,13 @@ fun RoomRouter(code: RoomCode, client: Client, modifier: Modifier = Modifier, on
     }
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun NotLoggedInRoomRouter(modifier: Modifier = Modifier) {
     LoadingScreen("Loading into room", modifier)
 }
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun LoggedInRoomRouter(code: RoomCode, user: User, client: Client, modifier: Modifier = Modifier, onNavigateBack: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()

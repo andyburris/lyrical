@@ -2,10 +2,12 @@ package platform
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.common.core.graphics.Color
+import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.common.ui.Modifier
 import styles.text.TextOverflow
 import styles.text.TextStyle
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun Text(
     text: String,
@@ -16,6 +18,7 @@ fun Text(
     overflow: TextOverflow = TextOverflow.Clip,
 ) = ActualText(text, modifier, style, color, maxLines, overflow)
 
+@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 expect fun ActualText(
     text: String,
