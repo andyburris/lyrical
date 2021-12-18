@@ -17,6 +17,7 @@ dependencies {
     implementation(Dependencies.Ktor.serverAuth)
     implementation(Dependencies.Ktor.serverAuthJWT)
     implementation(Dependencies.Ktor.websockets)
+    implementation(Dependencies.Ktor.clientSerialization)
     implementation(Dependencies.spotify)
 
     implementation("ch.qos.logback:logback-classic:1.2.3")

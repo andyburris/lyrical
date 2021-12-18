@@ -5,6 +5,7 @@ import androidx.compose.runtime.*
 import client.ChoosePlaylistsMachine
 import client.PlaylistSearchState
 import client.SelectedPlaylist
+import client.openSpotifyLogin
 import common.Icon
 import jetbrains.compose.common.shapes.CircleShape
 import kotlinx.coroutines.flow.Flow
@@ -35,13 +36,13 @@ fun ChoosePlaylists(selectedPlaylists: List<GenericPlaylist>, spotifyRepository:
         PlaylistSection(
             name = "My Playlists",
             searchState = userPlaylists.value,
-            onLoginClick = { },
+            onLoginClick = { openSpotifyLogin() },
             onSelect = onSelect
         )
         PlaylistSection(
             name = "Spotify Playlists",
             searchState = spotifyPlaylists.value,
-            onLoginClick = { },
+            onLoginClick = { openSpotifyLogin() },
             onSelect = onSelect
         )
     }

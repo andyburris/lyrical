@@ -1,10 +1,13 @@
-import client.ClientResponse
+import client.redirectURI
 import client.serialize
 import com.adamratzman.spotify.spotifyAppApi
 import com.andb.apps.lyricalbackend.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
+import io.ktor.client.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
 import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
@@ -14,13 +17,13 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.sessions.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.serialization.json.Json
 import server.RoomCode
 import server.RoomMachine
-import server.ServerError
 import java.util.*
 
 fun main() {
@@ -30,6 +33,13 @@ fun main() {
     val spotifyRepository = LocalSpotifyRepository(api)
     val lyricsRepository = LyricsRepository()
     val coroutineScope = CoroutineScope(Dispatchers.IO)
+
+    val oauthClient = HttpClient() {
+        install(JsonFeature) {
+            serializer = KotlinxSerializer()
+        }
+    }
+
     embeddedServer(Netty, port = System.getenv()["PORT"]?.toInt() ?: 5050, host = "localhost") {
         install(ContentNegotiation) {
             json()
@@ -41,7 +51,21 @@ fun main() {
         }
         install(WebSockets)
         install(Authentication) {
-            jwt() {
+            oauth("spotify") {
+                urlProvider = { redirectURI }
+                providerLookup = {
+                    OAuthServerSettings.OAuth2ServerSettings(
+                        name = "spotify",
+                        authorizeUrl = "https://accounts.spotify.com/authorize",
+                        accessTokenUrl = "https://accounts.spotify.com/api/token",
+                        requestMethod = HttpMethod.Post,
+                        clientId = Keys.Spotify.clientID,
+                        clientSecret = Keys.Spotify.clientSecret,
+                    )
+                }
+                client = oauthClient
+            }
+            jwt("anonymous") {
                 realm = Keys.JWT.realm
                 verifier(jwtAccessVerifier())
                 validate { credential ->
@@ -93,7 +117,11 @@ fun main() {
                 }
             }
 
-            authenticate() {
+            authenticate("anonymous", "spotify") {
+                get("/callback") {
+                    val principal: OAuthAccessTokenResponse.OAuth2? = call.principal()
+                    call.respondRedirect("/hello")
+                }
                 post<RoomCode>("/creategame") {
                     println("/creategame called")
                     val user = call.authentication.principal<JWTPrincipal>()?.toUser() ?: return@post

@@ -3,7 +3,9 @@ import it.skrape.core.htmlDocument
 import it.skrape.extract
 import it.skrape.selects.DocElement
 import it.skrape.skrape
+import java.awt.Desktop
 import java.io.File
+import java.net.URI
 
 actual suspend fun GeniusRepository.scrapeLyrics(songURL: String): String? {
     return skrape(HttpFetcher) {
