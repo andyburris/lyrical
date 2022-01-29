@@ -40,6 +40,7 @@ fun App() {
                 client = client,
                 onNavigateBack = { navigation.value = Screen.Home }
             )
+            is Screen.Test -> TODO()
         }
     }
 }

@@ -2,10 +2,9 @@ object Versions {
     const val minSDK = 23
     const val targetSDK = 29
     const val compileSDK = 29
-    const val kotlin = "1.5.30"
+    const val kotlin = "1.6.10"
     const val kotlinCoroutines = "1.5.0"
-    const val koin = "2.1.5"
-    const val compose = "1.0.0-beta08"
+    const val compose = "1.0.1-rc2"
     const val activity = "1.3.0-alpha08"
     const val serialization = "1.2.2"
     const val ktor = "1.6.1"

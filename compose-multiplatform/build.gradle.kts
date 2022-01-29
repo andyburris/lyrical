@@ -1,27 +1,22 @@
 plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose") version "1.0.1"
-    //id("com.android.library")
 }
 
-version = "1.0.0"
+version = "0.0.1"
 
 repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-    mavenCentral()
+    google()
 }
-
-/*
-android {
-
-}
-*/
 
 kotlin {
-    //android()
+    /* Targets configuration omitted. 
+    *  To find out how to configure the targets, please follow the link:
+    *  https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#setting-up-targets */
     js(IR) {
-        browser {}
+        browser()
         binaries.executable()
     }
     jvm()
@@ -29,12 +24,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-common"))
-                implementation(Dependencies.Coroutines.core)
-                implementation(Dependencies.Ktor.client)
                 implementation(compose.runtime)
-                implementation(compose.web.widgets)
-                implementation(project(":shared"))
+                implementation(kotlin("stdlib-common"))
             }
         }
         val commonTest by getting {
@@ -43,31 +34,16 @@ kotlin {
                 implementation(kotlin("test-annotations-common"))
             }
         }
-
-        val jvmMain by getting {
-            dependencies {
-                implementation(compose.desktop.currentOs)
-                implementation(Dependencies.kamel)
-            }
-        }
-        val jvmTest by getting {
-
-        }
-
-/*        val androidMain by getting {
-
-        }
-        val androidTest by getting {
-
-        }*/
-
         val jsMain by getting {
             dependencies {
                 implementation(compose.web.core)
             }
         }
-        val jsTest by getting {
 
+        val jvmMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+            }
         }
     }
 }

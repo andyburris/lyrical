@@ -11,7 +11,6 @@ repositories {
     mavenCentral()
     jcenter()
     maven(url = "https://jitpack.io")
-    maven("https://kotlin.bintray.com/kotlin-js-wrappers/")
 }
 
 
