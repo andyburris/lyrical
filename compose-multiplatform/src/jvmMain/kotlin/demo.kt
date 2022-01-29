@@ -15,11 +15,8 @@
  */
 package org.jetbrains.compose.common.demo
 
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import org.jetbrainsc.compose.common.demo.App
 
 fun main() = application {
     Window(onCloseRequest = ::exitApplication, title = "Demo") {

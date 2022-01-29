@@ -1,9 +1,10 @@
-package org.jetbrainsc.compose.common.demo
+package org.jetbrains.compose.common.demo
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import jetbrains.compose.common.shapes.CircleShape
+import jetbrains.compose.common.shapes.RoundedCornerShape
 import org.jetbrains.compose.common.core.graphics.Color
 import org.jetbrains.compose.common.foundation.background
 import org.jetbrains.compose.common.foundation.border
@@ -19,6 +20,22 @@ import org.jetbrains.compose.common.ui.unit.em
 import kotlin.random.Random
 
 object LayoutSamples {
+
+    @Composable
+    fun DemoCard() {
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color(29, 185, 84))
+                .padding(16.dp)
+                .size(width = 300.dp, height = 150.dp),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Text("Title", color = Color.White)
+            Text("Summaries are slightly longer text that might wrap multiple lines", color = Color.White.copy(alpha = 0.5f))
+        }
+    }
+
     @Composable
     fun TwoTexts() {
         Text("Alfred Sisley")
@@ -155,7 +172,7 @@ object LayoutSamples {
 @Composable
 fun App() {
     Column(modifier = Modifier.padding(32.dp)) {
-        LayoutSamples.NestedModifiers()
+        LayoutSamples.DemoCard()
     }
 
 }
