@@ -3,16 +3,20 @@ package room.game.answer
 import GameAnswer
 import GenericTrack
 import androidx.compose.runtime.Composable
+import compose.multiplatform.foundation.Image
+import compose.multiplatform.foundation.Resource
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.foundation.modifier.background
+import compose.multiplatform.foundation.modifier.padding
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.dp
 import isWrong
 import model.GenericGameTrack
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.Row
 import org.jetbrains.compose.common.ui.*
-import org.jetbrains.compose.common.ui.draw.clip
-import org.jetbrains.compose.common.ui.unit.dp
 import platform.*
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun AnswerTrack(
     gameTrack: GenericGameTrack,
@@ -37,7 +41,6 @@ fun AnswerTrack(
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun YourAnswer(
     answer: GameAnswer.Answered.Incorrect,
@@ -49,7 +52,6 @@ private fun YourAnswer(
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun SongItem(track: GenericTrack, modifier: Modifier = Modifier) {
     Row(modifier) { //TODO: add Arrangement.SpacedBy(16.dp)

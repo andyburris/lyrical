@@ -1,8 +1,8 @@
 package org.jetbrains.compose.common.ui.draw
 
-import org.jetbrains.compose.common.ui.Modifier
-import jetbrains.compose.common.shapes.Shape
-import jetbrains.compose.common.shapes.implementation
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.shape.Shape
+import compose.multiplatform.ui.shape.implementation
 import org.jetbrains.compose.common.internal.castOrCreate
 import androidx.compose.ui.draw.clip
 

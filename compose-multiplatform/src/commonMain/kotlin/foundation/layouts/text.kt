@@ -1,14 +1,17 @@
-package org.jetbrains.compose.common.material
+package compose.multiplatform.foundation
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.core.graphics.Color
-import org.jetbrains.compose.common.ui.unit.TextUnit
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.Color
+import compose.multiplatform.ui.text.TextOverflow
+import compose.multiplatform.ui.text.TextStyle
 
 @Composable
 expect fun Text(
     text: String,
-    modifier: Modifier = Modifier.Companion,
-    color: Color = Color.Black,
-    size: TextUnit = TextUnit.Unspecified
+    modifier: Modifier = Modifier,
+    style: TextStyle? = null,
+    color: Color? = null,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
 )

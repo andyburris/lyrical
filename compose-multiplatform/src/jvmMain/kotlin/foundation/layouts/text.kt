@@ -1,25 +1,30 @@
-package org.jetbrains.compose.common.material
+package compose.multiplatform.foundation
 
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.runtime.Composable
-import androidx.compose.material.Text as JText
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.ui.Modifier
 import org.jetbrains.compose.common.ui.implementation
-import org.jetbrains.compose.common.core.graphics.Color
+import compose.multiplatform.ui.Color
+import compose.multiplatform.ui.text.TextOverflow
+import compose.multiplatform.ui.text.TextStyle
 import org.jetbrains.compose.common.core.graphics.implementation
-import org.jetbrains.compose.common.ui.unit.TextUnit
-import org.jetbrains.compose.common.ui.unit.implementation
+import styles.implementation
 
 @Composable
 actual fun Text(
     text: String,
     modifier: Modifier,
-    color: Color,
-    size: TextUnit
+    style: TextStyle?,
+    color: Color?,
+    maxLines: Int,
+    overflow: TextOverflow,
 ) {
-    JText(
-        text,
+    androidx.compose.material.Text(
+        text = text,
         modifier = modifier.implementation,
-        color = color.implementation,
-        fontSize = size.implementation
+        style = style?.implementation ?: LocalTextStyle.current,
+        color = color?.implementation ?: androidx.compose.ui.graphics.Color.Unspecified,
+        maxLines = maxLines,
+        overflow = overflow.implementation
     )
 }

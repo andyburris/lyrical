@@ -1,18 +1,15 @@
 package common
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.common.foundation.clickable
-import platform.LyricalTheme
-import platform.Text
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.Row
-import org.jetbrains.compose.common.ui.Alignment
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.foundation.modifier.clickable
+import compose.multiplatform.ui.Alignment
+import compose.multiplatform.ui.Modifier
 import platform.CurrentPalette
-import platform.LocalPalette
+import platform.LyricalTheme
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun AppBar(
     title: String,

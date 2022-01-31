@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.compose.common.demo
+package compose.multiplatform
 
 import org.jetbrains.compose.web.renderComposable
 import kotlinx.browser.document

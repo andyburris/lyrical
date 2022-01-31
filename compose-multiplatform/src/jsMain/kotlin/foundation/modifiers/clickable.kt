@@ -1,8 +1,7 @@
-package org.jetbrains.compose.common.foundation
+package compose.multiplatform.foundation.modifier
 
 import org.jetbrains.compose.common.internal.AttributeModifier
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.internal.castOrCreate
+import compose.multiplatform.ui.Modifier
 
 actual fun Modifier.clickable(onClick: () -> Unit): Modifier = this then AttributeModifier {
     onClick { onClick() }

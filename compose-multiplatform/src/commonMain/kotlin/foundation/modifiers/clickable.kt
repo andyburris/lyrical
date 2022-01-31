@@ -1,5 +1,5 @@
-package org.jetbrains.compose.common.foundation
+package compose.multiplatform.foundation.modifier
 
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.ui.Modifier
 
 expect fun Modifier.clickable(onClick: () -> Unit): Modifier

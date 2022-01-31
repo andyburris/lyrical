@@ -1,18 +1,14 @@
 package common
 
 import androidx.compose.runtime.Composable
-import jetbrains.compose.common.shapes.CircleShape
-import org.jetbrains.compose.common.foundation.layout.Box
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.ui.background
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Box
+import compose.multiplatform.foundation.modifier.padding
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.shape.CircleShape
+import compose.multiplatform.ui.unit.dp
 import org.jetbrains.compose.common.ui.draw.clip
-import org.jetbrains.compose.common.ui.padding
-import org.jetbrains.compose.common.ui.unit.dp
-import platform.CurrentPalette
-import platform.Text
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun Chip(text: String, modifier: Modifier = Modifier, selected: Boolean = false) { //TODO: add color schemes
     Box(

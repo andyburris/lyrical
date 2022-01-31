@@ -1,10 +1,10 @@
 package org.jetbrains.compose.common.material
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.common.ui.Modifier
+import org.jetbrains.compose.common.internal.modifierWrapper
+import compose.multiplatform.ui.Modifier
 import org.jetbrains.compose.web.dom.Input
 import org.jetbrains.compose.web.attributes.InputType
-import org.jetbrains.compose.web.attributes.value
 
 @Composable
 actual fun Slider(
@@ -13,7 +13,7 @@ actual fun Slider(
     valueRange: ClosedFloatingPointRange<Float>,
     steps: Int,
     modifier: Modifier,
-) {
+) = modifierWrapper(modifier) {
     val stepCount = if (steps == 0) 100 else steps
     val step = (valueRange.endInclusive - valueRange.start) / stepCount
 

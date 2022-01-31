@@ -1,38 +1,44 @@
-package org.jetbrains.compose.common.demo
+package compose.multiplatform
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import jetbrains.compose.common.shapes.CircleShape
-import jetbrains.compose.common.shapes.RoundedCornerShape
-import org.jetbrains.compose.common.core.graphics.Color
-import org.jetbrains.compose.common.foundation.background
-import org.jetbrains.compose.common.foundation.border
-import org.jetbrains.compose.common.foundation.clickable
-import org.jetbrains.compose.common.foundation.layout.*
-import org.jetbrains.compose.common.material.Button
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.ui.shape.CircleShape
+import compose.multiplatform.ui.shape.RoundedCornerShape
+import compose.multiplatform.foundation.modifier.padding
+import compose.multiplatform.ui.*
+import compose.multiplatform.ui.text.FontWeight
+import compose.multiplatform.ui.text.TextStyle
+import compose.multiplatform.foundation.modifier.background
+import compose.multiplatform.foundation.modifier.border
+import compose.multiplatform.foundation.modifier.clickable
+import compose.multiplatform.foundation.layout.*
 import org.jetbrains.compose.common.material.Slider
-import org.jetbrains.compose.common.material.Text
 import org.jetbrains.compose.common.ui.*
 import org.jetbrains.compose.common.ui.draw.clip
-import org.jetbrains.compose.common.ui.unit.dp
-import org.jetbrains.compose.common.ui.unit.em
+import compose.multiplatform.ui.unit.dp
 import kotlin.random.Random
 
 object LayoutSamples {
 
     @Composable
     fun DemoCard() {
+        val clickCounter = remember { mutableStateOf(0) }
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
+                .clickable { clickCounter.value = clickCounter.value + 1 }
                 .background(Color(29, 185, 84))
                 .padding(16.dp)
                 .size(width = 300.dp, height = 150.dp),
             verticalArrangement = Arrangement.Bottom
         ) {
-            Text("Title", color = Color.White)
-            Text("Summaries are slightly longer text that might wrap multiple lines", color = Color.White.copy(alpha = 0.5f))
+            Text("Title", color = Color.White, style = TextStyle(fontWeight = FontWeight.SemiBold))
+            Text(
+                text = "Summaries are slightly longer text that might wrap multiple lines. This card has been clicked ${clickCounter.value} times.",
+                color = Color.White.copy(alpha = 0.5f)
+            )
         }
     }
 
@@ -52,7 +58,7 @@ object LayoutSamples {
             Text(
                 "3 minutes ago",
                 color = subtitleColor.value,
-                size = fontSize.value.em,
+                //size = fontSize.value.em,
                 modifier = Modifier.clickable {
                     subtitleColor.value = Color.Yellow
                 }
@@ -66,13 +72,6 @@ object LayoutSamples {
                 steps = 80,
                 modifier = Modifier.width(200.dp)
             )
-            Button(
-                onClick = {
-                    fontSize.value = defaultFontSize
-                }
-            ) {
-                Text("reset view")
-            }
         }
     }
 

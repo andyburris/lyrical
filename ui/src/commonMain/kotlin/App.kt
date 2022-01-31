@@ -5,7 +5,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import client.Client
 import client.Screen
 import client.UserMachine
-import client.decodeUser
 import home.HomeScreen
 import join.JoinScreen
 import kotlinx.coroutines.launch

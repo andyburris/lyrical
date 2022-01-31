@@ -1,14 +1,12 @@
 package room
 
 import androidx.compose.runtime.Composable
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.fillMaxWidth
+import compose.multiplatform.ui.Modifier
 import platform.LyricalTheme
-import platform.Text
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun LoadingScreen(loadingDescription: String, modifier: Modifier = Modifier) {
     Column(modifier) { //TODO: add Arrangement.SpacedBy(32.dp, Alignment.CenterVertically)

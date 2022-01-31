@@ -1,16 +1,14 @@
 package platform
 
 import androidx.compose.runtime.Composable
-import jetbrains.compose.common.shapes.CircleShape
-import org.jetbrains.compose.common.foundation.layout.Box
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.ui.background
+import compose.multiplatform.foundation.layout.Box
+import compose.multiplatform.foundation.modifier.background
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.shape.CircleShape
+import compose.multiplatform.ui.unit.dp
 import org.jetbrains.compose.common.ui.draw.clip
 import org.jetbrains.compose.common.ui.size
-import org.jetbrains.compose.common.ui.unit.dp
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 actual fun ActualSwitch(
     checked: Boolean,

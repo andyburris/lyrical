@@ -1,23 +1,23 @@
 package room.lobby
 
 import androidx.compose.runtime.Composable
-import platform.HorizontalOverflowRow
-import platform.LyricalTheme
-import platform.Text
-import model.GenericPlaylist
-import org.jetbrains.compose.common.foundation.clickable
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.Row
-import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.ui.background
-import org.jetbrains.compose.common.ui.padding
-import org.jetbrains.compose.common.ui.unit.dp
 import common.AppBar
 import common.Icon
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.foundation.layout.fillMaxWidth
+import compose.multiplatform.foundation.modifier.background
+import compose.multiplatform.foundation.modifier.clickable
+import compose.multiplatform.foundation.modifier.padding
+import compose.multiplatform.ui.Alignment
+import compose.multiplatform.ui.Arrangement
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.dp
+import model.GenericPlaylist
+import platform.HorizontalOverflowRow
+import platform.LyricalTheme
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun LobbyHeader(
     code: String,
@@ -27,7 +27,10 @@ fun LobbyHeader(
     onClickPlaylist: (playlist: GenericPlaylist) -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    Column(modifier.background(LyricalTheme.colors.backgroundDark).padding(32.dp)) { //TODO: Add Arrangement.SpacedBy(32.dp), add 32.dp bottom padding if (isHost)
+    Column(
+        modifier = modifier.background(LyricalTheme.colors.backgroundDark).padding(32.dp),
+        verticalArrangement = Arrangement.spacedBy(32.dp)
+    ) { //TODO: Add Arrangement.SpacedBy(32.dp), add 32.dp bottom padding if (isHost)
         AppBar(
             title = "Lobby",
             onNavigateBack = onNavigateBack
@@ -46,7 +49,6 @@ fun LobbyHeader(
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun ShareRoom(code: String, modifier: Modifier = Modifier) {
     Row(modifier.background(LyricalTheme.colors.background).padding(16.dp)) { //TODO: Add CircleShape to background, vertical 4.dp padding, right 12.dp padding
@@ -55,7 +57,6 @@ private fun ShareRoom(code: String, modifier: Modifier = Modifier) {
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun NoPlaylists(isHost: Boolean, modifier: Modifier = Modifier) {
     Column(modifier) { //TODO: Add Arrangement.SpacedBy(32.dp)

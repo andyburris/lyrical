@@ -1,24 +1,25 @@
 package platform
 
+import compose.multiplatform.ui.Modifier
 import androidx.compose.runtime.Composable
-import jetbrains.compose.common.shapes.Shape
-import org.jetbrains.compose.common.material.ButtonActual
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.ui.shape.Shape
+import org.jetbrains.compose.web.dom.Button
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
-actual fun ActualButton(
+actual fun Button(
     onClick: () -> Unit,
     modifier: Modifier,
     isEnabled: Boolean,
     shape: Shape,
-    palette: Palette,
-    content: @Composable () -> Unit
+    buttonColors: Palette,
+    content: @Composable () -> Unit,
 ) {
-    val enabledPalette = when(isEnabled) {
-        true -> palette
-        false -> palette.copy(contentPrimary = palette.contentTernary, contentSecondary = palette.contentTernary)
+    Button(
+        attrs = {
+            onClick { onClick() }
+        }
+    ) {
+        content()
     }
-    ButtonActual(modifier = modifier, onClick = onClick, content = content)
+    //TODO: convert to Box-based button
 }

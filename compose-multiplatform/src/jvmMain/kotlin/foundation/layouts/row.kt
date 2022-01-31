@@ -1,14 +1,14 @@
-package org.jetbrains.compose.common.foundation.layout
+package compose.multiplatform.foundation.layout
 
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.ui.Modifier
 import androidx.compose.runtime.Composable
+import compose.multiplatform.ui.Arrangement
 import androidx.compose.foundation.layout.Row as JRow
 import org.jetbrains.compose.common.ui.implementation
-import org.jetbrains.compose.common.ui.implementation
-import org.jetbrains.compose.common.ui.Alignment
+import compose.multiplatform.ui.Alignment
 
 @Composable
-internal actual fun Row(
+actual fun Row(
     modifier: Modifier,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,

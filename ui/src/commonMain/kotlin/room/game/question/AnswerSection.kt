@@ -5,15 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import common.Icon
-import jetbrains.compose.common.shapes.CircleShape
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.Row
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.shape.CircleShape
 import org.jetbrains.compose.common.ui.draw.clip
 import platform.*
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun AnswerSection(modifier: Modifier = Modifier, onAnswer: (UserAnswer) -> Unit) {
     Column(modifier) { //TODO: Add Arrangement.SpacedBy(24.dp)
@@ -36,7 +35,6 @@ fun AnswerSection(modifier: Modifier = Modifier, onAnswer: (UserAnswer) -> Unit)
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun CombinedButton(
     modifier: Modifier = Modifier,

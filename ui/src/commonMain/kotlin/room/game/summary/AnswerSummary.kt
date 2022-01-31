@@ -1,22 +1,30 @@
 package room.game.summary
 
 import GameAnswer
+import Hint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import client.ClientGameQuestion
 import common.Divider
 import common.Icon
+import compose.multiplatform.foundation.Image
+import compose.multiplatform.foundation.Resource
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.*
+import compose.multiplatform.foundation.modifier.background
+import compose.multiplatform.foundation.modifier.border
+import compose.multiplatform.foundation.modifier.clickable
+import compose.multiplatform.foundation.modifier.padding
+import compose.multiplatform.ui.Alignment
+import compose.multiplatform.ui.Arrangement
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.dp
 import model.name
-import org.jetbrains.compose.common.foundation.border
-import org.jetbrains.compose.common.foundation.clickable
-import org.jetbrains.compose.common.foundation.layout.*
 import org.jetbrains.compose.common.ui.*
-import org.jetbrains.compose.common.ui.unit.dp
 import platform.*
 import points
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun AnswerSummary(
     questions: List<ClientGameQuestion.Answered>,
@@ -30,7 +38,6 @@ fun AnswerSummary(
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun AnswerSummaryItem(question: ClientGameQuestion.Answered, index: Int, modifier: Modifier = Modifier) {
     val (expanded, setExpanded) = remember { mutableStateOf(false) }
@@ -48,7 +55,6 @@ private fun AnswerSummaryItem(question: ClientGameQuestion.Answered, index: Int,
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun AnswerSummaryItemHeader(question: ClientGameQuestion.Answered, index: Int, expanded: Boolean, modifier: Modifier = Modifier) {
     Row(
@@ -88,7 +94,6 @@ private fun AnswerSummaryItemHeader(question: ClientGameQuestion.Answered, index
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun AnswerSummaryInfo(question: ClientGameQuestion.Answered, modifier: Modifier = Modifier) {
     Column(modifier) { //TODO: add Arrangement.SpacedBy(24.dp)

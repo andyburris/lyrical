@@ -2,16 +2,13 @@ package room.game.question
 
 import androidx.compose.runtime.Composable
 import client.SourcePlaylist
-import org.jetbrains.compose.common.ui.Modifier
-import platform.LyricalTheme
-import platform.Text
 import common.AppBar
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.ui.Modifier
 import model.name
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import platform.CurrentPalette
-import platform.LocalPalette
+import platform.LyricalTheme
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun QuestionAppBar(
     questionIndex: Int,

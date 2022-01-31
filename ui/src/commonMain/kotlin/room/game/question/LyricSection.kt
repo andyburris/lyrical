@@ -1,22 +1,22 @@
 package room.game.question
 
+import GameAction
+import Hint
 import androidx.compose.runtime.Composable
 import client.ClientGameQuestion
 import client.Hints
 import client.artist
 import client.nextLyric
 import common.Chip
-import org.jetbrains.compose.common.foundation.clickable
-import org.jetbrains.compose.common.foundation.layout.Arrangement
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.Row
-import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.foundation.layout.fillMaxWidth
+import compose.multiplatform.foundation.modifier.clickable
+import compose.multiplatform.ui.Arrangement
+import compose.multiplatform.ui.Modifier
 import platform.LyricalTheme
-import platform.Text
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun LyricSection(question: ClientGameQuestion.Unanswered, questionIndex: Int, modifier: Modifier = Modifier, onQuestionAction: (GameAction.Question) -> Unit) {
     Column(modifier = modifier) { //TODO: add Arrangement.SpacedBy(16.dp)

@@ -1,16 +1,13 @@
 package common
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.tooling.LocalInspectionTables
-import org.jetbrains.compose.common.foundation.layout.Box
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.Row
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.ui.padding
-import org.jetbrains.compose.common.ui.unit.dp
+import compose.multiplatform.foundation.layout.Box
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.foundation.modifier.padding
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.dp
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun LyricalScaffold(
     modifier: Modifier = Modifier,

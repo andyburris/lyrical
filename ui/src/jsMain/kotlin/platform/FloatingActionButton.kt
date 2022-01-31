@@ -1,14 +1,11 @@
 package platform
 
 import androidx.compose.runtime.Composable
-import jetbrains.compose.common.shapes.Shape
-import org.jetbrains.compose.common.material.ButtonActual
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.ui.shape.Shape
+import compose.multiplatform.ui.Modifier
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
-actual fun ActualFloatingActionButton(
+actual fun FloatingActionButton(
     onClick: () -> Unit,
     modifier: Modifier,
     isEnabled: Boolean,
@@ -16,7 +13,7 @@ actual fun ActualFloatingActionButton(
     palette: Palette,
     content: @Composable () -> Unit
 ) {
-    ButtonActual(modifier = modifier, onClick = onClick) {
+    Button(modifier = modifier, onClick = onClick) {
         val enabledPalette = when(isEnabled) {
             true -> palette
             false -> palette.copy(contentPrimary = palette.contentTernary, contentSecondary = palette.contentTernary)

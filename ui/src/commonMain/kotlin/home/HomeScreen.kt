@@ -2,20 +2,17 @@ package home
 
 import androidx.compose.runtime.Composable
 import common.Icon
-import platform.LyricalTheme
-import org.jetbrains.compose.common.foundation.clickable
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.Row
-import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.ui.background
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.foundation.layout.fillMaxWidth
+import compose.multiplatform.foundation.modifier.clickable
+import compose.multiplatform.foundation.modifier.padding
+import compose.multiplatform.foundation.modifier.verticalScroll
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.dp
 import org.jetbrains.compose.common.ui.draw.clip
-import org.jetbrains.compose.common.ui.padding
-import org.jetbrains.compose.common.ui.unit.dp
-import platform.verticalScroll
+import platform.LyricalTheme
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun HomeScreen(
     onCreateGame: () -> Unit,
@@ -30,7 +27,7 @@ fun HomeScreen(
                 icon = Icon.PlayCircle,
                 palette = LyricalTheme.colors.primaryPalette,
                 modifier = Modifier //TODO: add shadow, weight, fillMaxHeight Modifier
-                    //.clip(LyricalTheme.shapes.medium) TODO: readd once shapes are supported
+                    .clip(LyricalTheme.shapes.large)
                     .clickable(onClick = onCreateGame)
             )
             ActionCard(
@@ -39,7 +36,7 @@ fun HomeScreen(
                 icon = Icon.Join,
                 palette = LyricalTheme.colors.backgroundPalette,
                 modifier = Modifier //TODO: add shadow, weight, fillMaxHeight Modifier
-                    //.clip(LyricalTheme.shapes.medium) TODO: readd once shapes are supported
+                    .clip(LyricalTheme.shapes.large)
                     .clickable(onClick = onJoinRoom)
             )
         }

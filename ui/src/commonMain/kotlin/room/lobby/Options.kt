@@ -2,18 +2,12 @@ package room.lobby
 
 import GameConfig
 import androidx.compose.runtime.Composable
-import common.Chip
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.Row
-import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.ui.background
-import org.jetbrains.compose.common.ui.padding
-import org.jetbrains.compose.common.ui.unit.dp
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.ui.Modifier
 import platform.*
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun EditableOptions(
     config: GameConfig,
@@ -39,7 +33,6 @@ fun EditableOptions(
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun UneditableOptions(
     config: GameConfig,
@@ -50,7 +43,6 @@ fun UneditableOptions(
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun VerticalOptionItem(
     title: String,
@@ -63,7 +55,6 @@ private fun VerticalOptionItem(
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun HorizontalOptionItem(
     title: String,
@@ -81,7 +72,6 @@ private fun HorizontalOptionItem(
 }
 
 /*
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun <T> SegmentedControl(
     selected: T,

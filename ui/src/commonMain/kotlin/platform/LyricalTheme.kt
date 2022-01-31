@@ -3,11 +3,10 @@ package platform
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
-import jetbrains.compose.common.shapes.Shape
-import org.jetbrains.compose.common.core.graphics.Color
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import styles.text.FontFamily
-import styles.text.TextStyle
+import compose.multiplatform.ui.Color
+import compose.multiplatform.ui.shape.Shape
+import compose.multiplatform.ui.text.FontFamily
+import compose.multiplatform.ui.text.TextStyle
 import toColor
 
 
@@ -33,7 +32,6 @@ fun LyricalTheme(
     CompositionLocalProvider(LocalColors provides colors, LocalTypography provides typography, LocalShapes provides shapes, LocalPalette provides colors.backgroundPalette, content = content)
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 data class LyricalColors(
     val backgroundPalette: Palette,
     val primaryPalette: Palette,
@@ -53,7 +51,6 @@ data class LyricalColors(
     val onPrimaryTernary: Color = primaryPalette.contentTernary
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 data class Palette(
     val background: Color,
     val backgroundDark: Color,
@@ -72,34 +69,22 @@ fun ProvidePalette(palette: Palette, content: @Composable () -> Unit) {
 @Composable
 fun Palette.invert() = if (this == LyricalTheme.colors.backgroundPalette) LyricalTheme.colors.primaryPalette else LyricalTheme.colors.backgroundPalette
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 fun lightColors() = LyricalColors(
-    //background = 0xFFFFFFFF.toColor(),
-    //backgroundDark = 0xFFF0F0F0.toColor(),
-    //backgroundCard = 0xFFFFFFFF.toColor(),
-    //onBackground = 0xFF000000.toColor(),
-    //onBackgroundSecondary = 0x80000000.toColor(),
-    //onBackgroundTernary = 0x33000000.toColor(),
-    //primary = 0xFF1DB954.toColor(),
-    //primaryDark = 0xFF1BAA4D.toColor(),
-    //onPrimary = 0xFFFFFFFF.toColor(),
-    //onPrimarySecondary = 0x80FFFFFF.toColor(),
-    //onPrimaryTernary = 0x40FFFFFF.toColor(),
     backgroundPalette = Palette(
-        background = Color.White,
-        backgroundDark = Color(0xF0, 0xF0, 0xF0),
-        backgroundLight = Color.White,
-        contentPrimary = Color(0x21, 0x21, 0x21),
-        contentSecondary = Color(0x80, 0x80, 0x80),
-        contentTernary = Color(0xCC, 0xCC, 0xCC),
+        background = 0xFFFFFFFF.toColor(),
+        backgroundDark = 0xFFF0F0F0.toColor(),
+        backgroundLight = 0xFFFFFFFF.toColor(),
+        contentPrimary = 0xDE000000.toColor(),
+        contentSecondary = 0x80000000.toColor(),
+        contentTernary = 0x33000000.toColor(),
     ),
     primaryPalette = Palette(
-        background = Color(0x1D, 0xB9, 0x54),
-        backgroundDark = Color(0x1B, 0xAA, 0x4D),
+        background = 0xFF1DB954.toColor(),
+        backgroundDark = 0xFF1BAA4D.toColor(),
         backgroundLight = Color(0x1D, 0xB9, 0x54),
-        contentPrimary = Color.White,
-        contentSecondary = Color(0x8E, 0xDC, 0xAA),
-        contentTernary = Color(0x56, 0xCB, 0x7F),
+        contentPrimary = 0xFFFFFFFF.toColor(),
+        contentSecondary = 0x80FFFFFF.toColor(),
+        contentTernary = 0x40FFFFFF.toColor(),
     ),
     overlay = 0x0D000000.toColor(),
     overlayDark = 0xB3000000.toColor(),
@@ -118,12 +103,8 @@ data class LyricalTypography(
     val caption: TextStyle,
 )
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 data class LyricalShapes(
     val small: Shape,
     val medium: Shape,
     val large: Shape,
 )
-
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
-object RectangleShape : Shape

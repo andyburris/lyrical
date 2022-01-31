@@ -1,13 +1,10 @@
 package platform
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.common.core.graphics.Color
-import org.jetbrains.compose.common.foundation.layout.Box
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
-import styles.text.TextStyle
+import compose.multiplatform.ui.Color
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.text.TextStyle
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun TextField(
     value: String,
@@ -19,7 +16,7 @@ fun TextField(
     placeholder: String = "",
     placeholderColor: Color? = CurrentPalette.contentTernary,
 ) {
-    BaseTextField(
+    BasicTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
@@ -31,9 +28,8 @@ fun TextField(
     )
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
-fun BaseTextField(
+expect fun BasicTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -41,18 +37,5 @@ fun BaseTextField(
     textStyle: TextStyle? = null,
     textColor: Color? = null,
     placeholder: String = "",
-    placeholderColor: Color? = null,
-) = ActualBaseTextField(value, onValueChange, modifier, enabled, textStyle, textColor, placeholder, placeholderColor)
-
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
-@Composable
-expect fun ActualBaseTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier,
-    enabled: Boolean,
-    textStyle: TextStyle?,
-    textColor: Color? = null,
-    placeholder: String,
     placeholderColor: Color? = null,
 )

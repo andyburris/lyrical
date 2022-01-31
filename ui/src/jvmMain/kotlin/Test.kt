@@ -1,12 +1,9 @@
-import androidx.compose.material.Icon
-import androidx.compose.material.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.platform.Font
-import androidx.compose.ui.text.platform.Typeface
+import compose.multiplatform.ui.text.FontStyle
+import compose.multiplatform.ui.text.FontWeight
 import styles.implementation
-import styles.text.FontStyle
-import styles.text.FontWeight
 import java.io.File
 
 @Composable

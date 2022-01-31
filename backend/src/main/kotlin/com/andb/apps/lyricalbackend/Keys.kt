@@ -17,4 +17,4 @@ object Keys {
     }
 }
 
-private fun getEnvironmentalVariable(key: String) = System.getenv()[key] ?: File("../local.properties").readText().lines().first { it.startsWith(key) }.takeLastWhile { it != '=' }
+private fun getEnvironmentalVariable(key: String) = System.getenv()[key] ?: File("local.properties").readText().lines().first { it.startsWith(key) }.takeLastWhile { it != '=' }

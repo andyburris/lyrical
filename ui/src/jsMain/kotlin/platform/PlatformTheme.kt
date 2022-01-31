@@ -1,16 +1,17 @@
 package platform
 
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.unit.sp
-import styles.text.FontFamily
-import styles.text.FontWeight
-import styles.text.TextStyle
-import styles.text.sp
+import compose.multiplatform.ui.shape.RectangleShape
+import compose.multiplatform.ui.shape.RoundedCornerShape
+import compose.multiplatform.ui.text.FontFamily
+import compose.multiplatform.ui.text.FontWeight
+import compose.multiplatform.ui.text.TextStyle
+import compose.multiplatform.ui.text.sp
+import compose.multiplatform.ui.unit.dp
+import compose.multiplatform.ui.unit.sp
 
 val bodyFont = FontFamily(alias = "Inter", "/assets/fonts/InterVariable.ttf")
 val displayFont = FontFamily(alias = "YoungSerif", "/assets/fonts/YoungSerif.otf")
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 actual fun lyricalPlatformTypography() = LyricalTypography(
     displayFont = displayFont,
     bodyFont = bodyFont,
@@ -65,7 +66,7 @@ actual fun lyricalPlatformTypography() = LyricalTypography(
 )
 
 actual fun lyricalPlatformShapes() = LyricalShapes(
-    small = RectangleShape, //TODO: Add RoundedCornerShape(4.dp)
-    medium = RectangleShape, //TODO: Add RoundedCornerShape(8.dp)
-    large = RectangleShape, //TODO: Add RoundedCornerShape(16.dp)
+    small = RoundedCornerShape(4.dp),
+    medium = RoundedCornerShape(8.dp),
+    large = RoundedCornerShape(16.dp),
 )

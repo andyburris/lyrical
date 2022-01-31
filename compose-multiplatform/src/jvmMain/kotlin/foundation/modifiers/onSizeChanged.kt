@@ -1,7 +1,7 @@
 package org.jetbrains.compose.common.ui.layout
 
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.ui.unit.IntSize
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.IntSize
 import org.jetbrains.compose.common.internal.castOrCreate
 import androidx.compose.ui.layout.onSizeChanged
 

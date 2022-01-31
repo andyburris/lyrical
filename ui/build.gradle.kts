@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "1.0.1"
+    id("org.jetbrains.compose") version "1.1.0-alpha02"
     //id("com.android.library")
 }
 
@@ -33,8 +33,8 @@ kotlin {
                 implementation(Dependencies.Coroutines.core)
                 implementation(Dependencies.Ktor.client)
                 implementation(compose.runtime)
-                implementation(compose.web.widgets)
                 implementation(project(":shared"))
+                implementation(project(":compose-multiplatform"))
             }
         }
         val commonTest by getting {

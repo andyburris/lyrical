@@ -5,19 +5,16 @@ import SpotifyRepository
 import UserAction
 import androidx.compose.runtime.Composable
 import common.Icon
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.foundation.modifier.verticalScroll
+import compose.multiplatform.ui.Alignment
+import compose.multiplatform.ui.Modifier
 import platform.Button
-import platform.Text
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.Row
-import org.jetbrains.compose.common.ui.Alignment
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
-import platform.FloatingActionButton
-import platform.verticalScroll
 import server.RoomCode
 import server.RoomState
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun LobbyScreen(
     code: RoomCode,
@@ -62,7 +59,6 @@ fun LobbyScreen(
 }
 
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun ButtonRow(state: RoomState.Lobby, modifier: Modifier = Modifier, onStartGame: () -> Unit, onOpenOptions: () -> Unit) {
     Row(modifier) {

@@ -1,6 +1,6 @@
-package org.jetbrains.compose.common.foundation.layout
+package compose.multiplatform.foundation.layout
 
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.ui.Modifier
 import org.jetbrains.compose.common.internal.castOrCreate
 import androidx.compose.foundation.layout.fillMaxWidth
 

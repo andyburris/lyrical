@@ -1,10 +1,10 @@
-package org.jetbrains.compose.common.foundation.layout
+package compose.multiplatform.foundation.layout
 
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.ui.Modifier
 import androidx.compose.runtime.Composable
 
 @Composable
-internal expect fun Box(
+expect fun Box(
     modifier: Modifier = Modifier.Companion,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit = {}
 )

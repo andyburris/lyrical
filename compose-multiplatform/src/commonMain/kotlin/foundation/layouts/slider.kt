@@ -1,7 +1,7 @@
 package org.jetbrains.compose.common.material
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.ui.Modifier
 
 @Composable
 expect fun Slider(

@@ -4,20 +4,22 @@ import androidx.compose.runtime.Composable
 import client.Leaderboard
 import client.LeaderboardPlayer
 import common.Icon
-import jetbrains.compose.common.shapes.CircleShape
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Box
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.foundation.layout.fillMaxWidth
+import compose.multiplatform.foundation.modifier.background
+import compose.multiplatform.ui.Alignment
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.shape.CircleShape
+import compose.multiplatform.ui.unit.dp
 import name
-import org.jetbrains.compose.common.foundation.layout.Box
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.Row
-import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
 import org.jetbrains.compose.common.ui.*
 import org.jetbrains.compose.common.ui.draw.clip
-import org.jetbrains.compose.common.ui.unit.dp
 import platform.CurrentPalette
 import platform.LyricalTheme
-import platform.Text
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun Leaderboard(
     leaderboard: Leaderboard,
@@ -34,7 +36,6 @@ fun Leaderboard(
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun LeaderboardPlayerItem(
     player: LeaderboardPlayer,
@@ -72,7 +73,6 @@ private fun LeaderboardPlayerItem(
 }
 
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun ProfilePictureBox(modifier: Modifier, content: @Composable () -> Unit) {
     Box(modifier, content = content)

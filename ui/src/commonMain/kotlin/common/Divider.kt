@@ -1,16 +1,14 @@
 package common
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.common.core.graphics.Color
-import org.jetbrains.compose.common.foundation.layout.Box
-import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.ui.background
+import compose.multiplatform.foundation.layout.Box
+import compose.multiplatform.foundation.layout.fillMaxWidth
+import compose.multiplatform.foundation.modifier.background
+import compose.multiplatform.ui.Color
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.dp
 import org.jetbrains.compose.common.ui.size
-import org.jetbrains.compose.common.ui.unit.dp
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun Divider(color: Color, modifier: Modifier = Modifier) {
     Box(

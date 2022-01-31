@@ -1,12 +1,10 @@
-package org.jetbrains.compose.common.foundation
+package compose.multiplatform.foundation.modifier
 
-import org.jetbrains.compose.common.ui.unit.Dp
-import org.jetbrains.compose.common.core.graphics.Color
+import compose.multiplatform.ui.Color
 import org.jetbrains.compose.common.internal.StyleModifier
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.internal.castOrCreate
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.Dp
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.Color.RGB
 
 actual fun Modifier.border(size: Dp, color: Color): Modifier = this then StyleModifier {
     border(size.value.px, LineStyle.Solid, rgba(color.red, color.green, color.blue, color.alpha))

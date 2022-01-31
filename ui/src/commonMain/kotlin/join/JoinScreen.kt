@@ -4,19 +4,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import common.AppBar
-import org.jetbrains.compose.common.foundation.layout.Box
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.fillMaxHeight
-import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.fillMaxHeight
+import compose.multiplatform.foundation.layout.fillMaxWidth
+import compose.multiplatform.ui.Modifier
 import platform.Button
 import platform.LyricalTheme
-import platform.Text
 import platform.TextField
 import server.RoomCode
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun JoinScreen(
     modifier: Modifier = Modifier,

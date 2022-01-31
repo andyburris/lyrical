@@ -7,20 +7,23 @@ import client.PlaylistSearchState
 import client.SelectedPlaylist
 import client.openSpotifyLogin
 import common.Icon
-import jetbrains.compose.common.shapes.CircleShape
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.foundation.layout.fillMaxWidth
+import compose.multiplatform.foundation.modifier.background
+import compose.multiplatform.foundation.modifier.clickable
+import compose.multiplatform.foundation.modifier.padding
+import compose.multiplatform.ui.Alignment
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.shape.CircleShape
+import compose.multiplatform.ui.unit.dp
 import kotlinx.coroutines.flow.Flow
 import model.GenericPlaylist
-import org.jetbrains.compose.common.foundation.clickable
-import org.jetbrains.compose.common.foundation.layout.Box
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.Row
-import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
 import org.jetbrains.compose.common.ui.*
 import org.jetbrains.compose.common.ui.draw.clip
-import org.jetbrains.compose.common.ui.unit.dp
 import platform.*
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun ChoosePlaylists(selectedPlaylists: List<GenericPlaylist>, spotifyRepository: SpotifyRepository, modifier: Modifier = Modifier, onSelect: (GenericPlaylist) -> Unit) {
     val selectedPlaylistsFlow = snapshotFlow { selectedPlaylists }
@@ -48,7 +51,6 @@ fun ChoosePlaylists(selectedPlaylists: List<GenericPlaylist>, spotifyRepository:
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun SearchBar(term: String, modifier: Modifier = Modifier, onTermUpdate: (String) -> Unit) {
     Row(
@@ -65,7 +67,6 @@ private fun SearchBar(term: String, modifier: Modifier = Modifier, onTermUpdate:
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun PlaylistSection(name: String, searchState: PlaylistSearchState, modifier: Modifier = Modifier, onLoginClick: () -> Unit, onSelect: (GenericPlaylist) -> Unit) {
     when(searchState) {
@@ -76,7 +77,6 @@ private fun PlaylistSection(name: String, searchState: PlaylistSearchState, modi
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun PlaylistResultsSection(name: String, playlists: List<SelectedPlaylist>, modifier: Modifier = Modifier, onSelect: (GenericPlaylist) -> Unit) {
     Column(modifier = modifier) { //TODO: add Arrangement.SpacedBy(16.dp)
@@ -89,7 +89,6 @@ private fun PlaylistResultsSection(name: String, playlists: List<SelectedPlaylis
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun PlaylistLoadingSection(name: String, modifier: Modifier = Modifier) {
     Column(modifier = modifier) { //TODO: add Arrangement.SpacedBy(16.dp)
@@ -102,7 +101,6 @@ private fun PlaylistLoadingSection(name: String, modifier: Modifier = Modifier) 
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun PlaylistRequiresLoginSection(name: String, modifier: Modifier = Modifier, onLoginClick: () -> Unit) {
     Column(

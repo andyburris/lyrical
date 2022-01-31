@@ -2,33 +2,41 @@ package home
 
 import androidx.compose.runtime.Composable
 import common.Icon
-import platform.LyricalTheme
-import platform.Text
-import jetbrains.compose.common.shapes.CircleShape
-import org.jetbrains.compose.common.foundation.layout.Box
-import org.jetbrains.compose.common.foundation.layout.Row
-import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.ui.background
+import compose.multiplatform.foundation.Image
+import compose.multiplatform.foundation.Resource
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Box
+import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.foundation.layout.fillMaxWidth
+import compose.multiplatform.foundation.modifier.background
+import compose.multiplatform.ui.Alignment
+import compose.multiplatform.ui.Arrangement
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.shape.CircleShape
+import compose.multiplatform.ui.unit.dp
 import org.jetbrains.compose.common.ui.draw.clip
 import org.jetbrains.compose.common.ui.size
-import org.jetbrains.compose.common.ui.unit.dp
-import platform.Image
-import platform.Resource
+import platform.LyricalTheme
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun HomeHeader(modifier: Modifier = Modifier) {
-    Row(modifier.fillMaxWidth()) { //TODO: add Arrangement.SpaceBetween()
-        Image(resource = Resource.File("LyricalIcon.svg"), contentDescription = "Lyrical logo", modifier = Modifier.size(32.dp))
-        Text("Lyrical", style = LyricalTheme.typography.h2)
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Image(resource = Resource.File("LyricalIcon.svg"), contentDescription = "Lyrical logo", modifier = Modifier.size(32.dp))
+            Text("Lyrical", style = LyricalTheme.typography.h2)
+        }
         ProfilePicture(modifier = Modifier.size(40.dp))
         //TODO: add popup
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun ProfilePicture(modifier: Modifier = Modifier) {
     Box(modifier.clip(CircleShape).background(LyricalTheme.colors.overlay)) {

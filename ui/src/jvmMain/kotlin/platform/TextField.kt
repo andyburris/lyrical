@@ -5,18 +5,17 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.common.core.graphics.Color
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.ui.Color
 import org.jetbrains.compose.common.core.graphics.implementation
-import org.jetbrains.compose.common.foundation.layout.Box
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.foundation.layout.Box
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.text.TextStyle
 import org.jetbrains.compose.common.ui.implementation
 import styles.implementation
-import styles.text.TextStyle
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
-actual fun ActualBaseTextField(
+actual fun BasicTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier,

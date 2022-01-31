@@ -1,30 +1,33 @@
 package platform
 
+import compose.multiplatform.ui.Modifier
 import androidx.compose.runtime.Composable
-import jetbrains.compose.common.shapes.CircleShape
-import jetbrains.compose.common.shapes.Shape
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.ui.shape.CircleShape
+import compose.multiplatform.ui.shape.Shape
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun Button(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
     shape: Shape = CircleShape,
-    palette: Palette = CurrentPalette.invert(),
     content: @Composable () -> Unit,
-) = ActualButton(onClick, modifier, isEnabled, shape, palette, content)
+) = Button(onClick, modifier, isEnabled, shape, CurrentPalette.invert(), content)
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
-expect fun ActualButton(
+expect fun Button(
     onClick: () -> Unit,
-    modifier: Modifier,
-    isEnabled: Boolean,
-    shape: Shape,
-    palette: Palette,
+    modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
+    shape: Shape = CircleShape,
+    buttonColors: Palette/* = CurrentPalette.invert()*/,
     content: @Composable () -> Unit,
-    //TODO: add ButtonElevation
 )
+
+/*
+data class ButtonColors(
+    val backgroundColor: Color,
+    val disabledBackgroundColor: Color = backgroundColor.copy(alpha = 0.25f),
+    val contentColor: Color,
+    val disabledContentColor: Color = contentColor.copy(alpha = 0.25f)
+)*/

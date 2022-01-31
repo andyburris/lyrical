@@ -1,9 +1,8 @@
 package org.jetbrains.compose.common.ui
 
-import org.jetbrains.compose.common.internal.ActualModifier
+import compose.multiplatform.ui.Modifier
 import org.jetbrains.compose.common.internal.StyleModifier
-import org.jetbrains.compose.common.ui.unit.Dp
-import org.jetbrains.compose.web.css.add
+import compose.multiplatform.ui.unit.Dp
 import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.css.height
 import org.jetbrains.compose.web.css.px

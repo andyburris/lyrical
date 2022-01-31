@@ -1,6 +1,6 @@
-package org.jetbrains.compose.common.foundation.layout
+package compose.multiplatform.foundation.layout
 
-import org.jetbrains.compose.common.ui.unit.Dp
-import org.jetbrains.compose.common.ui.Modifier
+import compose.multiplatform.ui.unit.Dp
+import compose.multiplatform.ui.Modifier
 
 expect fun Modifier.offset(x: Dp, y: Dp): Modifier

@@ -5,39 +5,36 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.ProvideTextStyle
+import compose.multiplatform.ui.Modifier
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import jetbrains.compose.common.shapes.Shape
-import jetbrains.compose.common.shapes.implementation
+import compose.multiplatform.ui.shape.CircleShape
+import compose.multiplatform.ui.shape.Shape
+import compose.multiplatform.ui.shape.implementation
 import org.jetbrains.compose.common.core.graphics.implementation
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
 import org.jetbrains.compose.common.ui.implementation
 import styles.implementation
+import androidx.compose.material.Button as JButton
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
-actual fun ActualButton(
+actual fun Button(
     onClick: () -> Unit,
     modifier: Modifier,
     isEnabled: Boolean,
     shape: Shape,
-    palette: Palette,
-    content: @Composable () -> Unit
+    buttonColors: Palette,
+    content: @Composable () -> Unit,
 ) {
-    androidx.compose.material.Button(
+    JButton(
         onClick = onClick,
         modifier = modifier.implementation.height(56.dp),
         enabled = isEnabled,
         shape = shape.implementation,
-        colors = lyricalButtonColors(palette),
+        colors = lyricalButtonColors(buttonColors),
     ) {
         val enabledPalette = when(isEnabled) {
-            true -> palette
-            false -> palette.copy(contentPrimary = palette.contentTernary, contentSecondary = palette.contentTernary)
+            true -> buttonColors
+            false -> buttonColors.copy(contentPrimary = buttonColors.contentTernary, contentSecondary = buttonColors.contentTernary)
         }
         ProvidePalette(enabledPalette) {
             ProvideTextStyle(LyricalTheme.typography.subtitle1.implementation) {
@@ -47,7 +44,6 @@ actual fun ActualButton(
     }
 }
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 private fun lyricalButtonColors(palette: Palette) = buttonColors(
     backgroundColor = palette.background.implementation,

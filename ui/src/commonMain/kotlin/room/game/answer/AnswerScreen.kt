@@ -1,23 +1,26 @@
 package room.game.answer
 
+import GameAction
+import GameAnswer
+import GameScreen
 import androidx.compose.runtime.Composable
 import client.ClientGameQuestion
 import client.SourcePlaylist
 import client.totalPoints
 import common.LyricalScaffold
+import compose.multiplatform.foundation.Text
+import compose.multiplatform.foundation.layout.Column
+import compose.multiplatform.foundation.layout.fillMaxWidth
+import compose.multiplatform.foundation.modifier.background
+import compose.multiplatform.foundation.modifier.padding
+import compose.multiplatform.foundation.modifier.verticalScroll
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.dp
 import isRight
-import org.jetbrains.compose.common.foundation.layout.Column
-import org.jetbrains.compose.common.foundation.layout.fillMaxWidth
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
-import org.jetbrains.compose.common.ui.Modifier
-import org.jetbrains.compose.common.ui.background
-import org.jetbrains.compose.common.ui.padding
-import org.jetbrains.compose.common.ui.unit.dp
 import platform.*
 import room.game.question.QuestionAppBar
 import server.RoomState
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 @Composable
 fun AnswerScreen(
     gameScreen: GameScreen.Answer,

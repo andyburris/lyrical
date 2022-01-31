@@ -1,7 +1,7 @@
 package org.jetbrains.compose.common.ui
 
-import org.jetbrains.compose.common.ui.unit.Dp
-import kotlin.jvm.JvmName
+import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.Dp
 
 fun Modifier.size(size: Dp): Modifier {
     return size(size, size)
