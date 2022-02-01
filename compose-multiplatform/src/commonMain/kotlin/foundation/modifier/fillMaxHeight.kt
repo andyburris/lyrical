@@ -2,4 +2,4 @@ package compose.multiplatform.foundation.layout
 
 import compose.multiplatform.ui.Modifier
 
-expect fun Modifier.fillMaxWidth(): Modifier
+expect fun Modifier.fillMaxHeight(fraction: Float = 1f): Modifier

@@ -3,6 +3,7 @@ package platform
 import androidx.compose.runtime.Composable
 import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.foundation.modifiers.RowScopeImpl
 import compose.multiplatform.ui.Alignment
 import compose.multiplatform.ui.Modifier
 
@@ -18,5 +19,7 @@ actual fun ActualHorizontalOverflowRow(
     verticalAlignment: Alignment.Vertical,
     content: @Composable () -> Unit
 ) {
-   Row(modifier, horizontalArrangement, verticalAlignment, content) //TODO: wrap overflow
+   Row(modifier, horizontalArrangement, verticalAlignment) {
+       content()
+   } //TODO: wrap overflow
 }

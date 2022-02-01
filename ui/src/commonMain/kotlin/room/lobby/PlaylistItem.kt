@@ -7,6 +7,7 @@ import compose.multiplatform.foundation.Resource
 import compose.multiplatform.foundation.Text
 import compose.multiplatform.foundation.layout.*
 import compose.multiplatform.foundation.modifier.background
+import compose.multiplatform.foundation.modifiers.fillMaxSize
 import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.Modifier
 import compose.multiplatform.ui.shape.CircleShape
@@ -17,11 +18,15 @@ import model.name
 import model.subtitle
 import org.jetbrains.compose.common.ui.draw.clip
 import org.jetbrains.compose.common.ui.size
+import platform.CurrentPalette
 import platform.LyricalTheme
 
 @Composable
 fun VerticalPlaylistItem(playlist: GenericPlaylist, modifier: Modifier = Modifier, selected: Boolean = false) {
-    Column(modifier) { //TODO: Add Arrangement.SpacedBy(12.dp)
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         Box(
             modifier = Modifier
                 .clip(LyricalTheme.shapes.small)
@@ -31,7 +36,7 @@ fun VerticalPlaylistItem(playlist: GenericPlaylist, modifier: Modifier = Modifie
             Image(
                 resource = Resource.Url(playlist.imageURL ?: ""), //TODO: replace with file path of placeholder
                 contentDescription = null,
-                modifier = Modifier.fillMaxWidth().fillMaxHeight(1f) //TODO: replace with fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             )
             if (selected) {
                 Icon(
@@ -52,6 +57,7 @@ fun VerticalPlaylistItem(playlist: GenericPlaylist, modifier: Modifier = Modifie
             Text(
                 text = playlist.subtitle,
                 style = LyricalTheme.typography.body2,
+                color = CurrentPalette.contentSecondary,
                 modifier = Modifier.width(128.dp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

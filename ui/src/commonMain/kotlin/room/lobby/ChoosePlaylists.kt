@@ -15,6 +15,7 @@ import compose.multiplatform.foundation.modifier.background
 import compose.multiplatform.foundation.modifier.clickable
 import compose.multiplatform.foundation.modifier.padding
 import compose.multiplatform.ui.Alignment
+import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.Modifier
 import compose.multiplatform.ui.shape.CircleShape
 import compose.multiplatform.ui.unit.dp
@@ -34,7 +35,10 @@ fun ChoosePlaylists(selectedPlaylists: List<GenericPlaylist>, spotifyRepository:
     val userPlaylists = choosePlaylistsMachine.filteredUserPlaylists.collectAsState()
     val spotifyPlaylists = choosePlaylistsMachine.searchedSpotifyPlaylists.collectAsState()
 
-    Column(modifier) { //TODO: add Arrangement.SpacedBy(32.dp)
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(32.dp),
+    ) {
         SearchBar(term = searchTerm.value) { choosePlaylistsMachine.handleSearchUpdate(it) }
         PlaylistSection(
             name = "My Playlists",
@@ -60,10 +64,10 @@ private fun SearchBar(term: String, modifier: Modifier = Modifier, onTermUpdate:
             .padding(16.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        //TODO: add Arrangement.SpacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Icon(Icon.Search, contentDescription = null, tint = CurrentPalette.contentSecondary)
-        TextField(term, onTermUpdate, placeholder = "Search playlists, artists...")
+        TextField(term, onTermUpdate, textStyle = LyricalTheme.typography.body1, placeholder = "Search playlists, artists...")
     }
 }
 
@@ -79,9 +83,15 @@ private fun PlaylistSection(name: String, searchState: PlaylistSearchState, modi
 
 @Composable
 private fun PlaylistResultsSection(name: String, playlists: List<SelectedPlaylist>, modifier: Modifier = Modifier, onSelect: (GenericPlaylist) -> Unit) {
-    Column(modifier = modifier) { //TODO: add Arrangement.SpacedBy(16.dp)
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
         Text(name.uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onBackgroundSecondary)
-        HorizontalOverflowRow(Modifier.fillMaxWidth()) { //TODO: add Arrangement.SpacedBy(24.dp) (or 16?)
+        HorizontalOverflowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
             playlists.forEach {
                 VerticalPlaylistItem(it.playlist, selected = it.selected, modifier = Modifier.clickable { onSelect.invoke(it.playlist)})
             }
@@ -91,9 +101,15 @@ private fun PlaylistResultsSection(name: String, playlists: List<SelectedPlaylis
 
 @Composable
 private fun PlaylistLoadingSection(name: String, modifier: Modifier = Modifier) {
-    Column(modifier = modifier) { //TODO: add Arrangement.SpacedBy(16.dp)
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         Text(name.uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onBackgroundSecondary)
-        HorizontalOverflowRow(Modifier.fillMaxWidth()) { //TODO: add Arrangement.SpacedBy(24.dp) (or 16?)
+        HorizontalOverflowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
             repeat(5) {
                 VerticalPlaylistPlaceholderLarge()
             }
@@ -105,17 +121,25 @@ private fun PlaylistLoadingSection(name: String, modifier: Modifier = Modifier) 
 private fun PlaylistRequiresLoginSection(name: String, modifier: Modifier = Modifier, onLoginClick: () -> Unit) {
     Column(
         modifier = modifier
-            //.clip(LyricalTheme.shapes.medium) TODO: readd once shapes are supported
+            .clip(LyricalTheme.shapes.large)
             .background(LyricalTheme.colors.backgroundDark)
-            .padding(32.dp)
-    ) { //TODO: Arrangement.SpacedBy(32.dp)
+            .padding(32.dp),
+        verticalArrangement = Arrangement.spacedBy(32.dp)
+    ) {
         Text(name.uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onBackgroundSecondary)
-        HorizontalOverflowRow(Modifier.fillMaxWidth()) { //TODO: add Arrangement.SpacedBy(24.dp) (or 16?)
+        HorizontalOverflowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
             repeat(5) { //TODO: add constraints to limit overflow for web
                 VerticalPlaylistPlaceholderSmall()
             }
         }
-        Text("Log in with Spotify to easily access your playlists, save your progress, and compete with others!")
+        Text(
+            text = "Log in with Spotify to easily access your playlists, save your progress, and compete with others!",
+            style = LyricalTheme.typography.body1,
+            color = LyricalTheme.colors.onBackgroundSecondary
+        )
         Button(onClick = onLoginClick, modifier = Modifier.fillMaxWidth()) {
             Text("Log in with Spotify".uppercase())
         }

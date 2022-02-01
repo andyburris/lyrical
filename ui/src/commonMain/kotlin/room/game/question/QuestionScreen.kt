@@ -9,6 +9,7 @@ import compose.multiplatform.foundation.layout.Column
 import compose.multiplatform.foundation.modifier.background
 import compose.multiplatform.foundation.modifier.padding
 import compose.multiplatform.foundation.modifier.verticalScroll
+import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.Modifier
 import compose.multiplatform.ui.unit.dp
 import platform.LyricalTheme
@@ -26,10 +27,10 @@ fun QuestionScreen(
 ) {
     Column(modifier.verticalScroll()) {
         Column(
-            //TODO: add Arrangement.SpacedBy(24.dp)
             modifier = Modifier
                 .background(LyricalTheme.colors.backgroundDark)
-                .padding(32.dp)
+                .padding(32.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             QuestionAppBar(
                 questionIndex = gameScreen.questionIndex,

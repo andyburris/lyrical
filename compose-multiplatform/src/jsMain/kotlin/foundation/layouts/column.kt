@@ -6,10 +6,8 @@ import compose.multiplatform.ui.SpacedArrangement
 import org.jetbrains.compose.common.internal.modifierWrapper
 import compose.multiplatform.ui.Alignment
 import compose.multiplatform.ui.Modifier
-import compose.multiplatform.ui.asAttributeBuilderApplier
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.ui.Styles
 
 @Composable
 actual fun Column(
@@ -20,8 +18,9 @@ actual fun Column(
 ) = modifierWrapper(modifier) {
     Div(
         attrs = {
-            classes(Styles.columnClass)
             style {
+                display(DisplayStyle.Flex)
+                flexDirection(FlexDirection.Column)
                 when (verticalArrangement) {
                     Arrangement.Top -> justifyContent(JustifyContent.FlexStart)
                     Arrangement.Center -> justifyContent(JustifyContent.Center)

@@ -14,6 +14,8 @@ import compose.multiplatform.foundation.layout.fillMaxWidth
 import compose.multiplatform.foundation.modifier.background
 import compose.multiplatform.foundation.modifier.padding
 import compose.multiplatform.foundation.modifier.verticalScroll
+import compose.multiplatform.foundation.modifiers.fillMaxSize
+import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.Modifier
 import compose.multiplatform.ui.unit.dp
 import isRight
@@ -33,6 +35,7 @@ fun AnswerScreen(
     ProvidePalette(if (answeredQuestion.answer.isRight) LyricalTheme.colors.primaryPalette else LyricalTheme.colors.backgroundPalette) {
         LyricalScaffold(
             modifier = modifier
+                .fillMaxSize()
                 .verticalScroll()
                 .background(CurrentPalette.background)
                 .padding(32.dp),
@@ -73,7 +76,7 @@ fun AnswerScreen(
                 }
             },
             content = {
-                Column { //TODO: Add Arrangement.SpacedBy(24.dp)
+                Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
                     AnswerTrack(answeredQuestion.track, answeredQuestion.answer, modifier = Modifier.fillMaxWidth())
                     Leaderboard(game.leaderboard, gameScreen.questionIndex)
                 }

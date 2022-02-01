@@ -1,6 +1,8 @@
 package compose.multiplatform.foundation.layout
 
 import androidx.compose.runtime.Composable
+import compose.multiplatform.foundation.modifiers.RowScope
+import compose.multiplatform.foundation.modifiers.RowScopeImpl
 import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.SpacedArrangement
 import org.jetbrains.compose.common.internal.modifierWrapper
@@ -8,21 +10,20 @@ import compose.multiplatform.ui.Alignment
 import compose.multiplatform.ui.Modifier
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.ui.Styles
 
 @Composable
 actual fun Row(
     modifier: Modifier,
     horizontalArrangement: Arrangement.Horizontal,
     verticalAlignment: Alignment.Vertical,
-    content: @Composable () -> Unit
+    content: @Composable RowScope.() -> Unit
 ) = modifierWrapper(modifier) {
     Div(
         attrs = {
-            classes(
-                *arrayOf(Styles.rowClass)
-            )
             style {
+                display(DisplayStyle.Flex)
+                flexDirection(FlexDirection.Row)
+                width(100.percent)
                 when (horizontalArrangement) {
                     Arrangement.Start -> justifyContent(JustifyContent.FlexStart)
                     Arrangement.Center -> justifyContent(JustifyContent.Center)
@@ -51,6 +52,6 @@ actual fun Row(
             }
         }
     ) {
-        content()
+        content(RowScopeImpl())
     }
 }

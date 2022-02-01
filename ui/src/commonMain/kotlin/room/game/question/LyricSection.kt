@@ -13,14 +13,19 @@ import compose.multiplatform.foundation.layout.Column
 import compose.multiplatform.foundation.layout.Row
 import compose.multiplatform.foundation.layout.fillMaxWidth
 import compose.multiplatform.foundation.modifier.clickable
+import compose.multiplatform.ui.Alignment
 import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.dp
 import platform.LyricalTheme
 
 @Composable
 fun LyricSection(question: ClientGameQuestion.Unanswered, questionIndex: Int, modifier: Modifier = Modifier, onQuestionAction: (GameAction.Question) -> Unit) {
-    Column(modifier = modifier) { //TODO: add Arrangement.SpacedBy(16.dp)
-        Column { //TODO: add Arrangement.SpacedBy(4.dp)
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text("Lyric".uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onBackgroundSecondary)
             val shownLyrics = question.lyric + (question.hints.nextLyric?.let { " / $it" } ?: "") //TODO: create AnnotatedString
             Text(shownLyrics, style = LyricalTheme.typography.h1, color = LyricalTheme.colors.onBackground)
@@ -29,7 +34,10 @@ fun LyricSection(question: ClientGameQuestion.Unanswered, questionIndex: Int, mo
             }
         }
 
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.End)
+        ) {
             if (question.hints !is Hints.Both && question.hints !is Hints.Artist){
                 Chip(
                     text = "+ Show Artist",

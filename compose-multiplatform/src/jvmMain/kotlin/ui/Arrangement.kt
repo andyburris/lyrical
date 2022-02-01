@@ -10,9 +10,9 @@ val Arrangement.Vertical.implementation: JArrangement.Vertical
     get() = when(this) {
         Arrangement.Top -> JArrangement.Top
         Arrangement.Bottom -> JArrangement.Bottom
-        is Arrangement.HorizontalOrVertical -> this.implementation
         is SpacedArrangement.HorizontalOrVertical -> JArrangement.spacedBy(this.space.implementation)
         is SpacedArrangement.Vertical -> JArrangement.spacedBy(this.space.implementation, this.alignment.implementation)
+        is Arrangement.HorizontalOrVertical -> this.implementation
         else -> throw ClassCastException("Other values not supported")
     }
 
@@ -20,9 +20,9 @@ val Arrangement.Horizontal.implementation: JArrangement.Horizontal
     get() = when (this) {
         Arrangement.Start -> JArrangement.Start
         Arrangement.End -> JArrangement.End
-        is Arrangement.HorizontalOrVertical -> this.implementation
         is SpacedArrangement.HorizontalOrVertical -> JArrangement.spacedBy(this.space.implementation)
         is SpacedArrangement.Horizontal -> JArrangement.spacedBy(this.space.implementation, this.alignment.implementation)
+        is Arrangement.HorizontalOrVertical -> this.implementation
         else -> throw ClassCastException("Other values not supported")
     }
 

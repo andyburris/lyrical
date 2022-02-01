@@ -8,18 +8,29 @@ import common.Icon
 import compose.multiplatform.foundation.Text
 import compose.multiplatform.foundation.layout.Column
 import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.Modifier
 import compose.multiplatform.ui.shape.CircleShape
+import compose.multiplatform.ui.shape.RectangleShape
+import compose.multiplatform.ui.unit.dp
 import org.jetbrains.compose.common.ui.draw.clip
 import platform.*
 
 @Composable
 fun AnswerSection(modifier: Modifier = Modifier, onAnswer: (UserAnswer) -> Unit) {
-    Column(modifier) { //TODO: Add Arrangement.SpacedBy(24.dp)
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
         val answerInput = remember { mutableStateOf("") }
         Column {
             Text("Answer".uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onBackgroundSecondary)
-            TextField(answerInput.value, onValueChange = answerInput.component2(), textStyle = LyricalTheme.typography.h1)
+            TextField(
+                value = answerInput.value,
+                onValueChange = answerInput.component2(),
+                textStyle = LyricalTheme.typography.h1,
+                placeholder = "Song Name"
+            )
         }
         CombinedButton(
             text = {
@@ -49,15 +60,15 @@ private fun CombinedButton(
         Button(
             isEnabled = isTextEnabled,
             onClick = onClickText,
-            //shape = RectangleShape TODO: readd once shapes are supported
+            shape = RectangleShape
         ) { //TODO: add weight(1f) modifier, colors, etc.
             text()
         }
         FloatingActionButton(
             isEnabled = isIconEnabled,
             onClick = onClickIcon,
-            palette = CurrentPalette.invert().copy(background = CurrentPalette.invert().backgroundDark)
-            //shape = RectangleShape TODO: readd once shapes are supported
+            palette = CurrentPalette.invert().copy(background = CurrentPalette.invert().backgroundDark),
+            shape = RectangleShape
         ) {
             icon()
         }

@@ -13,8 +13,10 @@ import compose.multiplatform.foundation.modifier.padding
 import compose.multiplatform.ui.Alignment
 import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.shape.CircleShape
 import compose.multiplatform.ui.unit.dp
 import model.GenericPlaylist
+import org.jetbrains.compose.common.ui.draw.clip
 import platform.HorizontalOverflowRow
 import platform.LyricalTheme
 
@@ -28,9 +30,12 @@ fun LobbyHeader(
     onNavigateBack: () -> Unit
 ) {
     Column(
-        modifier = modifier.background(LyricalTheme.colors.backgroundDark).padding(32.dp),
+        modifier = modifier
+            .background(LyricalTheme.colors.backgroundDark)
+            .padding(32.dp)
+            .padding(bottom = if (isHost) 32.dp else 0.dp),
         verticalArrangement = Arrangement.spacedBy(32.dp)
-    ) { //TODO: Add Arrangement.SpacedBy(32.dp), add 32.dp bottom padding if (isHost)
+    ) {
         AppBar(
             title = "Lobby",
             onNavigateBack = onNavigateBack
@@ -51,7 +56,14 @@ fun LobbyHeader(
 
 @Composable
 private fun ShareRoom(code: String, modifier: Modifier = Modifier) {
-    Row(modifier.background(LyricalTheme.colors.background).padding(16.dp)) { //TODO: Add CircleShape to background, vertical 4.dp padding, right 12.dp padding
+    Row(
+        modifier = modifier
+            .clip(CircleShape)
+            .background(LyricalTheme.colors.background)
+            .padding(start = 16.dp, top = 4.dp, end = 12.dp, bottom = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(code, style = LyricalTheme.typography.subtitle1)
         Icon(icon = Icon.Share, contentDescription = "Share room code")
     }
@@ -59,8 +71,14 @@ private fun ShareRoom(code: String, modifier: Modifier = Modifier) {
 
 @Composable
 private fun NoPlaylists(isHost: Boolean, modifier: Modifier = Modifier) {
-    Column(modifier) { //TODO: Add Arrangement.SpacedBy(32.dp)
-        HorizontalOverflowRow(Modifier.fillMaxWidth()) { //TODO: Add Arrangement.SpacedBy(16.dp), BoxWithConstraints to make go off screen?
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(32.dp),
+    ) {
+        HorizontalOverflowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) { //TODO: Add BoxWithConstraints to have enough elements to go off screen?
             repeat(5) {
                 VerticalPlaylistPlaceholderSmall()
             }

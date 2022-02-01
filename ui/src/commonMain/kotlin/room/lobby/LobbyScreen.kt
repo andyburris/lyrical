@@ -8,9 +8,13 @@ import common.Icon
 import compose.multiplatform.foundation.Text
 import compose.multiplatform.foundation.layout.Column
 import compose.multiplatform.foundation.layout.Row
+import compose.multiplatform.foundation.modifier.padding
 import compose.multiplatform.foundation.modifier.verticalScroll
+import compose.multiplatform.foundation.modifiers.height
 import compose.multiplatform.ui.Alignment
+import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.dp
 import platform.Button
 import server.RoomCode
 import server.RoomState
@@ -41,7 +45,10 @@ fun LobbyScreen(
             )
         }
         when (isHost) {
-            true -> Column {
+            true -> Column(
+                modifier = Modifier.padding(32.dp).padding(top = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(32.dp)
+            ) {
                 EditableOptions(state.config) {
                     onUserAction.invoke(LobbyAction.Host.UpdateConfig(it))
                 }
@@ -61,14 +68,18 @@ fun LobbyScreen(
 
 @Composable
 private fun ButtonRow(state: RoomState.Lobby, modifier: Modifier = Modifier, onStartGame: () -> Unit, onOpenOptions: () -> Unit) {
-    Row(modifier) {
+    Row(
+        modifier.height(0.dp).padding(horizontal = 32.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Button(
+            modifier = Modifier.height(56.dp),
             isEnabled = state.playlists.isNotEmpty(),
             onClick = onStartGame
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                //TODO: add Arrangement.SpacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Icon(Icon.Play, contentDescription = null)
                 Text("Start Game".uppercase())

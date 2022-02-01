@@ -27,6 +27,10 @@ fun QuestionAppBar(
         modifier = modifier,
         onNavigateBack = onNavigateBack
     ) {
-        Text("$currentPoints/$questionIndex pts", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary) //TODO: create AnnotatedString with different colors for "/n pts"
+        Text(
+            text = "$currentPoints/$questionIndex pts",
+            style = LyricalTheme.typography.subtitle1,
+            color = CurrentPalette.contentSecondary
+        ) //TODO: create AnnotatedString with different colors for "/n pts"
     }
 }

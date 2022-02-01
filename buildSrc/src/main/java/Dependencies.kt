@@ -10,7 +10,7 @@ object Versions {
     const val ktor = "1.6.1"
     const val spotify = "3.8.1"
     const val mosaic = "0.1.0"
-    const val kamel = "0.2.2"
+    const val kamel = "0.3.0"
 }
 
 object Dependencies {

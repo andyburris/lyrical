@@ -37,22 +37,22 @@ actual fun lyricalPlatformTypography() = LyricalTypography(
     subtitle2 = TextStyle(
         fontWeight = FontWeight.SemiBold,
         fontSize = 18.sp,
-        //fontFamily = bodyFont, TODO: variable fonts
+        fontFamily = bodyFont, //TODO: variable fonts
     ),
     body1 = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 18.sp,
-        //fontFamily = bodyFont, TODO: variable fonts
+        fontFamily = bodyFont, //TODO: variable fonts
     ),
     body2 = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 18.sp,
-        //fontFamily = bodyFont, TODO: variable fonts
+        fontFamily = bodyFont, //TODO: variable fonts
     ),
     caption = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        //fontFamily = bodyFont, TODO: variable fonts
+        fontFamily = bodyFont, //TODO: variable fonts
     ),
 )
 

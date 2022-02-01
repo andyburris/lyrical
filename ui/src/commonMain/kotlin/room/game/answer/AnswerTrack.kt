@@ -10,11 +10,14 @@ import compose.multiplatform.foundation.layout.Column
 import compose.multiplatform.foundation.layout.Row
 import compose.multiplatform.foundation.modifier.background
 import compose.multiplatform.foundation.modifier.padding
+import compose.multiplatform.ui.Alignment
+import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.Modifier
 import compose.multiplatform.ui.unit.dp
 import isWrong
 import model.GenericGameTrack
 import org.jetbrains.compose.common.ui.*
+import org.jetbrains.compose.common.ui.draw.clip
 import platform.*
 
 @Composable
@@ -25,14 +28,15 @@ fun AnswerTrack(
 ) {
     Column(
         modifier = modifier
-            //.clip(LyricalTheme.shapes.medium) TODO: readd once shapes are supported
+            .clip(LyricalTheme.shapes.large)
             .background(CurrentPalette.backgroundDark)
-            .padding(24.dp)
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         if (answer is GameAnswer.Answered.Incorrect) {
             YourAnswer(answer)
         }
-        Column { //TODO: Add Arrangement.SpacedBy(8.dp)
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (answer.isWrong) {
                 Text("Correct Answer".uppercase(), style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
             }
@@ -54,7 +58,11 @@ private fun YourAnswer(
 
 @Composable
 private fun SongItem(track: GenericTrack, modifier: Modifier = Modifier) {
-    Row(modifier) { //TODO: add Arrangement.SpacedBy(16.dp)
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Image(Resource.Url(track.album.imageURL), contentDescription = null, modifier = Modifier.size(48.dp))
         Column {
             Text(track.name, style = LyricalTheme.typography.h2, color = CurrentPalette.contentPrimary)
