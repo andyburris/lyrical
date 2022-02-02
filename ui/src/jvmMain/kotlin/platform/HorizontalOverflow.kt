@@ -7,27 +7,35 @@ import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.foundation.layout.implementation
 import compose.multiplatform.ui.Alignment
 import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.Dp
+import compose.multiplatform.ui.unit.implementation
 import org.jetbrains.compose.common.ui.implementation
 
 @Composable
-actual fun ActualHorizontalOverflowRow(
+actual fun HorizontalOverflowRow(
     modifier: Modifier,
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalAlignment: Alignment.Vertical,
+    mainAxisAlignment: Alignment.Horizontal,
+    mainAxisSpacing: Dp,
+    crossAxisAlignment: Alignment.Vertical,
+    crossAxisSpacing: Dp,
     content: @Composable () -> Unit
 ) {
     FlowRow(
         modifier = modifier.implementation,
-        mainAxisAlignment = when(horizontalArrangement.implementation) {
-            androidx.compose.foundation.layout.Arrangement.Start -> MainAxisAlignment.Start
-            androidx.compose.foundation.layout.Arrangement.Center -> MainAxisAlignment.Center
-            androidx.compose.foundation.layout.Arrangement.End -> MainAxisAlignment.End
-            androidx.compose.foundation.layout.Arrangement.SpaceAround -> MainAxisAlignment.SpaceAround
-            androidx.compose.foundation.layout.Arrangement.SpaceBetween -> MainAxisAlignment.SpaceBetween
-            androidx.compose.foundation.layout.Arrangement.SpaceEvenly -> MainAxisAlignment.SpaceEvenly
+        mainAxisAlignment = when(mainAxisAlignment) {
+            Alignment.Start -> MainAxisAlignment.Start
+            Alignment.CenterHorizontally -> MainAxisAlignment.Center
+            Alignment.End -> MainAxisAlignment.End
             else -> MainAxisAlignment.Start
         },
-        mainAxisSpacing = horizontalArrangement.implementation.spacing,
+        mainAxisSpacing = mainAxisSpacing.implementation,
+        crossAxisAlignment = when(crossAxisAlignment.implementation) {
+            Alignment.Top -> FlowCrossAxisAlignment.Start
+            Alignment.CenterVertically -> FlowCrossAxisAlignment.Center
+            Alignment.Bottom -> FlowCrossAxisAlignment.End
+            else -> FlowCrossAxisAlignment.Start
+        },
+        crossAxisSpacing = crossAxisSpacing.implementation,
         content = content
     )
 }

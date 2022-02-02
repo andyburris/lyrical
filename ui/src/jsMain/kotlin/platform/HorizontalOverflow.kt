@@ -3,9 +3,10 @@ package platform
 import androidx.compose.runtime.Composable
 import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.foundation.layout.Row
-import compose.multiplatform.foundation.modifiers.RowScopeImpl
 import compose.multiplatform.ui.Alignment
 import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.Dp
+import compose.multiplatform.ui.unit.dp
 
 /**
  * Row that handles horizontal overflow based on platform
@@ -13,13 +14,15 @@ import compose.multiplatform.ui.Modifier
  * Desktop: wrap items to next line
  */
 @Composable
-actual fun ActualHorizontalOverflowRow(
+actual fun HorizontalOverflowRow(
     modifier: Modifier,
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalAlignment: Alignment.Vertical,
+    mainAxisAlignment: Alignment.Horizontal,
+    mainAxisSpacing: Dp,
+    crossAxisAlignment: Alignment.Vertical,
+    crossAxisSpacing: Dp,
     content: @Composable () -> Unit
 ) {
-   Row(modifier, horizontalArrangement, verticalAlignment) {
+   Row(modifier, Arrangement.spacedBy(mainAxisSpacing, alignment = mainAxisAlignment), crossAxisAlignment) {
        content()
    } //TODO: wrap overflow
 }

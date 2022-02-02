@@ -1,9 +1,14 @@
 package client
 
-import com.adamratzman.spotify.SpotifyScope
-import com.adamratzman.spotify.getSpotifyPkceAuthorizationUrl
-import com.adamratzman.spotify.getSpotifyPkceCodeChallenge
-import com.adamratzman.spotify.spotifyClientPkceApi
+import ClientSpotifyRepository
+import SpotifyRepository
+import com.adamratzman.spotify.*
+import io.ktor.application.*
+import io.ktor.routing.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.util.*
+import kotlinx.coroutines.flow.*
 import spotifyClientID
 import java.awt.Desktop
 import java.io.File
@@ -35,7 +40,9 @@ suspend fun handleSpotifyLoginPKCE(code: String) = spotifyClientPkceApi(
     pkceCodeVerifier = codeVerifier
 ).build()
 
-val redirectURI: String = "lyricalgame://authorize"
+//val redirectURI: String = "lyricalgame://authorize"
+val redirectPort = 4324
+val redirectURI: String = "http://localhost:$redirectPort/authorize"
 
 actual fun openURLInBrowserTab(url: String) {
     if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)){
@@ -45,3 +52,38 @@ actual fun openURLInBrowserTab(url: String) {
     }
 }
 
+actual fun spotifyRepository(defaultRepository: SpotifyRepository): StateFlow<SpotifyRepository> = loginListenerServer(defaultRepository)
+
+/*
+fun loginListenerServer(): Flow<SpotifyRepository> = flow {
+    embeddedServer(Netty, port = redirectPort) {
+        routing {
+            get("/authorize") {
+                val code = this.call.parameters.getOrFail<String>("code")
+                println("authorization code = $code")
+                val api = handleSpotifyLoginPKCE(code)
+                println("logged into userId = ${api.getUserId()}")
+                emit(ClientSpotifyRepository(api))
+            }
+        }
+    }.start(wait = false)
+}.map {
+    println("emitted repo = $it")
+    it
+}*/
+
+fun loginListenerServer(defaultRepository: SpotifyRepository): StateFlow<SpotifyRepository>  {
+    val stateFlow = MutableStateFlow(defaultRepository)
+    embeddedServer(Netty, port = redirectPort) {
+        routing {
+            get("/authorize") {
+                val code = this.call.parameters.getOrFail<String>("code")
+                println("authorization code = $code")
+                val api = handleSpotifyLoginPKCE(code)
+                println("logged into userId = ${api.getUserId()}")
+                stateFlow.value = ClientSpotifyRepository(api)
+            }
+        }
+    }.start(wait = false)
+    return stateFlow
+}

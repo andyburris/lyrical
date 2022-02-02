@@ -43,7 +43,11 @@ fun LobbyHeader(
             ShareRoom(code)
         }
         when {
-            playlists.isNotEmpty() -> HorizontalOverflowRow(Modifier.fillMaxWidth()) { //TODO: Add Arrangement.SpacedBy(16.dp), add flex row if desktop/web
+            playlists.isNotEmpty() -> HorizontalOverflowRow(
+                modifier = Modifier.fillMaxWidth(),
+                mainAxisSpacing = 16.dp,
+                crossAxisSpacing = 16.dp
+            ) {
                 playlists.map {
                     val clickableModifier = if (isHost) Modifier.clickable { onClickPlaylist.invoke(it) } else Modifier
                     VerticalPlaylistItem(it, clickableModifier)
@@ -77,7 +81,8 @@ private fun NoPlaylists(isHost: Boolean, modifier: Modifier = Modifier) {
     ) {
         HorizontalOverflowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            mainAxisSpacing = 16.dp,
+            crossAxisSpacing = 16.dp,
         ) { //TODO: Add BoxWithConstraints to have enough elements to go off screen?
             repeat(5) {
                 VerticalPlaylistPlaceholderSmall()

@@ -21,7 +21,6 @@ import compose.multiplatform.ui.shape.CircleShape
 import compose.multiplatform.ui.unit.dp
 import kotlinx.coroutines.flow.Flow
 import model.GenericPlaylist
-import org.jetbrains.compose.common.ui.*
 import org.jetbrains.compose.common.ui.draw.clip
 import platform.*
 
@@ -30,7 +29,7 @@ fun ChoosePlaylists(selectedPlaylists: List<GenericPlaylist>, spotifyRepository:
     val selectedPlaylistsFlow = snapshotFlow { selectedPlaylists }
     val spotifyRepositoryFlow: Flow<SpotifyRepository> = snapshotFlow { spotifyRepository }
     val coroutineScope = rememberCoroutineScope()
-    val choosePlaylistsMachine = remember { ChoosePlaylistsMachine(spotifyRepositoryFlow, selectedPlaylistsFlow, coroutineScope) }
+    val choosePlaylistsMachine = ChoosePlaylistsMachine(spotifyRepositoryFlow, selectedPlaylistsFlow, coroutineScope)
     val searchTerm = choosePlaylistsMachine.searchTerm.collectAsState()
     val userPlaylists = choosePlaylistsMachine.filteredUserPlaylists.collectAsState()
     val spotifyPlaylists = choosePlaylistsMachine.searchedSpotifyPlaylists.collectAsState()
@@ -90,7 +89,8 @@ private fun PlaylistResultsSection(name: String, playlists: List<SelectedPlaylis
         Text(name.uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onBackgroundSecondary)
         HorizontalOverflowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            mainAxisSpacing = 16.dp,
+            crossAxisSpacing = 16.dp,
         ) {
             playlists.forEach {
                 VerticalPlaylistItem(it.playlist, selected = it.selected, modifier = Modifier.clickable { onSelect.invoke(it.playlist)})
@@ -108,7 +108,8 @@ private fun PlaylistLoadingSection(name: String, modifier: Modifier = Modifier) 
         Text(name.uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onBackgroundSecondary)
         HorizontalOverflowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            mainAxisSpacing = 16.dp,
+            crossAxisSpacing = 16.dp,
         ) {
             repeat(5) {
                 VerticalPlaylistPlaceholderLarge()
@@ -129,7 +130,8 @@ private fun PlaylistRequiresLoginSection(name: String, modifier: Modifier = Modi
         Text(name.uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onBackgroundSecondary)
         HorizontalOverflowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            mainAxisSpacing = 16.dp,
+            crossAxisSpacing = 16.dp,
         ) {
             repeat(5) { //TODO: add constraints to limit overflow for web
                 VerticalPlaylistPlaceholderSmall()

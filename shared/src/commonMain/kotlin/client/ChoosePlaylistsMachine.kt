@@ -29,6 +29,7 @@ class ChoosePlaylistsMachine(
     }.stateIn(coroutineScope, SharingStarted.Lazily, PlaylistSearchState.Loading)
 
     val filteredUserPlaylists: StateFlow<PlaylistSearchState> = combine(spotifyRepository, selectedPlaylists, backingSearchTerm) { repository, selected, term ->
+        println("userPlaylists, spotifyRepository = $spotifyRepository")
         if (repository !is ClientSpotifyRepository) return@combine PlaylistSearchState.RequiresLogin
         val playlists = repository.getUserPlaylists().filter { term.lowercase() in it.name.lowercase() }.map { it.toGenericPlaylist() }
         PlaylistSearchState.Results(playlists.map { SelectedPlaylist(it, it in selected) })

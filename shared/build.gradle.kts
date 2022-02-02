@@ -56,6 +56,8 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation("it.skrape:skrape-it:1.0.0-alpha7")
+                implementation(Dependencies.Ktor.server)
+                implementation(Dependencies.Ktor.netty)
             }
         }
 

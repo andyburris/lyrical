@@ -16,12 +16,15 @@ import compose.multiplatform.foundation.modifier.background
 import compose.multiplatform.foundation.modifier.border
 import compose.multiplatform.foundation.modifier.clickable
 import compose.multiplatform.foundation.modifier.padding
+import compose.multiplatform.foundation.modifiers.fillMaxSize
 import compose.multiplatform.ui.Alignment
 import compose.multiplatform.ui.Arrangement
+import compose.multiplatform.ui.Color
 import compose.multiplatform.ui.Modifier
 import compose.multiplatform.ui.unit.dp
 import model.name
 import org.jetbrains.compose.common.ui.*
+import org.jetbrains.compose.common.ui.draw.clip
 import platform.*
 import points
 
@@ -30,7 +33,10 @@ fun AnswerSummary(
     questions: List<ClientGameQuestion.Answered>,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) { //TODO: add Arrangement.SpacedBy(32.dp)
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
         Text("Answers".uppercase(), style = LyricalTheme.typography.subtitle1, color = LyricalTheme.colors.onPrimarySecondary)
         questions.forEachIndexed { index, question ->
             AnswerSummaryItem(question, index)
@@ -45,8 +51,13 @@ private fun AnswerSummaryItem(question: ClientGameQuestion.Answered, index: Int,
     Column(
         modifier = modifier
             .clickable { setExpanded(!expanded) }
-            .border(1.dp, if (expanded) LyricalTheme.colors.onPrimaryTernary else LyricalTheme.colors.primary)
-            .padding(padding) //TODO: add animation, change else to Color.Transparent, LyricalTheme.shapes.medium
+            .border(
+                width = 1.dp,
+                color = if (expanded) LyricalTheme.colors.onPrimaryTernary else Color.Transparent,
+                shape = LyricalTheme.shapes.large
+            )
+            .padding(padding), //TODO: add animation
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         AnswerSummaryItemHeader(question, index, expanded, Modifier.fillMaxWidth())
         if (expanded) { //TODO: switch with AnimatedVisibility(expanded)
@@ -59,25 +70,28 @@ private fun AnswerSummaryItem(question: ClientGameQuestion.Answered, index: Int,
 private fun AnswerSummaryItemHeader(question: ClientGameQuestion.Answered, index: Int, expanded: Boolean, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.Start, //TODO: add Arrangement.SpacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp), //TODO: add Arrangement.SpacedBy(8.dp)
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
-            horizontalArrangement = Arrangement.Start, //TODO: add Arrangement.SpacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp), //TODO: add Arrangement.SpacedBy(16.dp)
             verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
         ) {
-            Box(Modifier.size(32.dp)) {
+            Box(
+                modifier = Modifier.size(32.dp).clip(LyricalTheme.shapes.small)
+            ) {
                 Image(
                     resource = Resource.Url(question.track.track.album.imageURL),
                     contentDescription = null,
-                    modifier = Modifier.fillMaxWidth().fillMaxHeight(1f) //TODO: add Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 )
-                Box(Modifier.fillMaxWidth().fillMaxHeight(1f).background(LyricalTheme.colors.overlayDark)) {}
+                Box(modifier = Modifier.fillMaxSize().background(LyricalTheme.colors.overlayDark))
                 Text((index + 1).toString(), style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary) //TODO: add Modifier.align(Alignment.Center)
             }
             Text(question.track.track.name, style = LyricalTheme.typography.h2, color = CurrentPalette.contentPrimary)
         }
-        when(question.answer) {
+        when (question.answer) {
             is GameAnswer.Answered.Correct -> Text("+${question.answer.points} pts", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary)
             is GameAnswer.Answered.Incorrect -> Text("Incorrect", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
             is GameAnswer.Answered.Skipped -> Text("Skipped", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
@@ -96,29 +110,35 @@ private fun AnswerSummaryItemHeader(question: ClientGameQuestion.Answered, index
 
 @Composable
 private fun AnswerSummaryInfo(question: ClientGameQuestion.Answered, modifier: Modifier = Modifier) {
-    Column(modifier) { //TODO: add Arrangement.SpacedBy(24.dp)
-        Column() { //TODO: add Arrangement.SpacedBy(16.dp)
-            Row( //TODO: add Arrangement.SpacedBy(16.dp)
-                verticalAlignment = Alignment.CenterVertically
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(icon = Icon.Quote, contentDescription = null)
                 Text("\"${question.allLyrics}\"", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary)
             }
-            Row( //TODO: add Arrangement.SpacedBy(16.dp)
-                verticalAlignment = Alignment.CenterVertically
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(icon = Icon.Person, contentDescription = null)
                 Text(question.track.track.artists.joinToString { it.name }, style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary)
             }
-            Row(//TODO: add Arrangement.SpacedBy(16.dp)
-                verticalAlignment = Alignment.CenterVertically
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(icon = Icon.Playlist, contentDescription = null)
                 Text("from ${question.track.sourcePlaylist.name}", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentPrimary) //TODO: add AnnotatedString for colors
             }
         }
         Divider(CurrentPalette.contentTernary)
-        Column() { //TODO: add Arrangement.SpacedBy(16.dp)
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             if (question.answer is GameAnswer.Answered.Incorrect) {
                 Column {
                     Text("You Said", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
@@ -129,7 +149,7 @@ private fun AnswerSummaryInfo(question: ClientGameQuestion.Answered, modifier: M
             Column {
                 Text("Hints Used", style = LyricalTheme.typography.subtitle1, color = CurrentPalette.contentSecondary)
                 val hints = question.answer.hintsUsed.map { hint ->
-                    when(hint) {
+                    when (hint) {
                         Hint.NextLyric -> "Next Line"
                         Hint.Artist -> "Show Artist"
                     }

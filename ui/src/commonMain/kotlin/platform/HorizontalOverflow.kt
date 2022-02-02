@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import compose.multiplatform.ui.Alignment
 import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.Modifier
+import compose.multiplatform.ui.unit.Dp
+import compose.multiplatform.ui.unit.dp
 
 /**
  * Row that handles horizontal overflow based on platform
@@ -12,22 +14,11 @@ import compose.multiplatform.ui.Modifier
  * Desktop: wrap items to next line
  */
 @Composable
-fun HorizontalOverflowRow(
+expect fun HorizontalOverflowRow(
     modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
-    verticalAlignment: Alignment.Vertical = Alignment.Top,
-    content: @Composable () -> Unit
-) = ActualHorizontalOverflowRow(modifier, horizontalArrangement, verticalAlignment, content)
-
-/**
- * Row that handles horizontal overflow based on platform
- * Mobile: horizontal scroll
- * Desktop: wrap items to next line
- */
-@Composable
-expect fun ActualHorizontalOverflowRow(
-    modifier: Modifier,
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalAlignment: Alignment.Vertical,
+    mainAxisAlignment: Alignment.Horizontal = Alignment.Start,
+    mainAxisSpacing: Dp = 0.dp,
+    crossAxisAlignment: Alignment.Vertical = Alignment.Top,
+    crossAxisSpacing: Dp = 0.dp,
     content: @Composable () -> Unit
 )

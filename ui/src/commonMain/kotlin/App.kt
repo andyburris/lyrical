@@ -1,10 +1,5 @@
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import client.Client
-import client.Screen
-import client.UserMachine
+import androidx.compose.runtime.*
+import client.*
 import home.HomeScreen
 import join.JoinScreen
 import kotlinx.coroutines.launch
@@ -14,10 +9,11 @@ import room.RoomRouter
 @Composable
 fun App() {
     val navigation = remember { mutableStateOf<Screen>(Screen.Home) }
-    //val spotifyRepository = remember { SpotifyLogin() }
     val userMachine = remember { UserMachine() }
-    val client = remember { Client(userMachine) }
+    val httpClient = remember { defaultHttpClient(userMachine) }
+    val spotifyRepository by remember { spotifyRepository(RemoteSpotifyRepository(httpClient)) }.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+    val client = Client(userMachine, httpClient, spotifyRepository)
     LyricalTheme {
         when (val screen = navigation.value) {
             Screen.Home -> HomeScreen(

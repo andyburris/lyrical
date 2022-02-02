@@ -11,6 +11,8 @@ import compose.multiplatform.foundation.layout.Column
 import compose.multiplatform.foundation.modifier.background
 import compose.multiplatform.foundation.modifier.padding
 import compose.multiplatform.foundation.modifier.verticalScroll
+import compose.multiplatform.foundation.modifiers.fillMaxSize
+import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.Modifier
 import compose.multiplatform.ui.unit.dp
 import platform.*
@@ -27,6 +29,7 @@ fun SummaryScreen(
     ProvidePalette(LyricalTheme.colors.primaryPalette) {
         LyricalScaffold(
             modifier = modifier
+                .fillMaxSize()
                 .verticalScroll()
                 .background(CurrentPalette.background)
                 .padding(32.dp),
@@ -48,7 +51,9 @@ fun SummaryScreen(
                 }
             },
             content = {
-                Column { //TODO: add Arrangement.SpacedBy(48.dp)
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(32.dp)
+                ) {
                     Leaderboard(game.leaderboard, game.config.amountOfSongs - 1)
                     AnswerSummary(game.questions.map { it as? ClientGameQuestion.Answered ?: throw Error("All questions should be answered by the end screen") })
                 }
