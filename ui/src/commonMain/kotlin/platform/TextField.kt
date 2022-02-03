@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import compose.multiplatform.ui.Color
 import compose.multiplatform.ui.Modifier
 import compose.multiplatform.ui.text.TextStyle
+import platform.keyboard.KeyboardActions
+import platform.keyboard.KeyboardOptions
 
 @Composable
 fun TextField(
@@ -15,6 +17,9 @@ fun TextField(
     textColor: Color? = CurrentPalette.contentPrimary,
     placeholder: String = "",
     placeholderColor: Color? = CurrentPalette.contentTernary,
+    singleLine: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(),
+    keyboardActions: KeyboardActions = KeyboardActions(),
 ) {
     BasicTextField(
         value = value,
@@ -24,7 +29,10 @@ fun TextField(
         textStyle = textStyle,
         textColor = textColor,
         placeholder = placeholder,
-        placeholderColor = placeholderColor
+        placeholderColor = placeholderColor,
+        singleLine = singleLine,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
     )
 }
 
@@ -38,4 +46,7 @@ expect fun BasicTextField(
     textColor: Color? = null,
     placeholder: String = "",
     placeholderColor: Color? = null,
+    singleLine: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(),
+    keyboardActions: KeyboardActions = KeyboardActions(),
 )

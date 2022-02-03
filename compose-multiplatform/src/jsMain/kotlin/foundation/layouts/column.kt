@@ -1,6 +1,8 @@
 package compose.multiplatform.foundation.layout
 
 import androidx.compose.runtime.Composable
+import compose.multiplatform.foundation.modifiers.ColumnScope
+import compose.multiplatform.foundation.modifiers.ColumnScopeImpl
 import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.SpacedArrangement
 import org.jetbrains.compose.common.internal.modifierWrapper
@@ -14,7 +16,7 @@ actual fun Column(
     modifier: Modifier,
     verticalArrangement: Arrangement.Vertical,
     horizontalAlignment: Alignment.Horizontal,
-    content: @Composable () -> Unit
+    content: @Composable ColumnScope.() -> Unit
 ) = modifierWrapper(modifier) {
     Div(
         attrs = {
@@ -49,6 +51,6 @@ actual fun Column(
             }
         }
     ) {
-        content()
+        content(ColumnScopeImpl())
     }
 }

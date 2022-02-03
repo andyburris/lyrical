@@ -2,6 +2,7 @@ package compose.multiplatform.foundation.layout
 
 import compose.multiplatform.ui.Modifier
 import androidx.compose.runtime.Composable
+import compose.multiplatform.foundation.modifiers.ColumnScope
 import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.Alignment
 
@@ -10,5 +11,5 @@ expect fun Column(
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    content: @Composable () -> Unit
+    content: @Composable ColumnScope.() -> Unit
 )

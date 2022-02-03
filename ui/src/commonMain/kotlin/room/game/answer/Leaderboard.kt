@@ -9,6 +9,7 @@ import compose.multiplatform.foundation.layout.Box
 import compose.multiplatform.foundation.layout.Column
 import compose.multiplatform.foundation.layout.Row
 import compose.multiplatform.foundation.layout.fillMaxWidth
+import compose.multiplatform.foundation.modifier.BoxScope
 import compose.multiplatform.foundation.modifier.background
 import compose.multiplatform.ui.Alignment
 import compose.multiplatform.ui.Arrangement
@@ -91,6 +92,6 @@ private fun LeaderboardPlayerItem(
 
 
 @Composable
-fun ProfilePictureBox(modifier: Modifier, content: @Composable () -> Unit) {
+fun ProfilePictureBox(modifier: Modifier, content: @Composable BoxScope.() -> Unit) {
     Box(modifier, content = content)
 }

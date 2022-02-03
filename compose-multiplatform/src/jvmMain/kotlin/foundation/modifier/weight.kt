@@ -12,3 +12,13 @@ fun androidx.compose.foundation.layout.RowScope.toMultiplatformRowScope(): RowSc
         modifier = modifier.weight(fraction, fill)
     }
 }
+
+actual interface ColumnScope {
+    actual fun Modifier.weight(fraction: Float, fill: Boolean): Modifier
+}
+
+fun androidx.compose.foundation.layout.ColumnScope.toMultiplatformColumnScope(): ColumnScope = object : ColumnScope {
+    override fun Modifier.weight(fraction: Float, fill: Boolean): Modifier = castOrCreate().apply {
+        modifier = modifier.weight(fraction, fill)
+    }
+}

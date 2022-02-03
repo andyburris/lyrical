@@ -2,6 +2,8 @@ package compose.multiplatform.foundation.layout
 
 import compose.multiplatform.ui.Modifier
 import androidx.compose.runtime.Composable
+import compose.multiplatform.foundation.modifiers.ColumnScope
+import compose.multiplatform.foundation.modifiers.toMultiplatformColumnScope
 import compose.multiplatform.ui.Arrangement
 import compose.multiplatform.ui.Alignment
 import androidx.compose.foundation.layout.Column as JColumn
@@ -12,9 +14,13 @@ actual fun Column(
     modifier: Modifier,
     verticalArrangement: Arrangement.Vertical,
     horizontalAlignment: Alignment.Horizontal,
-    content: @Composable () -> Unit
+    content: @Composable ColumnScope.() -> Unit
 ) {
-    JColumn(modifier = modifier.implementation, verticalArrangement = verticalArrangement.implementation) {
-        content.invoke()
+    JColumn(
+        modifier = modifier.implementation,
+        verticalArrangement = verticalArrangement.implementation,
+        horizontalAlignment = horizontalAlignment.implementation
+    ) {
+        content.invoke(this.toMultiplatformColumnScope())
     }
 }

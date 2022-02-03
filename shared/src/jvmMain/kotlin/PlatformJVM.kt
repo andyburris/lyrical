@@ -11,6 +11,7 @@ actual suspend fun GeniusRepository.scrapeLyrics(songURL: String): String? {
     return skrape(HttpFetcher) {
         request {
             url = songURL
+            timeout = 15000
         }
         extract {
             htmlDocument {

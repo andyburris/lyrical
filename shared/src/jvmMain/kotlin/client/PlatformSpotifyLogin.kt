@@ -4,6 +4,7 @@ import ClientSpotifyRepository
 import SpotifyRepository
 import com.adamratzman.spotify.*
 import io.ktor.application.*
+import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -54,24 +55,6 @@ actual fun openURLInBrowserTab(url: String) {
 
 actual fun spotifyRepository(defaultRepository: SpotifyRepository): StateFlow<SpotifyRepository> = loginListenerServer(defaultRepository)
 
-/*
-fun loginListenerServer(): Flow<SpotifyRepository> = flow {
-    embeddedServer(Netty, port = redirectPort) {
-        routing {
-            get("/authorize") {
-                val code = this.call.parameters.getOrFail<String>("code")
-                println("authorization code = $code")
-                val api = handleSpotifyLoginPKCE(code)
-                println("logged into userId = ${api.getUserId()}")
-                emit(ClientSpotifyRepository(api))
-            }
-        }
-    }.start(wait = false)
-}.map {
-    println("emitted repo = $it")
-    it
-}*/
-
 fun loginListenerServer(defaultRepository: SpotifyRepository): StateFlow<SpotifyRepository>  {
     val stateFlow = MutableStateFlow(defaultRepository)
     embeddedServer(Netty, port = redirectPort) {
@@ -82,6 +65,7 @@ fun loginListenerServer(defaultRepository: SpotifyRepository): StateFlow<Spotify
                 val api = handleSpotifyLoginPKCE(code)
                 println("logged into userId = ${api.getUserId()}")
                 stateFlow.value = ClientSpotifyRepository(api)
+                call.respondText("Logged in! You can close this tab and return to Lyrical")
             }
         }
     }.start(wait = false)

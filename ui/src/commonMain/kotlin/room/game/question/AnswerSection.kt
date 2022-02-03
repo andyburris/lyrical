@@ -15,6 +15,7 @@ import compose.multiplatform.ui.shape.RectangleShape
 import compose.multiplatform.ui.unit.dp
 import org.jetbrains.compose.common.ui.draw.clip
 import platform.*
+import platform.keyboard.KeyboardActions
 
 @Composable
 fun AnswerSection(modifier: Modifier = Modifier, onAnswer: (UserAnswer) -> Unit) {
@@ -29,7 +30,11 @@ fun AnswerSection(modifier: Modifier = Modifier, onAnswer: (UserAnswer) -> Unit)
                 value = answerInput.value,
                 onValueChange = answerInput.component2(),
                 textStyle = LyricalTheme.typography.h1,
-                placeholder = "Song Name"
+                placeholder = "Song Name",
+                singleLine = true,
+                keyboardActions = KeyboardActions {
+                    if (answerInput.value.isNotBlank()) onAnswer.invoke(UserAnswer.Answer(answerInput.value))
+                }
             )
         }
         CombinedButton(

@@ -18,5 +18,5 @@ expect fun ActualSwitch(
     onCheckedChange: ((Boolean) -> Unit)?,
     modifier: Modifier,
     enabled: Boolean,
-    palette: Palette,
+    palette: Palette, //TODO: remove Actual implementation when bug is fixed https://github.com/JetBrains/compose-jb/issues/1407
 )
