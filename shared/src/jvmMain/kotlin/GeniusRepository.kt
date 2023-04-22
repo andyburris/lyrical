@@ -1,14 +1,15 @@
 import io.ktor.client.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.*
 
 data class GeniusRepository(
     val apiKey: String,
     val httpClient: HttpClient = HttpClient {
-        install(JsonFeature) {
-            serializer = KotlinxSerializer()
+        install(ContentNegotiation) {
+            json()
         }
     }
 ) {
@@ -30,7 +31,7 @@ data class GeniusRepository(
 
     private suspend fun getSongURLByArtist(trackName: String, artist: String, allArtists: List<String>): String? {
         val url = "https://api.genius.com/search?q=${trackName.replace(invalidSearch, "")} ${artist}&access_token=$apiKey"
-        val response = httpClient.get<JsonObject>(url) {}
+        val response = httpClient.get(url) {}.body<JsonObject>()
         //println(response)
         return try {
             response.hits().first { hit -> allArtists.any { it.replace(invalidSearch, "").replace(" ", "").toLowerCase() in hit.hitArtist().replace(invalidSearch, "").replace(" ", "").toLowerCase() } }.hitUrl()

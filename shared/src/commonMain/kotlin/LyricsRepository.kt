@@ -1,15 +1,16 @@
 import io.ktor.client.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 
 data class LyricsRepository(val httpClient: HttpClient = HttpClient {
-    install(JsonFeature) {
-        serializer = KotlinxSerializer()
+    install(ContentNegotiation) {
+        json()
     }
 }, val debug: Boolean = false) {
     suspend fun getLyricsFor(tracks: List<SourcedTrack>): List<TrackWithLyrics> {
@@ -18,11 +19,11 @@ data class LyricsRepository(val httpClient: HttpClient = HttpClient {
             false -> "https://lyricalgame.herokuapp.com/lyrics"
             true -> "http://localhost:5050/lyrics"
         }
-        val responses = httpClient.get<List<LyricResponse>>(url) {
+        val responses = httpClient.get(url) {
             val lyricRequests = tracks.map { LyricRequest(it.track.name.filterHeader(), it.track.artists.map { it.name.filterHeader() }, it.track.uri.uri) }
             println("lyricRequests = $lyricRequests")
             header("lyricRequests", lyricRequests.encodeToString())
-        }
+        }.body<List<LyricResponse>>()
         return responses.mapNotNull { lyricResponse ->
             if (lyricResponse.lyrics == null) return@mapNotNull null
             TrackWithLyrics(tracks.first { it.track.uri.uri == lyricResponse.trackURI }, LyricsState.Available(lyricResponse.lyrics.filter { !it.startsWith('[') }))

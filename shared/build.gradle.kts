@@ -42,8 +42,10 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
                 implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
                 implementation("com.adamratzman:spotify-api-kotlin-core:3.8.8")
-                implementation("io.ktor:ktor-client-core:1.5.0")
-                implementation("io.ktor:ktor-client-serialization:1.5.0")
+                implementation("io.ktor:ktor-client-core:2.3.0")
+                implementation("io.ktor:ktor-client-serialization:2.3.0")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.0")
+                implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
             }
         }
         val commonTest by getting {

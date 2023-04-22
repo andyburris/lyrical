@@ -1,4 +1,5 @@
 plugins {
+    kotlin("jvm")
     application
     kotlin("plugin.serialization")
     id("io.ktor.plugin") version "2.3.0"
@@ -7,21 +8,25 @@ plugins {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
 
-    implementation("io.ktor:ktor-server-core:1.5.1")
-    implementation("io.ktor:ktor-client-core:1.5.1")
-    implementation("io.ktor:ktor-server-netty:1.5.1")
-    implementation("io.ktor:ktor-serialization:1.5.1")
+    implementation("io.ktor:ktor-server-core:2.3.0")
+    implementation("io.ktor:ktor-client-core:2.3.0")
+    implementation("io.ktor:ktor-server-netty:2.3.0")
+    implementation("io.ktor:ktor-serialization:2.3.0")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.0")
 
     implementation("ch.qos.logback:logback-classic:1.2.9")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.1") // JVM dependency
-    implementation("io.ktor:ktor-websockets:1.6.0-eap-103")
+    implementation("io.ktor:ktor-server-websockets:2.3.0")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
+    implementation("io.ktor:ktor-server-content-negotiation:2.3.0")
+    implementation("io.ktor:ktor-server-cors:2.3.0")
 
     implementation(project(":shared"))
 }
 
 application {
-    mainClass.set("ServerKt")
+    mainClass.set("com.andb.apps.lyricalbackend.ServerKt")
 }
 
 task("stage") {
