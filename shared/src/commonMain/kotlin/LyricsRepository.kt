@@ -16,7 +16,7 @@ data class LyricsRepository(val httpClient: HttpClient = HttpClient {
     suspend fun getLyricsFor(tracks: List<SourcedTrack>): List<TrackWithLyrics> {
         println("getting lyrics for $tracks")
         val url = when(debug) {
-            false -> "https://lyricalgame.herokuapp.com/lyrics"
+            false -> "https://lyricalbackend.up.railway.app/lyrics"
             true -> "http://localhost:5050/lyrics"
         }
         val responses = httpClient.get(url) {
