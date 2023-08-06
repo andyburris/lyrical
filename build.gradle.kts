@@ -6,7 +6,7 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:8.0.0")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:1.8.20")
+//        classpath("org.jetbrains.kotlin:kotlin-serialization:1.8.20")
     }
 }
 
@@ -15,7 +15,7 @@ allprojects {
         google()
         mavenCentral()
         maven(url = "https://dl.bintray.com/ekito/koin")
-//        maven(url = "https://kotlin.bintray.com/kotlin-js-wrappers/")
         maven(url = "https://jitpack.io")
+        maven("https://us-central1-maven.pkg.dev/varabyte-repos/public")
     }
 }
