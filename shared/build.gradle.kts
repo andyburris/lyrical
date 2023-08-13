@@ -5,9 +5,6 @@ plugins {
 
 repositories {
     mavenCentral()
-//    mavenCentral()
-//    maven(url = "https://jitpack.io")
-//    maven("https://kotlin.bintray.com/kotlin-js-wrappers/")
 }
 
 
@@ -20,20 +17,21 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
-                implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
-                implementation("com.adamratzman:spotify-api-kotlin-core:3.8.8")
-                implementation("io.ktor:ktor-client-core:2.3.0")
-                implementation("io.ktor:ktor-client-serialization:2.3.0")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.0")
-                implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
+                implementation(libs.kotlin.stdlib.common)
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.serialization.core)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.spotify.api)
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.serialization)
+                implementation(libs.ktor.serialization.kotlinxjson)
+                implementation(libs.ktor.client.contentnegotiation)
             }
         }
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
+                implementation(libs.kotlin.test.common)
+                implementation(libs.kotlin.test.annotations.common)
             }
         }
         val jvmMain by getting {
@@ -50,17 +48,11 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-js"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.7.0-RC")
+                implementation(libs.kotlin.stdlib.js)
+                implementation(libs.kotlinx.coroutines.core.js)
             }
         }
 
         val jsTest by getting {}
-    }
-}
-
-configurations.all {
-    resolutionStrategy {
-        force("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
     }
 }

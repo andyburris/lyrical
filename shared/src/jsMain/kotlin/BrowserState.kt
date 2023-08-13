@@ -1,4 +1,5 @@
 import com.adamratzman.spotify.models.SimplePlaylist
+import com.adamratzman.spotify.spotifyAppApi
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.coroutines.*
@@ -40,3 +41,14 @@ class BrowserState(coroutineScope: CoroutineScope) : Machine(
         }
     }
 }
+
+class BrowserHomeMachine(
+    coroutineScope: CoroutineScope,
+    onStartGame: (List<SimplePlaylist>, GameConfig) -> Unit
+) : HomeMachine(
+//    coroutineScope = coroutineScope,
+//    spotifyRepository = MutableStateFlow(null),
+//    backingConfig = SourcedMutableStateFlow(savedConfig) { savedConfig = it },
+//    backingPlaylistURIs = SourcedMutableStateFlow(savedPlaylistURIs) { savedPlaylistURIs = it },
+//    onStartGame = onStartGame,
+)

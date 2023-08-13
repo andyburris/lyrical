@@ -2,8 +2,11 @@ import com.adamratzman.spotify.models.SimplePlaylist
 
 
 sealed class State {
-    data class Setup(val selectedPlaylists: List<SimplePlaylist>, val config: GameConfig, val addPlaylistState: AddPlaylistState) : State() {
-        data class AddPlaylistState(val searchTerm: String, val spotifySearchState: PlaylistSearchState, val myPlaylistSearchState: PlaylistSearchState)
+    sealed class Home : State() {
+        object LoggedOut : Home()
+        data class LoggedIn(val selectedPlaylists: List<SimplePlaylist>, val config: GameConfig, val addPlaylistState: AddPlaylistState) : Home() {
+            data class AddPlaylistState(val searchTerm: String, val spotifySearchState: PlaylistSearchState, val myPlaylistSearchState: PlaylistSearchState)
+        }
     }
     object Loading : State()
     sealed class GameState() : State() {

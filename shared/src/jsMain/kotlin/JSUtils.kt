@@ -1,5 +1,7 @@
+import com.adamratzman.spotify.SpotifyApi
 import com.adamratzman.spotify.SpotifyImplicitGrantApi
 import com.adamratzman.spotify.models.Token
+import com.adamratzman.spotify.spotifyAppApi
 import com.adamratzman.spotify.spotifyImplicitGrantApi
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
@@ -13,23 +15,10 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
 
-suspend fun XMLHttpRequest.get(url: String): Document = suspendCoroutine { c ->
-    this.onload = { statusHandler(this, c) }
-    val corsAnywhereURL = "https://cors-anywhere.herokuapp.com/$url"
-    this.open("GET", corsAnywhereURL)
-    this.send()
-}
-
-private val parser = DOMParser()
-fun statusHandler(xhr: XMLHttpRequest, coroutineContext: Continuation<Document>) {
-    if (xhr.readyState == XMLHttpRequest.DONE) {
-        if (xhr.status / 100 == 2) {
-            coroutineContext.resume(parser.parseFromString(xhr.responseText, "text/html"))
-        } else {
-            coroutineContext.resumeWithException(RuntimeException("HTTP error: ${xhr.status}"))
-        }
-    }
-}
+fun getRepository(onReauthenticate: (AuthAction.Authenticate) -> Unit): SpotifyRepository =
+    getClientAPIIfLoggedIn(onReauthenticate)
+        ?.let { SpotifyRepository.LoggedIn(it) }
+        ?: SpotifyRepository.LoggedOut
 
 fun getClientAPIIfLoggedIn(onAuthentication: (AuthAction.Authenticate) -> Unit): SpotifyImplicitGrantApi? {
     println("checking for user login")
@@ -55,30 +44,6 @@ fun logout() {
     localStorage.removeItem("access_token")
     localStorage.removeItem("access_token_expires_in")
     window.location.reload()
-}
-
-enum class Platform { Android, IOS, MacOS, Windows, Linux, Other }
-val Platform.formattedName get() = when(this) {
-    Platform.Android -> "Android"
-    Platform.IOS -> "iOS"
-    Platform.MacOS -> "macOS"
-    Platform.Windows -> "Windows"
-    Platform.Linux -> "Linux"
-    Platform.Other -> "Other"
-}
-
-fun getPlatform(): Platform {
-    val macosPlatforms = listOf("Macintosh", "MacIntel", "MacPPC", "Mac68K")
-    val windowsPlatforms = listOf("Win32", "Win64", "Windows", "WinCE")
-    val iosPlatforms = listOf("iPhone", "iPad", "iPod")
-    return when {
-        window.navigator.platform in macosPlatforms -> Platform.MacOS
-        window.navigator.platform in windowsPlatforms -> Platform.Windows
-        window.navigator.platform in iosPlatforms -> Platform.IOS
-        window.navigator.userAgent.contains("Android") -> Platform.Android
-        window.navigator.userAgent.contains("Linux") -> Platform.Linux
-        else -> Platform.Other
-    }
 }
 
 object BuildConfig {

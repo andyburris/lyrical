@@ -42,5 +42,5 @@ data class LyricRequest(val name: String, val artists: List<String>, val trackID
 @Serializable
 data class LyricResponse(val trackURI: String, val lyrics: List<String>?)
 
-fun List<LyricRequest>.encodeToString() = Json.Default.encodeToString(ListSerializer(LyricRequest.serializer()), this)
+fun List<LyricRequest>.encodeToString() = DefaultJson.encodeToString(ListSerializer(LyricRequest.serializer()), this)
 fun String.decodeLyricRequestsFromString(): List<LyricRequest> = Json.Default.decodeFromString(ListSerializer(LyricRequest.serializer()), this)

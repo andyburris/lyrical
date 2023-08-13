@@ -9,7 +9,11 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.ExperimentalTime
 
-data class SetupMachine(
+open class HomeMachine() {
+    val homeState: StateFlow<State.Home> = MutableStateFlow(State.Home.LoggedOut)
+}
+
+open class LoggedInSetupMachine(
     val coroutineScope: CoroutineScope,
     val spotifyRepository: Flow<SpotifyRepository.LoggedIn>,
     val backingConfig: MutableStateFlow<GameConfig>,
@@ -22,7 +26,7 @@ data class SetupMachine(
         playlistURIs.mapNotNull { repository.getPlaylistByURI(it) }
     }
 
-    @OptIn(ExperimentalTime::class, FlowPreview::class)
+    @OptIn(FlowPreview::class)
     private val searchedPlaylists = combine(spotifyRepository, backingSearchTerm.debounce(500.milliseconds)) { repository, term ->
         when {
             term.isNotBlank() -> (repository.searchPlaylists(term) + repository.getPlaylistByURL(term)).filterNotNull()
@@ -30,7 +34,9 @@ data class SetupMachine(
         }
     }.stateIn(coroutineScope, SharingStarted.Lazily, null)
 
-    private val filteredUserPlaylists = combine(spotifyRepository, backingSearchTerm) { repository, term -> repository.getUserPlaylists().filter { term.toLowerCase() in it.name.toLowerCase() } }.stateIn(coroutineScope, SharingStarted.Lazily, null)
+    private val filteredUserPlaylists = combine(spotifyRepository, backingSearchTerm) { repository, term ->
+        repository.getUserPlaylists().filter { term.toLowerCase() in it.name.toLowerCase() }
+    }.stateIn(coroutineScope, SharingStarted.Lazily, null)
 
     private val addPlaylistState = combine(backingSearchTerm, searchedPlaylists, filteredUserPlaylists, backingPlaylistURIs) { term, searchedPlaylists, userPlaylists, uris ->
         val searchedResults = when(searchedPlaylists) {
@@ -41,10 +47,12 @@ data class SetupMachine(
             null -> PlaylistSearchState.Loading
             else -> PlaylistSearchState.Results(userPlaylists.map { it to (it.uri.uri in uris) })
         }
-        return@combine State.Setup.AddPlaylistState(term, searchedResults, userResults)
-    }.stateIn(coroutineScope, SharingStarted.Lazily, State.Setup.AddPlaylistState("", PlaylistSearchState.Loading, PlaylistSearchState.Loading))
+        return@combine State.Home.LoggedIn.AddPlaylistState(term, searchedResults, userResults)
+    }.stateIn(coroutineScope, SharingStarted.Lazily, State.Home.LoggedIn.AddPlaylistState("", PlaylistSearchState.Loading, PlaylistSearchState.Loading))
 
-    val currentSetupScreen = combine(backingConfig, selectedPlaylists, addPlaylistState) { config, selectedPlaylists, addPlaylistState -> State.Setup(selectedPlaylists = selectedPlaylists, config, addPlaylistState) }.stateIn(coroutineScope, SharingStarted.Lazily, State.Setup(emptyList(), backingConfig.value, addPlaylistState.value))
+    val currentSetupScreen = combine(backingConfig, selectedPlaylists, addPlaylistState) { config, selectedPlaylists, addPlaylistState ->
+        State.Home.LoggedIn(selectedPlaylists = selectedPlaylists, config, addPlaylistState)
+    }.stateIn(coroutineScope, SharingStarted.Lazily, State.Home.LoggedIn(emptyList(), backingConfig.value, addPlaylistState.value))
 
     fun handleAction(action: SetupAction) {
         when(action) {
@@ -111,7 +119,7 @@ abstract class Machine(
     private val backingGame: MutableStateFlow<GameState> = MutableStateFlow(GameState.Unstarted)
     val currentGame = backingGame.asStateFlow()
 
-    val setupMachine: SetupMachine = SetupMachine(
+    val setupMachine: LoggedInSetupMachine = LoggedInSetupMachine(
         coroutineScope = coroutineScope,
         spotifyRepository = spotifyRepository.filterIsInstance<SpotifyRepository.LoggedIn>(),
         backingConfig = backingConfig,
