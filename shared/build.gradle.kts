@@ -53,6 +53,11 @@ kotlin {
             }
         }
 
-        val jsTest by getting {}
+        val jsTest by getting {
+            dependencies {
+                implementation(libs.kotlin.stdlib.js)
+                implementation(libs.kotlin.test.js)
+            }
+        }
     }
 }

@@ -1,5 +1,5 @@
 rootProject.name = "LyricGuesser"
-include("backend", "shared", "web", "site")
+include("backend", "shared", "site", "mosaic")
 
 pluginManagement {
     repositories {

@@ -1,9 +1,9 @@
 [versions]
-jetbrains-compose = "1.4.3"
-kobweb = "0.13.9"
-kotlin = "1.9.0"
+jetbrains-compose = "1.5.1"
+kobweb = "0.14.0"
+kotlin = "1.9.10"
 kotlinx-coroutines = "1.7.3"
-kotlinx-serialization = "1.6.0-RC"
+kotlinx-serialization = "1.6.0"
 spotify-api = "4.0.2"
 ktor = "2.3.0"
 
@@ -17,6 +17,7 @@ kobwebx-markdown = { module = "com.varabyte.kobwebx:kobwebx-markdown", version.r
 kotlin-stdlib-common = { module = "org.jetbrains.kotlin:kotlin-stdlib-common", version.ref = "kotlin" }
 kotlin-stdlib-js = { module = "org.jetbrains.kotlin:kotlin-stdlib-js", version.ref = "kotlin" }
 kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
+kotlin-test-js = { module = "org.jetbrains.kotlin:kotlin-test-js", version.ref = "kotlin" }
 kotlin-test-annotations-common = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-core-js = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-js", version.ref = "kotlinx-coroutines" }

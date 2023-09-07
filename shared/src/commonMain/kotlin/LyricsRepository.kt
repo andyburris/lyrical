@@ -6,6 +6,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 data class LyricsRepository(val httpClient: HttpClient = HttpClient {
@@ -42,5 +43,5 @@ data class LyricRequest(val name: String, val artists: List<String>, val trackID
 @Serializable
 data class LyricResponse(val trackURI: String, val lyrics: List<String>?)
 
-fun List<LyricRequest>.encodeToString() = DefaultJson.encodeToString(ListSerializer(LyricRequest.serializer()), this)
-fun String.decodeLyricRequestsFromString(): List<LyricRequest> = Json.Default.decodeFromString(ListSerializer(LyricRequest.serializer()), this)
+fun List<LyricRequest>.encodeToString() = Json.encodeToString(this)
+fun String.decodeLyricRequestsFromString(): List<LyricRequest> = Json.decodeFromString(this)
