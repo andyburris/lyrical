@@ -14,8 +14,8 @@ import com.varabyte.kobweb.compose.ui.modifiers.*
 import org.jetbrains.compose.web.css.percent
 
 @Composable
-fun HomeLoggedOut() {
-    LoginCard() {}
+fun HomeLoggedOut(modifier: Modifier = Modifier, onLogin: () -> Unit) {
+    LoginCard(onLogin = onLogin)
 }
 
 @Composable
@@ -37,9 +37,12 @@ private fun LoginCard(modifier: Modifier = Modifier, onLogin: () -> Unit) {
         }
         Button(
             text = "Log in with Spotify",
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().onClick { onLogin() },
             palette = LyricalTheme.Colors.accentPalette)
-        Body("Lyrical doesn’t collect your login information. All data is stored on your device.")
+        Body(
+            text = "Lyrical doesn’t collect your login information. All data is stored on your device.",
+            color = LyricalTheme.palette.contentSecondary,
+        )
     }
 }
 

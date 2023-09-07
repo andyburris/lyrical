@@ -1,8 +1,11 @@
 package com.andb.apps.lyrical.components.widgets
 
 import androidx.compose.runtime.Composable
+import com.andb.apps.lyrical.theme.LyricalTheme
 import com.varabyte.kobweb.compose.css.FontWeight
 import com.varabyte.kobweb.compose.ui.Modifier
+import com.varabyte.kobweb.compose.ui.graphics.Color
+import com.varabyte.kobweb.compose.ui.modifiers.color
 import com.varabyte.kobweb.compose.ui.modifiers.fontFamily
 import com.varabyte.kobweb.compose.ui.modifiers.fontSize
 import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
@@ -27,15 +30,21 @@ val Heading1Style by ComponentStyle {
     }
 }
 @Composable
-fun Heading1(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    H1(modifier.then(Heading1Style.toModifier()).toAttrs()) {
+fun Heading1(modifier: Modifier = Modifier, color: Color? = null, content: @Composable () -> Unit) {
+    H1(modifier
+        .then(Heading1Style.toModifier())
+        .then(if (color != null) Modifier.color(color) else Modifier)
+        .toAttrs()) {
         content()
     }
 }
 
 @Composable
-fun Heading1(text: String, modifier: Modifier = Modifier) {
-    H1(modifier.then(Heading1Style.toModifier()).toAttrs()) {
+fun Heading1(text: String, modifier: Modifier = Modifier, color: Color? = null) {
+    H1(modifier
+        .then(Heading1Style.toModifier())
+        .then(if (color != null) Modifier.color(color) else Modifier)
+        .toAttrs()) {
         Text(text)
     }
 }
@@ -52,15 +61,21 @@ val Heading2Style by ComponentStyle {
 }
 
 @Composable
-fun Heading2(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    H2(modifier.then(Heading2Style.toModifier()).toAttrs()) {
+fun Heading2(modifier: Modifier = Modifier, color: Color? = null, content: @Composable () -> Unit) {
+    H2(modifier
+        .then(Heading2Style.toModifier())
+        .then(if (color != null) Modifier.color(color) else Modifier)
+        .toAttrs()) {
         content()
     }
 }
 
 @Composable
-fun Heading2(text: String, modifier: Modifier = Modifier) {
-    H2(modifier.then(Heading2Style.toModifier()).toAttrs()) {
+fun Heading2(text: String, modifier: Modifier = Modifier, color: Color? = null) {
+    H2(modifier
+        .then(Heading2Style.toModifier())
+        .then(if (color != null) Modifier.color(color) else Modifier)
+        .toAttrs()) {
         Text(text)
     }
 }
@@ -78,15 +93,21 @@ val SubtitleStyle by ComponentStyle {
 }
 
 @Composable
-fun Subtitle(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    P (modifier.then(SubtitleStyle.toModifier()).toAttrs()) {
+fun Subtitle(modifier: Modifier = Modifier, color: Color? = null, content: @Composable () -> Unit) {
+    P (modifier
+        .then(SubtitleStyle.toModifier())
+        .then(if (color != null) Modifier.color(color) else Modifier)
+        .toAttrs()) {
         content()
     }
 }
 
 @Composable
-fun Subtitle(text: String, modifier: Modifier = Modifier) {
-    P (modifier.then(SubtitleStyle.toModifier()).toAttrs()) {
+fun Subtitle(text: String, modifier: Modifier = Modifier, color: Color? = null) {
+    P (modifier
+        .then(SubtitleStyle.toModifier())
+        .then(if (color != null) Modifier.color(color) else Modifier)
+        .toAttrs()) {
         Text(text)
     }
 }
@@ -95,7 +116,7 @@ fun Subtitle(text: String, modifier: Modifier = Modifier) {
 val BodyStyle by ComponentStyle {
     base {
         Modifier.fontSize(18.px)
-            .fontWeight(FontWeight.SemiBold)
+            .fontWeight(FontWeight.Normal)
             .fontFamily("Inter")
     }
     Breakpoint.SM {
@@ -104,15 +125,21 @@ val BodyStyle by ComponentStyle {
 }
 
 @Composable
-fun Body(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    P (modifier.then(BodyStyle.toModifier()).toAttrs()) {
+fun Body(modifier: Modifier = Modifier, color: Color? = null, content: @Composable () -> Unit) {
+    P (modifier
+        .then(BodyStyle.toModifier())
+        .then(if (color != null) Modifier.color(color) else Modifier)
+        .toAttrs()) {
         content()
     }
 }
 
 @Composable
-fun Body(text: String, modifier: Modifier = Modifier) {
-    P (modifier.then(BodyStyle.toModifier()).toAttrs()) {
+fun Body(text: String, modifier: Modifier = Modifier, color: Color? = null) {
+    P (modifier
+        .then(BodyStyle.toModifier())
+        .then(if (color != null) Modifier.color(color) else Modifier)
+        .toAttrs()) {
         Text(text)
     }
 }
