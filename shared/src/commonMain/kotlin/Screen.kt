@@ -1,5 +1,14 @@
 import com.adamratzman.spotify.models.SimplePlaylist
 
+sealed class Screen {
+    sealed class Home : Screen() {
+        object LoggedOut : Home()
+        data class LoggedIn(
+            val spotifyRepository: SpotifyRepository.LoggedIn,
+            val selectedPlaylists: List<SimplePlaylist>,
+        ) : Home()
+    }
+}
 
 sealed class State {
     sealed class Home : State() {

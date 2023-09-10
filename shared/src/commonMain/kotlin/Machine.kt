@@ -9,8 +9,10 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.ExperimentalTime
 
-open class HomeMachine() {
-    val homeState: StateFlow<State.Home> = MutableStateFlow(State.Home.LoggedOut)
+abstract class HomeMachine {
+    abstract val homeState: StateFlow<Screen.Home>
+    abstract fun handleAuthAction(authAction: AuthAction)
+    abstract fun handleAction(authAction: SetupAction)
 }
 
 open class LoggedInSetupMachine(

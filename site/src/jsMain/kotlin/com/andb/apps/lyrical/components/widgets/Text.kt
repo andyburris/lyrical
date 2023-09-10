@@ -88,7 +88,7 @@ val SubtitleStyle by ComponentStyle {
             .fontFamily("Inter")
     }
     Breakpoint.SM {
-        Modifier.fontSize(24.px)
+        Modifier.fontSize(22.px)
     }
 }
 
@@ -120,7 +120,7 @@ val BodyStyle by ComponentStyle {
             .fontFamily("Inter")
     }
     Breakpoint.SM {
-        Modifier.fontSize(24.px)
+        Modifier.fontSize(22.px)
     }
 }
 
@@ -148,7 +148,7 @@ fun Body(text: String, modifier: Modifier = Modifier, color: Color? = null) {
 val CaptionStyle by ComponentStyle {
     base {
         Modifier.fontSize(14.px)
-            .fontWeight(FontWeight.SemiBold)
+            .fontWeight(FontWeight.Normal)
             .fontFamily("Inter")
     }
     Breakpoint.SM {
@@ -157,14 +157,22 @@ val CaptionStyle by ComponentStyle {
 }
 
 @Composable
-fun Caption(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    P (modifier.then(CaptionStyle.toModifier()).toAttrs()) {
+fun Caption(modifier: Modifier = Modifier, content: @Composable () -> Unit, color: Color? = null) {
+    P (
+        modifier
+            .then(CaptionStyle.toModifier())
+            .then(if (color != null) Modifier.color(color) else Modifier)
+            .toAttrs()) {
         content()
     }
 }
 @Composable
-fun Caption(text: String, modifier: Modifier = Modifier) {
-    P (modifier.then(CaptionStyle.toModifier()).toAttrs()) {
+fun Caption(text: String, modifier: Modifier = Modifier, color: Color? = null) {
+    P (
+        modifier
+            .then(CaptionStyle.toModifier())
+            .then(if (color != null) Modifier.color(color) else Modifier)
+            .toAttrs()) {
         Text(text)
     }
 }

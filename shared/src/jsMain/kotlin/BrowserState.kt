@@ -8,17 +8,14 @@ import org.w3c.dom.get
 import org.w3c.dom.set
 import kotlin.random.Random
 
-class BrowserState(coroutineScope: CoroutineScope) : Machine(
-    coroutineScope = coroutineScope,
-    lyricsRepository = LyricsRepository(debug = BuildConfig.debug),
-    spotifyRepository = MutableStateFlow(SpotifyRepository.LoggedOut),
-    backingConfig = SourcedMutableStateFlow(savedConfig) { savedConfig = it },
-    backingPlaylistURIs = SourcedMutableStateFlow(savedPlaylistURIs) { savedPlaylistURIs = it },
-) {
-    init {
-        println("initializing BrowserState")
-        spotifyRepository.value = getClientAPIIfLoggedIn { this.handleAuthAction(it) }?.let { SpotifyRepository.LoggedIn(it) } ?: SpotifyRepository.LoggedOut
-    }
+class BrowserHomeMachine(
+    coroutineScope: CoroutineScope,
+    onStartGame: (List<SimplePlaylist>, GameConfig) -> Unit
+) : HomeMachine() {
+    private val spotifyRepository = MutableStateFlow(getRepository { this.handleAuthAction(it) })
+    override val homeState: StateFlow<Screen.Home> = spotifyRepository
+        .map { it.toHomeScreen() }
+        .stateIn(coroutineScope, SharingStarted.Eagerly, spotifyRepository.value.toHomeScreen())
     override fun handleAuthAction(authAction: AuthAction) {
         when(authAction) {
             is AuthAction.Authenticate -> {
@@ -35,20 +32,18 @@ class BrowserState(coroutineScope: CoroutineScope) : Machine(
                     localStorage["access_token_type"] = authAction.type
                     localStorage["access_token_expires_in"] = authAction.expiresIn.toString()
                     println("saved authentication")
-                    spotifyRepository.value = getClientAPIIfLoggedIn { handleAction(it) }?.let { SpotifyRepository.LoggedIn(it) } ?: SpotifyRepository.LoggedOut
+                    spotifyRepository.value = getRepository { this.handleAuthAction(it) }
                 }
             }
         }
     }
+
+    override fun handleAction(authAction: SetupAction) {
+
+    }
 }
 
-class BrowserHomeMachine(
-    coroutineScope: CoroutineScope,
-    onStartGame: (List<SimplePlaylist>, GameConfig) -> Unit
-) : HomeMachine(
-//    coroutineScope = coroutineScope,
-//    spotifyRepository = MutableStateFlow(null),
-//    backingConfig = SourcedMutableStateFlow(savedConfig) { savedConfig = it },
-//    backingPlaylistURIs = SourcedMutableStateFlow(savedPlaylistURIs) { savedPlaylistURIs = it },
-//    onStartGame = onStartGame,
-)
+private fun SpotifyRepository.toHomeScreen() = when(this) {
+    is SpotifyRepository.LoggedIn -> Screen.Home.LoggedIn(this, emptyList()) // TODO: load from local storage
+    SpotifyRepository.LoggedOut -> Screen.Home.LoggedOut
+}

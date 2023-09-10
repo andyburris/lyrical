@@ -51,7 +51,7 @@ fun PlaylistPlaceholder(modifier: Modifier = Modifier) {
     Column(modifier.gap(LyricalTheme.Spacing.SM)) {
         Box(
             modifier = Modifier
-                .size(LyricalTheme.Size.PlaylistPlaceholder.Cover)
+                .size(LyricalTheme.Size.Playlist.Placeholder.Cover)
                 .backgroundColor(LyricalTheme.palette.overlay)
                 .borderRadius(LyricalTheme.Radii.SM)
         )
