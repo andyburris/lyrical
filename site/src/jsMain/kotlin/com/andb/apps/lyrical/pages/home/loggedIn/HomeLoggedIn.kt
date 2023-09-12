@@ -1,8 +1,8 @@
 package com.andb.apps.lyrical.pages.home.loggedIn
 
-import GameConfig
+import GameOptions
 import Screen
-import SetupAction
+import SetupState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -19,13 +19,15 @@ import com.varabyte.kobweb.silk.components.layout.SimpleGrid
 import com.varabyte.kobweb.silk.components.layout.numColumns
 
 @Composable
-fun HomeLoggedIn(state: Screen.Home.LoggedIn, modifier: Modifier = Modifier, onAction: (SetupAction) -> Unit) {
-    val selectedPlaylists = remember { mutableStateOf(emptyList<SimplePlaylist>()) }
+fun HomeLoggedIn(
+    screen: Screen.Home.LoggedIn,
+    modifier: Modifier = Modifier,
+    onUpdateSetupState: (SetupState) -> Unit,
+    onStartGame: (SetupState) -> Unit,
+) {
     val (userPlaylists, setUserPlaylists) = remember { mutableStateOf<List<SimplePlaylist>?>(null) }
     LaunchedEffect(Unit) {
-        val up = state.spotifyRepository.getUserPlaylists()
-        println("loaded user playlists, playlists = $up")
-        setUserPlaylists(up)
+        setUserPlaylists(screen.spotifyRepository.getUserPlaylists())
     }
 
     Column(
@@ -34,10 +36,10 @@ fun HomeLoggedIn(state: Screen.Home.LoggedIn, modifier: Modifier = Modifier, onA
             .fillMaxWidth(),
     ) {
         JumpBar(
-            selectedPlaylists = selectedPlaylists.value,
-            options = GameConfig(),
+            selectedPlaylists = screen.setupState.selectedPlaylists,
+            options = GameOptions(),
             modifier = Modifier.fillMaxWidth(),
-            onStartGame = { onAction(SetupAction.StartGame(selectedPlaylists.value, GameConfig()) )},
+            onStartGame = { onStartGame(screen.setupState) },
         )
         SimpleGrid(
             numColumns = numColumns(2, 3, 4),
@@ -49,7 +51,7 @@ fun HomeLoggedIn(state: Screen.Home.LoggedIn, modifier: Modifier = Modifier, onA
             when(userPlaylists) {
                 null -> {}
                 else -> userPlaylists.map { playlist ->
-                    val isSelected = playlist in selectedPlaylists.value
+                    val isSelected = playlist in screen.setupState.selectedPlaylists
                     VerticalPlaylistItem(
                         playlist = playlist,
                         isSelected = isSelected,
@@ -57,15 +59,10 @@ fun HomeLoggedIn(state: Screen.Home.LoggedIn, modifier: Modifier = Modifier, onA
                             .fillMaxWidth()
                             .cursor(Cursor.Pointer)
                             .onClick {
-//                                val action = when {
-//                                    playlist in selectedPlaylists.value -> SetupAction.RemovePlaylist(playlist)
-//                                    else -> SetupAction.AddPlaylist(playlist)
-//                                }
-//                                onAction(action)
-                                when {
-                                    isSelected -> selectedPlaylists.value -= playlist
-                                    else -> selectedPlaylists.value += playlist
-                                }
+                                onUpdateSetupState(screen.setupState.copy(selectedPlaylists = when {
+                                    isSelected -> screen.setupState.selectedPlaylists - playlist
+                                    else -> screen.setupState.selectedPlaylists + playlist
+                                }))
                             }
                     )
                 }

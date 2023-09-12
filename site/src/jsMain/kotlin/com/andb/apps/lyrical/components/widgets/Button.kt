@@ -3,10 +3,8 @@ package com.andb.apps.lyrical.components.widgets
 import androidx.compose.runtime.Composable
 import com.andb.apps.lyrical.theme.LyricalPalette
 import com.andb.apps.lyrical.theme.LyricalTheme
-import com.andb.apps.lyrical.theme.outsetShadow
+import com.andb.apps.lyrical.theme.OutsetShadowStyle
 import com.varabyte.kobweb.compose.css.Cursor
-import com.varabyte.kobweb.compose.foundation.layout.Box
-import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.*
@@ -20,7 +18,6 @@ val ButtonStyle by ComponentStyle {
     base {
         Modifier
             .border(0.px)
-            .outsetShadow()
     }
 }
 
@@ -72,6 +69,7 @@ fun Button(
     org.jetbrains.compose.web.dom.Button(
         modifier
             .then(ButtonStyle.toModifier(colorVariant, enabledVariant))
+            .then(OutsetShadowStyle.toModifier())
             .height(LyricalTheme.Size.Button.LG)
             .borderRadius(LyricalTheme.Radii.LG)
             .padding(topBottom = LyricalTheme.Spacing.SM, leftRight = LyricalTheme.Spacing.LG)

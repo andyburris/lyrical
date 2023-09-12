@@ -19,6 +19,10 @@ import org.jetbrains.compose.web.dom.*
 
 
 val PageLayoutStyle by ComponentStyle {
+    base { Modifier.width(100.vw).height(100.vh) }
+}
+
+val PageLayoutContainerStyle by ComponentStyle {
     base {
         Modifier
             .maxWidth(1200.px)
@@ -36,14 +40,16 @@ val PageLayoutStyle by ComponentStyle {
 }
 
 @Composable
-fun PageLayout(title: String, content: @Composable () -> Unit) {
+fun PageLayout(title: String, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     LaunchedEffect(title) {
         document.title = title
     }
 
-    Box(
-        PageLayoutStyle.toModifier()
-    ) {
-        content()
+    Column(modifier.then(PageLayoutStyle.toModifier())) {
+        Column(
+            modifier.then(PageLayoutContainerStyle.toModifier())
+        ) {
+            content()
+        }
     }
 }

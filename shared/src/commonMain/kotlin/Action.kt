@@ -9,19 +9,11 @@ sealed class Action {
 
 sealed class GameAction : Action() {
     data class AnswerQuestion(val answer: UserAnswer) : GameAction()
-    object NextQuestion : GameAction()
-    object RestartGame : GameAction()
-}
-
-sealed class SetupAction : Action() {
-    data class AddPlaylist(val playlist: SimplePlaylist) : SetupAction()
-    data class RemovePlaylist(val playlist: SimplePlaylist) : SetupAction()
-    data class UpdateConfig(val updatedConfig: GameConfig) : SetupAction()
-    data class UpdateSearch(val searchTerm: String) : SetupAction()
-    data class StartGame(val playlists: List<SimplePlaylist>, val config: GameConfig) : SetupAction()
+    data object NextQuestion : GameAction()
 }
 
 sealed class AuthAction : Action() {
     data class Authenticate(val state: String) : AuthAction()
     data class CheckAuthentication(val token: String, val type: String, val expiresIn: Int, val state: String) : AuthAction()
+    data object LogOut : AuthAction()
 }

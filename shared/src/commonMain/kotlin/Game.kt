@@ -1,19 +1,23 @@
 import com.adamratzman.spotify.models.SimplePlaylist
 import com.adamratzman.spotify.models.Track
 import kotlinx.serialization.Serializable
-import kotlin.time.ExperimentalTime
 
-data class Game(val questions: List<GameQuestion>, val config: GameConfig) {
-    val points get() = questions.map { it.answer }.filterIsInstance<GameAnswer.Answered.Correct>().sumByDouble { it.points }
+@Serializable
+data class Game(val questions: List<GameQuestion>, val options: GameOptions) {
+    val currentQuestion = questions.firstOrNull { it.answer !is GameAnswer.Answered }
+    val currentQuestionIndex = questions.indexOfFirst { it.answer !is GameAnswer.Answered }
+    val lastQuestion = questions.lastOrNull { it.answer is GameAnswer.Answered }
+    val lastQuestionIndex = questions.indexOfLast { it.answer is GameAnswer.Answered }
+
+    val points get() = questions.map { it.answer }.filterIsInstance<GameAnswer.Answered.Correct>().sumOf { it.points }
     fun withNextAnswer(answer: UserAnswer): Game {
         val questionNumber = questions.indexOfFirst { it.answer is GameAnswer.Unanswered }
-        return this.copy(
-            questions = questions.replace(questionNumber) { it.withAnswer(answer) }
-        )
+        return this.copy(questions = questions.replace(questionNumber) { it.withAnswer(answer) },)
     }
     val isEnded get() = questions.all { it.answer !is GameAnswer.Unanswered }
 }
 
+@Serializable
 data class GameQuestion(val trackWithLyrics: TrackWithLyrics, val answer: GameAnswer = GameAnswer.Unanswered, val startingLineIndex: Int) {
     val lyric = trackWithLyrics.lyricState.lyrics[startingLineIndex]
     val nextLyric = trackWithLyrics.lyricState.lyrics.getOrNull(startingLineIndex + 1) ?: "[End of Song]"
@@ -30,23 +34,26 @@ data class GameQuestion(val trackWithLyrics: TrackWithLyrics, val answer: GameAn
                 this.copy(answer = gameAnswer)
             }
             is UserAnswer.Skipped -> {
-                this.copy(answer = GameAnswer.Answered.Skipped(answer.withNextLine, answer.withArtist))
+                val gameAnswer = GameAnswer.Answered.Skipped(answer.withNextLine, answer.withArtist)
+                this.copy(answer = gameAnswer)
             }
         }
     }
 }
 
+@Serializable
 sealed class GameAnswer {
+    @Serializable
     sealed class Answered() : GameAnswer() {
         abstract val withNextLine: Boolean
         abstract val withArtist: Boolean
-        data class Correct(override val withNextLine: Boolean, override val withArtist: Boolean) : Answered() {
+        @Serializable data class Correct(override val withNextLine: Boolean, override val withArtist: Boolean) : Answered() {
             val points = 1.0 - (if (withArtist) 0.5 else 0.0) - (if (withNextLine) 0.25 else 0.0)
         }
-        data class Incorrect(val answer: String, override val withNextLine: Boolean, override val withArtist: Boolean) : Answered()
-        data class Skipped(override val withNextLine: Boolean, override val withArtist: Boolean) : Answered()
+        @Serializable data class Incorrect(val answer: String, override val withNextLine: Boolean, override val withArtist: Boolean) : Answered()
+        @Serializable data class Skipped(override val withNextLine: Boolean, override val withArtist: Boolean) : Answered()
     }
-    object Unanswered : GameAnswer()
+    data object Unanswered : GameAnswer()
 }
 val GameAnswer.isRight get() = this is GameAnswer.Answered.Correct
 val GameAnswer.isWrong get() = !this.isRight
@@ -57,8 +64,7 @@ sealed class UserAnswer {
 }
 
 @Serializable
-@OptIn(ExperimentalTime::class)
-data class GameConfig(
+data class GameOptions(
     val amountOfSongs: Int = 10,
     val timer: Int = 0,
     val showSourcePlaylist: Boolean = false,
@@ -96,7 +102,7 @@ sealed class LyricsState {
 @Serializable
 data class TrackWithLyrics(val sourcedTrack: SourcedTrack, val lyricState: LyricsState.Available)
 
-fun List<TrackWithLyrics>.generateQuestions(config: GameConfig) = this.map { trackWithLyrics: TrackWithLyrics ->
+fun List<TrackWithLyrics>.generateQuestions(config: GameOptions) = this.map { trackWithLyrics: TrackWithLyrics ->
         val randomLine: Int = trackWithLyrics.lyricState.lyrics.randomLyricIndex(config.difficulty, trackWithLyrics.sourcedTrack.track.name)
         GameQuestion(trackWithLyrics, startingLineIndex = randomLine)
     }

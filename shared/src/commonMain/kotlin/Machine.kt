@@ -1,162 +1,88 @@
 import com.adamratzman.spotify.models.SimplePlaylist
-import com.adamratzman.spotify.models.SimpleTrack
 import com.adamratzman.spotify.models.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.ExperimentalTime
+import kotlinx.serialization.Serializable
 
-abstract class HomeMachine {
-    abstract val homeState: StateFlow<Screen.Home>
+abstract class SetupMachine(
+    coroutineScope: CoroutineScope,
+) {
+    abstract val initialRepository: SpotifyRepository
+    abstract val initialSetupState: SetupState?
+    protected val spotifyRepository = MutableStateFlow(initialRepository)
+    protected val setupState = MutableStateFlow(initialSetupState)
+    val homeScreen: StateFlow<Screen.Home> = combine(spotifyRepository, setupState) { repo, setupState ->
+        repo.toHomeScreen(setupState)
+    }.stateIn(coroutineScope, SharingStarted.Eagerly, spotifyRepository.value.toHomeScreen(setupState.value))
+
     abstract fun handleAuthAction(authAction: AuthAction)
-    abstract fun handleAction(authAction: SetupAction)
-}
-
-open class LoggedInSetupMachine(
-    val coroutineScope: CoroutineScope,
-    val spotifyRepository: Flow<SpotifyRepository.LoggedIn>,
-    val backingConfig: MutableStateFlow<GameConfig>,
-    val backingPlaylistURIs: MutableStateFlow<List<String>>,
-    val onStartGame: (playlists: List<SimplePlaylist>, config: GameConfig) -> Unit
-) {
-    private val backingSearchTerm = MutableStateFlow("")
-
-    private val selectedPlaylists = combine(spotifyRepository, backingPlaylistURIs) { repository, playlistURIs ->
-        playlistURIs.mapNotNull { repository.getPlaylistByURI(it) }
-    }
-
-    @OptIn(FlowPreview::class)
-    private val searchedPlaylists = combine(spotifyRepository, backingSearchTerm.debounce(500.milliseconds)) { repository, term ->
-        when {
-            term.isNotBlank() -> (repository.searchPlaylists(term) + repository.getPlaylistByURL(term)).filterNotNull()
-            else -> repository.getFeaturedPlaylists()
-        }
-    }.stateIn(coroutineScope, SharingStarted.Lazily, null)
-
-    private val filteredUserPlaylists = combine(spotifyRepository, backingSearchTerm) { repository, term ->
-        repository.getUserPlaylists().filter { term.toLowerCase() in it.name.toLowerCase() }
-    }.stateIn(coroutineScope, SharingStarted.Lazily, null)
-
-    private val addPlaylistState = combine(backingSearchTerm, searchedPlaylists, filteredUserPlaylists, backingPlaylistURIs) { term, searchedPlaylists, userPlaylists, uris ->
-        val searchedResults = when(searchedPlaylists) {
-            null -> PlaylistSearchState.Loading
-            else -> PlaylistSearchState.Results(searchedPlaylists.map { it to (it.uri.uri in uris) })
-        }
-        val userResults = when (userPlaylists) {
-            null -> PlaylistSearchState.Loading
-            else -> PlaylistSearchState.Results(userPlaylists.map { it to (it.uri.uri in uris) })
-        }
-        return@combine State.Home.LoggedIn.AddPlaylistState(term, searchedResults, userResults)
-    }.stateIn(coroutineScope, SharingStarted.Lazily, State.Home.LoggedIn.AddPlaylistState("", PlaylistSearchState.Loading, PlaylistSearchState.Loading))
-
-    val currentSetupScreen = combine(backingConfig, selectedPlaylists, addPlaylistState) { config, selectedPlaylists, addPlaylistState ->
-        State.Home.LoggedIn(selectedPlaylists = selectedPlaylists, config, addPlaylistState)
-    }.stateIn(coroutineScope, SharingStarted.Lazily, State.Home.LoggedIn(emptyList(), backingConfig.value, addPlaylistState.value))
-
-    fun handleAction(action: SetupAction) {
-        when(action) {
-            is SetupAction.AddPlaylist -> {
-                backingPlaylistURIs.value = (backingPlaylistURIs.value + action.playlist.uri.uri).distinct()
-                savedPlaylistURIs = backingPlaylistURIs.value.map { it }
-            }
-            is SetupAction.RemovePlaylist -> {
-                backingPlaylistURIs.value -= action.playlist.uri.uri
-                savedPlaylistURIs = backingPlaylistURIs.value.map { it }
-            }
-            is SetupAction.UpdateConfig -> {
-                backingConfig.value = action.updatedConfig
-                savedConfig = backingConfig.value
-            }
-            is SetupAction.UpdateSearch -> {
-                backingSearchTerm.value = action.searchTerm
-            }
-            is SetupAction.StartGame -> {
-                onStartGame.invoke(action.playlists, backingConfig.value)
-            }
-        }
+    abstract fun handleStart(setupState: SetupState): String
+    open fun onChangeSetupState(setupState: SetupState) {
+        this.setupState.value = setupState
     }
 }
 
-data class GameMachine(
-    val coroutineScope: CoroutineScope,
-    val backingGame: MutableStateFlow<GameState>
+private fun SpotifyRepository.toHomeScreen(setupState: SetupState?) = when(this) {
+    is SpotifyRepository.LoggedIn -> Screen.Home.LoggedIn(this, setupState ?: SetupState(emptyList(), GameOptions()))
+    else -> Screen.Home.LoggedOut
+}
+
+abstract class GameMachine(
+    coroutineScope: CoroutineScope,
+    private val spotifyRepository: SpotifyRepository.LoggedIn,
+    private val lyricsRepository: LyricsRepository,
+    val gameID: String,
+    val playlistIDs: List<String>,
+    val options: GameOptions,
+    val initialGameState: GameState,
 ) {
-    val currentGameScreen = backingGame.map { gameState ->
-        println("currrentGameScreen updating, gameState = $gameState")
-        when(gameState) {
-            GameState.Unstarted, is GameState.Loading -> null
-            is GameState.Playing -> when(gameState.screen) {
-                GameScreen.Question -> State.GameState.Question(gameState.game.questions.indexOfFirst { it.answer is GameAnswer.Unanswered }, gameState.game)
-                GameScreen.Answer -> State.GameState.Answer(gameState.game.questions.indexOfLast { it.answer !is GameAnswer.Unanswered }, gameState.game)
-                GameScreen.End -> State.GameState.End(gameState.game)
+    protected val gameState = MutableStateFlow(initialGameState)
+    val gameScreen: StateFlow<Screen.GameScreen> = gameState.map {
+        it.toGameScreen()
+    }.stateIn(coroutineScope, SharingStarted.Eagerly, gameState.value.toGameScreen())
+
+    init {
+        if (initialGameState is GameState.Loading) {
+            coroutineScope.launch {
+                val playlists = playlistIDs.mapNotNull { spotifyRepository.getPlaylistByURI(it) }
+                val randomTracks = playlists.getRandomSongs(spotifyRepository, options)
+                gameState.value = GameState.Loading(LoadingState.LoadingLyrics(0, options.amountOfSongs))
+                val tracksWithLyrics = lyricsRepository.getLyricsFor(randomTracks)
+                val game = Game(tracksWithLyrics.generateQuestions(options), options)
+                onLoadGame(game)
             }
         }
-    }.stateIn(coroutineScope, SharingStarted.Lazily, null)
+    }
 
-    fun handleAction(action: GameAction) {
+    open fun onLoadGame(game: Game) {
+        gameState.value = GameState.Playing(game, GameScreen.Question)
+    }
+
+    open fun handleAction(action: GameAction) {
+        println("handling action, current gameState = ${gameState.value}")
         when (action) {
-            is GameAction.AnswerQuestion -> backingGame.value = when (val gameState = backingGame.value) {
-                GameState.Unstarted, is GameState.Loading -> throw Error("Can't answer when gameState = $gameState")
+            is GameAction.AnswerQuestion -> gameState.value = when (val gameState = gameState.value) {
+                is GameState.Loading -> throw Error("Can't answer when gameState = $gameState")
                 is GameState.Playing -> gameState.copy(game = gameState.game.withNextAnswer(action.answer), GameScreen.Answer)
             }
-            is GameAction.NextQuestion -> backingGame.value = when (val gameState = backingGame.value) {
-                GameState.Unstarted, is GameState.Loading -> throw Error("Can't move to next question when gameState = $gameState")
+            is GameAction.NextQuestion -> gameState.value = when (val gameState = gameState.value) {
+                is GameState.Loading -> throw Error("Can't move to next question when gameState = $gameState")
                 is GameState.Playing -> gameState.copy(screen = if (gameState.game.isEnded) GameScreen.End else GameScreen.Question)
             }
-            is GameAction.RestartGame -> backingGame.value = GameState.Unstarted
         }
+        println("handled action, new gameState = ${gameState.value}")
     }
 }
 
-abstract class Machine(
-    coroutineScope: CoroutineScope,
-    private val lyricsRepository: LyricsRepository,
-    val spotifyRepository: MutableStateFlow<SpotifyRepository>,
-    val backingConfig: MutableStateFlow<GameConfig>,
-    val backingPlaylistURIs: MutableStateFlow<List<String>>,
-) {
-    private val backingGame: MutableStateFlow<GameState> = MutableStateFlow(GameState.Unstarted)
-    val currentGame = backingGame.asStateFlow()
-
-    val setupMachine: LoggedInSetupMachine = LoggedInSetupMachine(
-        coroutineScope = coroutineScope,
-        spotifyRepository = spotifyRepository.filterIsInstance<SpotifyRepository.LoggedIn>(),
-        backingConfig = backingConfig,
-        backingPlaylistURIs = backingPlaylistURIs,
-        onStartGame = { playlists, config ->
-            backingGame.value = GameState.Loading(LoadingState.LoadingSongs)
-            CoroutineScope(Dispatchers.Default).launch {
-                val spotifyRepository = spotifyRepository.value
-                if (spotifyRepository !is SpotifyRepository.LoggedIn) return@launch
-                val randomTracks = playlists.getRandomSongs(spotifyRepository, config)
-                backingGame.value = GameState.Loading(LoadingState.LoadingLyrics(0, config.amountOfSongs))
-                val tracksWithLyrics = lyricsRepository.getLyricsFor(randomTracks)
-                val game = Game(tracksWithLyrics.generateQuestions(config), config)
-                backingGame.value = GameState.Playing(game, GameScreen.Question)
-            }
-        }
-    )
-
-    val gameMachine: GameMachine = GameMachine(coroutineScope, backingGame)
-
-    val currentLoadingScreen = currentGame.map { gameState ->
-        when (gameState) {
-            is  GameState.Loading -> gameState.state
-            else -> null
-        }
-    }.stateIn(coroutineScope, SharingStarted.Lazily, LoadingState.LoadingSongs)
-
-    fun handleAction(action: Action) {
-        when (action) {
-            is GameAction -> gameMachine.handleAction(action)
-            is SetupAction -> setupMachine.handleAction(action)
-            is AuthAction -> handleAuthAction(action)
-        }
+private fun GameState.toGameScreen(): Screen.GameScreen = when(this) {
+    is GameState.Loading -> Screen.GameScreen.Loading(this.state)
+    is GameState.Playing -> when(this.screen) {
+        GameScreen.Question -> Screen.GameScreen.Question(this.game.questions.indexOfFirst { it.answer is GameAnswer.Unanswered }, this.game)
+        GameScreen.Answer -> Screen.GameScreen.Answer(this.game.questions.indexOfLast { it.answer !is GameAnswer.Unanswered }, this.game)
+        GameScreen.End -> Screen.GameScreen.End(this.game)
     }
-    abstract fun handleAuthAction(authAction: AuthAction)
 }
 
 suspend fun List<Track>.toSourcedTracks(sourcePlaylist: SimplePlaylist): List<SourcedTrack> {
@@ -165,7 +91,7 @@ suspend fun List<Track>.toSourcedTracks(sourcePlaylist: SimplePlaylist): List<So
 
 fun Track.toSourcedTrack(sourcePlaylist: SimplePlaylist) = SourcedTrack(this, sourcePlaylist)
 
-suspend fun List<SimplePlaylist>.getRandomSongs(spotifyRepository: SpotifyRepository.LoggedIn, config: GameConfig): List<SourcedTrack> {
+suspend fun List<SimplePlaylist>.getRandomSongs(spotifyRepository: SpotifyRepository.LoggedIn, config: GameOptions): List<SourcedTrack> {
     println("getting random songs, config = $config")
     return if (config.distributePlaylistsEvenly) {
         val amountOfSongsPerPlaylist = config.amountOfSongs.distributeInto(this.size)
@@ -186,19 +112,19 @@ suspend fun List<SimplePlaylist>.getRandomSongs(spotifyRepository: SpotifyReposi
     }
 }
 
+@Serializable
 sealed class GameState {
-    object Unstarted : GameState()
-    data class Loading(val state: LoadingState) : GameState()
-    data class Playing(val game: Game, val screen: GameScreen) : GameState()
+    @Serializable data class Loading(val state: LoadingState) : GameState()
+    @Serializable data class Playing(val game: Game, val screen: GameScreen) : GameState()
 }
 
 enum class GameScreen {
     Question, Answer, End
 }
 
-sealed class LoadingState {
-    object LoadingSongs : LoadingState()
-    data class LoadingLyrics(val amountLoaded: Int, val numberOfSongs: Int) : LoadingState() {
+@Serializable sealed class LoadingState {
+    @Serializable data object LoadingSongs : LoadingState()
+    @Serializable data class LoadingLyrics(val amountLoaded: Int, val numberOfSongs: Int) : LoadingState() {
         val percent: Double = amountLoaded.toDouble() / numberOfSongs
     }
 }

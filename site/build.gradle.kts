@@ -5,6 +5,7 @@ plugins {
     kotlin("multiplatform")
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kobweb.application)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "com.andb.apps.lyrical"
@@ -54,7 +55,10 @@ kotlin {
                 implementation(libs.kobweb.silk.core)
                 implementation(libs.kobweb.silk.icons.fa)
                 implementation(libs.kobwebx.markdown)
-
+                implementation(libs.kotlinx.serialization.core)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.serialization)
                 implementation(libs.spotify.api)
                 implementation(project(":shared"))
             }

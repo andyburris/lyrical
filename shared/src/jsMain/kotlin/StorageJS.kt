@@ -10,7 +10,7 @@ actual var savedConfig
     get() = localStorage[CONFIG_KEY]?.let {
         println("backingConfigString = $it")
         Json.decodeFromString(it)
-    } ?: GameConfig()
+    } ?: GameOptions()
     set(value) {
         localStorage[CONFIG_KEY] = Json.encodeToString(value)
     }

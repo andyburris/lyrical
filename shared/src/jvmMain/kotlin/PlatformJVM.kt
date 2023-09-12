@@ -21,11 +21,17 @@ actual suspend fun GeniusRepository.scrapeLyrics(songURL: String): String? {
                         return@htmlDocument null
                     }
                 }
-                lyricsDiv.html.replace(unnecessaryScrapingRegex, "").replace("&amp;", "&").split("<br>").filter { it.isNotBlank() }.map { it.trim() }.joinToString("\n")
+                lyricsDiv.html
+                    .replace(unnecessaryScrapingRegex, "")
+                    .replace("&amp;", "&")
+                    .split("<br>")
+                    .filter { it.isNotBlank() }
+                    .map { it.trim() }
+                    .joinToString("\n")
             }
         }
     }
 }
 
-actual var savedConfig: GameConfig = GameConfig()
+actual var savedConfig: GameOptions = GameOptions()
 actual var savedPlaylistURIs: List<String> = emptyList()

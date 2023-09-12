@@ -15,19 +15,28 @@ import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.gap
+import com.varabyte.kobweb.core.rememberPageContext
 import kotlin.random.Random
 
 @Composable
 fun HomePage() {
     val coroutineScope = rememberCoroutineScope()
-    val setupMachine = remember { BrowserHomeMachine(coroutineScope) { playlists, config -> } }
-    val homeState = setupMachine.homeState.collectAsState()
+    val router = rememberPageContext().router
+    val setupMachine = remember { BrowserHomeMachine(coroutineScope) }
+    val homeState = setupMachine.homeScreen.collectAsState()
     handleAuth { setupMachine.handleAuthAction(it) }
     PageLayout("Lyrical - Home") {
         Column(Modifier.gap(LyricalTheme.Spacing.XXL).fillMaxWidth()) {
             HomeHeader()
-            when(val state = homeState.value) {
-                is Screen.Home.LoggedIn -> HomeLoggedIn(state) { setupMachine.handleAction(it) }
+            when(val screen = homeState.value) {
+                is Screen.Home.LoggedIn -> HomeLoggedIn(
+                    screen = screen,
+                    onUpdateSetupState = { setupMachine.onChangeSetupState(it) },
+                    onStartGame = {
+                        val gameID = setupMachine.handleStart(it)
+                        router.navigateTo("/game/$gameID")
+                    }
+                )
                 Screen.Home.LoggedOut -> HomeLoggedOut() { setupMachine.handleAuthAction(AuthAction.Authenticate(Random.nextInt().toString())) }
             }
         }

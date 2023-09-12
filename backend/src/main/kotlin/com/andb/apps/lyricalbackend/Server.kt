@@ -31,7 +31,11 @@ fun main() {
 
 fun Application.applicationModule() {
     println(File(".").absolutePath)
-    val geniusAccessToken: String = System.getenv()["geniusAccessToken"] ?: File("../local.properties").readText().takeLastWhile { it != '=' }
+    val geniusAccessToken: String = System.getenv()["geniusAccessToken"]
+        ?: File("../local.properties")
+            .readLines()
+            .first { it.startsWith("geniusAccessToken") }
+            .takeLastWhile { it != '=' }
     val geniusRepository = GeniusRepository(geniusAccessToken)
 
     install(ContentNegotiation) {
