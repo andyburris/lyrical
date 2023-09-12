@@ -13,7 +13,9 @@ import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.gap
 import com.varabyte.kobweb.core.rememberPageContext
+import kotlinx.coroutines.delay
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun HomePage() {
@@ -28,6 +30,7 @@ fun HomePage() {
 
     handleAuth { setupMachine.handleAuthAction(it) }
     LaunchedEffect(needsReauthentication.value) {
+        delay(50.milliseconds)
         when (val authAction = needsReauthentication.value) {
             null -> {}
             else -> setupMachine.handleAuthAction(authAction)

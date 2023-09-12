@@ -21,7 +21,7 @@ import org.jetbrains.compose.web.dom.Text
 @Composable
 fun GameAppBar(
     gameScreen: Screen.GameScreen,
-    palette: LyricalPalette,
+    palette: LyricalPalette = LyricalTheme.palette,
     modifier: Modifier = Modifier,
     onClose: () -> Unit,
 ) {

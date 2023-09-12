@@ -16,11 +16,13 @@ import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.*
+import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.silk.components.forms.Input
 import com.varabyte.kobweb.silk.components.style.ComponentStyle
 import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.components.style.toModifier
 import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.css.unaryMinus
 import org.jetbrains.compose.web.css.vw
@@ -83,11 +85,11 @@ fun AnswerSection(
 val AnswerSectionStyle by ComponentStyle {
     base {
         Modifier
-            .margin(-(24.px))
             .maxWidth(1200.px)
             .width(100.vw)
-    }
-    Breakpoint.SM {
-        Modifier.margin(-(48.px))
+            .styleModifier {
+                property("margin-left", auto)
+                property("margin-right", auto)
+            }
     }
 }

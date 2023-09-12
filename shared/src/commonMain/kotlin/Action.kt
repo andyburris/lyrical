@@ -8,6 +8,7 @@ sealed class Action {
 }
 
 sealed class GameAction : Action() {
+    data class RequestHint(val hint: GameHint) : GameAction()
     data class AnswerQuestion(val answer: UserAnswer) : GameAction()
     data object NextQuestion : GameAction()
 }

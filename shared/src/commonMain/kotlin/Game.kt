@@ -3,7 +3,10 @@ import com.adamratzman.spotify.models.Track
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Game(val questions: List<GameQuestion>, val options: GameOptions) {
+data class Game(
+    val questions: List<GameQuestion>,
+    val options: GameOptions
+) {
     val currentQuestion = questions.firstOrNull { it.answer !is GameAnswer.Answered }
     val currentQuestionIndex = questions.indexOfFirst { it.answer !is GameAnswer.Answered }
     val lastQuestion = questions.lastOrNull { it.answer is GameAnswer.Answered }
@@ -14,11 +17,19 @@ data class Game(val questions: List<GameQuestion>, val options: GameOptions) {
         val questionNumber = questions.indexOfFirst { it.answer is GameAnswer.Unanswered }
         return this.copy(questions = questions.replace(questionNumber) { it.withAnswer(answer) },)
     }
+    fun withHintUsed(hint: GameHint): Game {
+        val questionNumber = questions.indexOfFirst { it.answer is GameAnswer.Unanswered }
+        return this.copy(questions = questions.replace(questionNumber) { it.withHintUsed(hint) })
+    }
     val isEnded get() = questions.all { it.answer !is GameAnswer.Unanswered }
 }
 
 @Serializable
-data class GameQuestion(val trackWithLyrics: TrackWithLyrics, val answer: GameAnswer = GameAnswer.Unanswered, val startingLineIndex: Int) {
+data class GameQuestion(
+    val trackWithLyrics: TrackWithLyrics,
+    val answer: GameAnswer = GameAnswer.Unanswered(emptyList()),
+    val startingLineIndex: Int
+) {
     val lyric = trackWithLyrics.lyricState.lyrics[startingLineIndex]
     val nextLyric = trackWithLyrics.lyricState.lyrics.getOrNull(startingLineIndex + 1) ?: "[End of Song]"
     val artist get() = trackWithLyrics.sourcedTrack.track.artists.first().name
@@ -28,39 +39,50 @@ data class GameQuestion(val trackWithLyrics: TrackWithLyrics, val answer: GameAn
             is UserAnswer.Answer -> {
                 println("answered, formatted user answer = ${answer.answer.formatAnswer()}, formatted correct answer = ${trackWithLyrics.sourcedTrack.track.name.formatAnswer()}")
                 val gameAnswer = when (answer.answer.formatAnswer() == trackWithLyrics.sourcedTrack.track.name.formatAnswer()) {
-                    true -> GameAnswer.Answered.Correct(answer.withNextLine, answer.withArtist)
-                    false -> GameAnswer.Answered.Incorrect(answer.answer, answer.withNextLine, answer.withArtist)
+                    true -> GameAnswer.Answered.Correct(answer.hintsUsed)
+                    false -> GameAnswer.Answered.Incorrect(answer.answer, answer.hintsUsed)
                 }
                 this.copy(answer = gameAnswer)
             }
             is UserAnswer.Skipped -> {
-                val gameAnswer = GameAnswer.Answered.Skipped(answer.withNextLine, answer.withArtist)
+                val gameAnswer = GameAnswer.Answered.Skipped(answer.hintsUsed)
                 this.copy(answer = gameAnswer)
             }
+        }
+    }
+    fun withHintUsed(hint: GameHint): GameQuestion {
+        return when(this.answer) {
+            is GameAnswer.Answered -> throw Error("Can't add a hint to an answered question")
+            is GameAnswer.Unanswered -> this.copy(answer = this.answer.copy(hintsUsed = this.answer.hintsUsed + hint))
         }
     }
 }
 
 @Serializable
+enum class GameHint {
+    Artist, NextLine
+}
+
+@Serializable
 sealed class GameAnswer {
+    abstract val hintsUsed: List<GameHint>
     @Serializable
     sealed class Answered() : GameAnswer() {
-        abstract val withNextLine: Boolean
-        abstract val withArtist: Boolean
-        @Serializable data class Correct(override val withNextLine: Boolean, override val withArtist: Boolean) : Answered() {
-            val points = 1.0 - (if (withArtist) 0.5 else 0.0) - (if (withNextLine) 0.25 else 0.0)
+
+        @Serializable data class Correct(override val hintsUsed: List<GameHint>) : Answered() {
+            val points = 1.0 - (if (GameHint.Artist in hintsUsed) 0.5 else 0.0) - (if (GameHint.NextLine in hintsUsed) 0.25 else 0.0)
         }
-        @Serializable data class Incorrect(val answer: String, override val withNextLine: Boolean, override val withArtist: Boolean) : Answered()
-        @Serializable data class Skipped(override val withNextLine: Boolean, override val withArtist: Boolean) : Answered()
+        @Serializable data class Incorrect(val answer: String, override val hintsUsed: List<GameHint>) : Answered()
+        @Serializable data class Skipped(override val hintsUsed: List<GameHint>) : Answered()
     }
-    data object Unanswered : GameAnswer()
+    @Serializable data class Unanswered(override val hintsUsed: List<GameHint>) : GameAnswer()
 }
 val GameAnswer.isRight get() = this is GameAnswer.Answered.Correct
 val GameAnswer.isWrong get() = !this.isRight
 
 sealed class UserAnswer {
-    data class Answer(val answer: String, val withNextLine: Boolean, val withArtist: Boolean) : UserAnswer()
-    data class Skipped(val withNextLine: Boolean, val withArtist: Boolean) : UserAnswer()
+    data class Answer(val answer: String, val hintsUsed: List<GameHint>) : UserAnswer()
+    data class Skipped(val hintsUsed: List<GameHint>) : UserAnswer()
 }
 
 @Serializable

@@ -69,6 +69,10 @@ abstract class GameMachine(
                 is GameState.Loading -> throw Error("Can't move to next question when gameState = $gameState")
                 is GameState.Playing -> gameState.copy(screen = if (gameState.game.isEnded) GameScreen.End else GameScreen.Question)
             }
+            is GameAction.RequestHint -> gameState.value = when (val gameState = gameState.value) {
+                is GameState.Loading -> throw Error("Can't request hint when gameState = $gameState")
+                is GameState.Playing -> gameState.copy(game = gameState.game.withHintUsed(action.hint), GameScreen.Question)
+            }
         }
         println("handled action, new gameState = ${gameState.value}")
     }

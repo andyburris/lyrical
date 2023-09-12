@@ -19,23 +19,26 @@ import org.jetbrains.compose.web.dom.*
 
 
 val PageLayoutStyle by ComponentStyle {
-    base { Modifier.width(100.vw).height(100.vh) }
+    base {
+        Modifier
+            .width(100.vw)
+            .height(100.vh)
+            .padding(24.px)
+    }
+    Breakpoint.SM {
+        Modifier.padding(48.px)
+    }
 }
 
 val PageLayoutContainerStyle by ComponentStyle {
     base {
         Modifier
             .maxWidth(1200.px)
-            .padding(24.px)
             .fillMaxWidth()
             .minHeight(100.percent)
             .styleModifier {
                 property("margin", auto)
             }
-    }
-
-    Breakpoint.SM {
-        Modifier.padding(48.px)
     }
 }
 
@@ -47,7 +50,7 @@ fun PageLayout(title: String, modifier: Modifier = Modifier, content: @Composabl
 
     Column(modifier.then(PageLayoutStyle.toModifier())) {
         Column(
-            modifier.then(PageLayoutContainerStyle.toModifier())
+            Modifier.then(PageLayoutContainerStyle.toModifier())
         ) {
             content()
         }
