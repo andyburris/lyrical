@@ -6,6 +6,11 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.*
 import java.util.NoSuchElementException
 
+private val invalidSearch = Regex("( \\(.*\\))+|( \\[.*])|(-.*)|([^\\w\\d\\s&])")
+fun String.sanitizeForSearch() = this.replace(invalidSearch, "")
+fun String.sanitizeForCompare() = this.sanitizeForSearch().replace(" ", "").toLowerCase()
+internal val unnecessaryScrapingRegex = Regex("(<section[^>]*>|</section[^>]*>)+|(<![^>]*>)+|(<p[^>]*>|</p[^>]*>)+|(<a[^>]*>|</a[^>]*>)+|(<span[^>]*>|</span[^>]*>)+|(<i>|</i>)+|(<b>|</b>)+|(<div[^>]*>|</div[^>]*>)+")
+
 data class GeniusRepository(
     val apiKey: String,
     val httpClient: HttpClient = HttpClient {
@@ -14,33 +19,32 @@ data class GeniusRepository(
         }
     }
 ) {
-    private val invalidSearch = Regex("( \\(.*\\))+|( \\[.*])|(-.*)|([^\\w\\d\\s&])")
-    internal val unnecessaryScrapingRegex = Regex("(<section[^>]*>|</section[^>]*>)+|(<![^>]*>)+|(<p[^>]*>|</p[^>]*>)+|(<a[^>]*>|</a[^>]*>)+|(<span[^>]*>|</span[^>]*>)+|(<i>|</i>)+|(<b>|</b>)+|(<div[^>]*>|</div[^>]*>)+")
 
     suspend fun getLyrics(trackName: String, artists: List<String>): String? {
         val songURL = getSongURL(trackName, artists) ?: return null
-        println("scraping lyrics from url = $songURL")
         return scrapeLyrics(songURL)
     }
 
     private suspend fun getSongURL(trackName: String, artists: List<String>): String? {
-        artists.forEach {
-            val url = getSongURLByArtist(trackName, it, artists)
-            if (url != null) return url
+        val url = artists.firstNotNullOfOrNull {
+            getSongURLByArtist(trackName, it, artists)
         }
-        return null
+        if (url == null) Error("Genius contains no results for $trackName by ${artists.joinToString()}").printStackTrace()
+        return url
     }
 
     private suspend fun getSongURLByArtist(trackName: String, artist: String, allArtists: List<String>): String? {
-        val url = "https://api.genius.com/search?q=${trackName.replace(invalidSearch, "")} $artist"
+        val searchTerm = "${trackName.sanitizeForSearch()} ${artist.sanitizeForSearch()}".replace(" ", "%20")
+        val url = "https://api.genius.com/search?q=$searchTerm"
         return try {
             val response = httpClient.get(url) {
                 bearerAuth(apiKey)
             }.body<JsonObject>()
-            println(response)
-            response.hits().first { hit -> allArtists.any { it.replace(invalidSearch, "").replace(" ", "").toLowerCase() in hit.hitArtist().replace(invalidSearch, "").replace(" ", "").toLowerCase() } }.hitUrl()
+//            println(response)
+            val bestHit = response.hits().findBestHitUrl(trackName, allArtists)
+            bestHit?.hitUrl()
         } catch (e: NoSuchElementException) {
-            Error("Genius contains no results for $trackName by $artist (search term was ${trackName.replace(invalidSearch, "")} $artist").printStackTrace()
+//            Error("Genius contains no results for $trackName by $artist (search term was ${trackName.replace(invalidSearch, "")} $artist")
             null
         } catch (e: Exception) {
             e.printStackTrace()
@@ -48,8 +52,25 @@ data class GeniusRepository(
         }
     }
 }
-private fun JsonObject.hits() = this["response"]!!
+
+private fun JsonElement.stringifyHit() = "${this.hitTitle()} - ${this.hitArtist()}"
+private fun JsonArray.findBestHitUrl(trackName: String, allArtists: List<String>): JsonElement? = this
+        .filter { hit ->
+            hit.hitArtist().sanitizeForCompare() in allArtists.map { it.sanitizeForCompare() }
+        }
+        .firstOrNull()
+    ?: this
+        .filter { hit ->
+            allArtists.any { it.sanitizeForCompare() in hit.hitArtist().sanitizeForCompare() }
+        }.firstOrNull()
+
+private fun JsonObject.hits(): JsonArray = this["response"]!!
     .jsonObject["hits"]!!.jsonArray
+
+private fun JsonElement.hitTitle() =
+    jsonObject["result"]!!
+        .jsonObject["title"]!!
+        .jsonPrimitive.content
 
 private fun JsonElement.hitArtist() =
     jsonObject["result"]!!
