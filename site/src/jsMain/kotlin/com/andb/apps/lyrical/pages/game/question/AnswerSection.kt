@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.andb.apps.lyrical.components.widgets.Button
+import com.andb.apps.lyrical.components.widgets.Heading1Style
 import com.andb.apps.lyrical.components.widgets.Heading2Style
 import com.andb.apps.lyrical.components.widgets.phosphor.PhSkipForward
 import com.andb.apps.lyrical.theme.LyricalTheme
@@ -50,7 +51,7 @@ fun AnswerSection(
             },
             placeholder = "Song name",
             modifier = Modifier
-                .then(Heading2Style.toModifier())
+                .then(Heading1Style.toModifier())
                 .border(0.px)
                 .height(Height.FitContent)
                 .padding(0.px)

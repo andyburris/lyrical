@@ -2,10 +2,7 @@ package com.andb.apps.lyrical.pages.home
 
 import AuthAction
 import BrowserHomeMachine
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import com.andb.apps.lyrical.components.layouts.PageLayout
 import com.andb.apps.lyrical.pages.home.loggedIn.HomeLoggedIn
 import com.andb.apps.lyrical.pages.home.loggedOut.HomeLoggedOut
@@ -22,9 +19,21 @@ import kotlin.random.Random
 fun HomePage() {
     val coroutineScope = rememberCoroutineScope()
     val router = rememberPageContext().router
-    val setupMachine = remember { BrowserHomeMachine(coroutineScope) }
+    val needsReauthentication = remember { mutableStateOf<AuthAction.Authenticate?>(null) }
+    val setupMachine = remember { BrowserHomeMachine(
+        coroutineScope = coroutineScope,
+        onReauthenticate = { needsReauthentication.value = it }
+    ) }
     val homeState = setupMachine.homeScreen.collectAsState()
+
     handleAuth { setupMachine.handleAuthAction(it) }
+    LaunchedEffect(needsReauthentication.value) {
+        when (val authAction = needsReauthentication.value) {
+            null -> {}
+            else -> setupMachine.handleAuthAction(authAction)
+        }
+    }
+
     PageLayout("Lyrical - Home") {
         Column(Modifier.gap(LyricalTheme.Spacing.XXL).fillMaxWidth()) {
             HomeHeader()

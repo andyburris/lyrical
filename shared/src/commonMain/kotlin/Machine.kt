@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 
 abstract class SetupMachine(
     coroutineScope: CoroutineScope,
+    initialRepository: SpotifyRepository,
+    initialSetupState: SetupState?,
 ) {
-    abstract val initialRepository: SpotifyRepository
-    abstract val initialSetupState: SetupState?
     protected val spotifyRepository = MutableStateFlow(initialRepository)
     protected val setupState = MutableStateFlow(initialSetupState)
     val homeScreen: StateFlow<Screen.Home> = combine(spotifyRepository, setupState) { repo, setupState ->

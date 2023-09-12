@@ -12,11 +12,12 @@ private const val setupStateKey = "currentSetupState"
 
 class BrowserHomeMachine(
     coroutineScope: CoroutineScope,
+    onReauthenticate: (AuthAction.Authenticate) -> Unit,
 ) : SetupMachine(
     coroutineScope = coroutineScope,
+    initialRepository = getRepository { onReauthenticate(it) },
+    initialSetupState = localStorage[setupStateKey]?.let { Json.decodeFromString(it) },
 ) {
-    override val initialRepository: SpotifyRepository = getRepository { this.handleAuthAction(it) }
-    override val initialSetupState: SetupState? = localStorage[setupStateKey]?.let { Json.decodeFromString(it) }
     override fun handleAuthAction(authAction: AuthAction) {
         when(authAction) {
             is AuthAction.Authenticate -> {

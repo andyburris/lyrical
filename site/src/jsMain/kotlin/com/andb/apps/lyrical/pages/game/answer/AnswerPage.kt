@@ -4,6 +4,7 @@ import GameAction
 import Screen
 import androidx.compose.runtime.Composable
 import com.andb.apps.lyrical.components.widgets.Button
+import com.andb.apps.lyrical.components.widgets.Heading1
 import com.andb.apps.lyrical.components.widgets.Heading2
 import com.andb.apps.lyrical.components.widgets.Subtitle
 import com.andb.apps.lyrical.theme.LyricalPalette
@@ -39,11 +40,11 @@ fun AnswerPage(
         ) {
             when(val answer = answerScreen.answer) {
                 is GameAnswer.Answered.Correct -> Column {
-                    Heading2("Correct!", color = palette.contentPrimary)
+                    Heading1("Correct!", color = palette.contentPrimary)
                     Subtitle("+${answer.points}pts", color = palette.contentSecondary)
                 }
-                is GameAnswer.Answered.Incorrect -> Heading2("Incorrect", color = palette.contentPrimary)
-                is GameAnswer.Answered.Skipped -> Heading2("Skipped", color = palette.contentPrimary)
+                is GameAnswer.Answered.Incorrect -> Heading1("Incorrect", color = palette.contentPrimary)
+                is GameAnswer.Answered.Skipped -> Heading1("Skipped", color = palette.contentPrimary)
                 GameAnswer.Unanswered -> throw Error("Should never show answer screen for an unanswered question")
             }
             Button(

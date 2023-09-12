@@ -49,7 +49,7 @@ fun GameRouter(
                 is Screen.GameScreen.Loading -> LoadingPage(screen, modifier)
                 is Screen.GameScreen.Question -> QuestionPage(screen, modifier) { onGameAction(it) }
                 is Screen.GameScreen.Answer -> AnswerPage(screen, palette, modifier) { onGameAction(it) }
-                is Screen.GameScreen.End -> EndPage(screen, modifier)
+                is Screen.GameScreen.End -> EndPage(screen, palette, modifier)
             }
         }
     }
