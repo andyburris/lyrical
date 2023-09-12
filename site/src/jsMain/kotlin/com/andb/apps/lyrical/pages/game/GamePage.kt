@@ -31,7 +31,7 @@ fun GamePage() {
             BrowserGameMachine(
                 coroutineScope = coroutineScope,
                 spotifyRepository = spotifyRepository,
-                lyricsRepository = LyricsRepository(debug = true),
+                lyricsRepository = LyricsRepository(debug = false),
                 gameID = gameID,
                 gameStorageState = game
             )

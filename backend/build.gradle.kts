@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     application
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ktor)
 }
 
 dependencies {

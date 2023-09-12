@@ -30,13 +30,7 @@ fun main() {
 }
 
 fun Application.applicationModule() {
-    println(File(".").absolutePath)
-    val geniusAccessToken: String = System.getenv()["geniusAccessToken"]
-        ?: File("../local.properties")
-            .readLines()
-            .first { it.startsWith("geniusAccessToken") }
-            .takeLastWhile { it != '=' }
-    val geniusRepository = GeniusRepository(geniusAccessToken)
+    val geniusRepository = GeniusRepository(getGeniusAccessToken())
 
     install(ContentNegotiation) {
         json()
@@ -49,7 +43,6 @@ fun Application.applicationModule() {
 
     routing {
         get("/lyrics") {
-            println("recieved request from ${call.request.local.let { it.host + ":" + it.port + it.uri }}")
             val requests = (call.request.header("lyricRequests")
                 ?: throw Error("Must have a lyricRequests header")).decodeLyricRequestsFromString()
             println("recieved request, tracks = $requests")
@@ -62,8 +55,15 @@ fun Application.applicationModule() {
                 }
             }
             val allLyrics = lyrics.awaitAll()
-            println("allLyrics successful")
             call.respond(allLyrics)
         }
     }
 }
+
+private fun getGeniusAccessToken(): String = System.getenv()["geniusAccessToken"]
+    ?: File("../local.properties")
+        .let { if (it.exists()) it else null }
+        ?.readLines()
+        ?.first { it.startsWith("geniusAccessToken") }
+        ?.takeLastWhile { it != '=' }
+    ?: throw Error("geniusAccessToken must exist as an environmental variable or in a local.properties file in the project root")

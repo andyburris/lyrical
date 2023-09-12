@@ -17,11 +17,18 @@ data class LyricsRepository(val httpClient: HttpClient = HttpClient {
     suspend fun getLyricsFor(tracks: List<SourcedTrack>): List<TrackWithLyrics> {
         println("getting lyrics for $tracks")
         val url = when(debug) {
-            false -> "https://lyricalbackend.up.railway.app/lyrics"
+            false -> "https://lyrical-backend.fly.dev/lyrics"
             true -> "http://localhost:5050/lyrics"
         }
         val responses = httpClient.get(url) {
-            val lyricRequests = tracks.map { LyricRequest(it.track.name.filterHeader(), it.track.artists.map { it.name.filterHeader() }, it.track.uri.uri) }
+            val lyricRequests = tracks
+                .map {
+                    LyricRequest(
+                        name = it.track.name.filterHeader(),
+                        artists = it.track.artists.map { it.name.filterHeader() },
+                        trackID = it.track.uri.uri
+                    )
+            }
             println("lyricRequests = $lyricRequests")
             header("lyricRequests", lyricRequests.encodeToString())
         }.body<List<LyricResponse>>()
