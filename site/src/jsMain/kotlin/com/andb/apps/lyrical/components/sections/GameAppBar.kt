@@ -7,6 +7,7 @@ import com.andb.apps.lyrical.components.widgets.Subtitle
 import com.andb.apps.lyrical.components.widgets.phosphor.PhX
 import com.andb.apps.lyrical.theme.LyricalPalette
 import com.andb.apps.lyrical.theme.LyricalTheme
+import com.andb.apps.lyrical.theme.onSubmit
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.Modifier
@@ -39,7 +40,7 @@ fun GameAppBar(
             PhX(
                 modifier = Modifier
                     .color(palette.contentSecondary)
-                    .onClick { onClose() } //TODO: add touch target
+                    .onSubmit { onClose() } //TODO: add touch target
             )
             when(gameScreen) {
                 is Screen.GameScreen.Loading -> Subtitle("Loading", color = palette.contentSecondary)

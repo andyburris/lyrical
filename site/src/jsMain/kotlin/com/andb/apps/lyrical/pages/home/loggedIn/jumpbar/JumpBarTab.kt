@@ -7,6 +7,9 @@ import com.andb.apps.lyrical.components.widgets.Subtitle
 import com.andb.apps.lyrical.components.widgets.phosphor.*
 import com.andb.apps.lyrical.theme.LyricalTheme
 import com.varabyte.kobweb.compose.css.Cursor
+import com.varabyte.kobweb.compose.css.Overflow
+import com.varabyte.kobweb.compose.css.TextOverflow
+import com.varabyte.kobweb.compose.css.WhiteSpace
 import com.varabyte.kobweb.compose.css.functions.blur
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.foundation.layout.Row
@@ -21,54 +24,14 @@ import com.varabyte.kobweb.silk.components.style.toModifier
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import org.jetbrains.compose.web.css.*
 
-@Composable
-fun JumpBarTabs(
-    expandedTab: ExpandedJumpBarTab,
-    selectedPlaylists: List<SimplePlaylist>,
-    modifier: Modifier = Modifier,
-    onExpandTab: (ExpandedJumpBarTab) -> Unit,
-    onStartGame: () -> Unit,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        SelectedTab(
-            selectedPlaylists = selectedPlaylists,
-            expandedTab = expandedTab,
-            modifier = Modifier
-                .then(if (expandedTab != ExpandedJumpBarTab.Options) Modifier.flexGrow(1) else Modifier)
-                .onClick {
-                    onExpandTab(when(expandedTab) {
-                        ExpandedJumpBarTab.SelectedPlaylists -> ExpandedJumpBarTab.None
-                        else -> ExpandedJumpBarTab.SelectedPlaylists
-                    })
-                }
-        )
-        OptionsTab(
-            expandedTab = expandedTab,
-            modifier = Modifier
-                .borderLeft(1.px, LineStyle.Solid, LyricalTheme.palette.divider)
-                .then(if (expandedTab == ExpandedJumpBarTab.Options) Modifier.flexGrow(1) else Modifier)
-                .onClick {
-                    onExpandTab(when(expandedTab) {
-                        ExpandedJumpBarTab.Options -> ExpandedJumpBarTab.None
-                        else -> ExpandedJumpBarTab.Options
-                    })
-                }
-        )
-        StartGameTab(
-            modifier = Modifier
-                .onClick { onStartGame() }
-        )
+val JumpBarTabStyle by ComponentStyle {
+    base { Modifier
+        .cursor(Cursor.Pointer)
     }
 }
 
-val JumpBarTabStyle by ComponentStyle {
-    base { Modifier.cursor(Cursor.Pointer) }
-}
-
 val DefaultJumpBarTabVariant by JumpBarTabStyle.addVariantBase {
-    Modifier.backgroundColor(LyricalTheme.paletteFrom(colorMode).backgroundCard)
+    Modifier
 }
 val StartGameJumpBarTabVariant by JumpBarTabStyle.addVariantBase {
     Modifier
@@ -76,7 +39,7 @@ val StartGameJumpBarTabVariant by JumpBarTabStyle.addVariantBase {
         .color(LyricalTheme.Colors.accentPalette.contentPrimary)
 }
 @Composable
-private fun StartGameTab(modifier: Modifier = Modifier) {
+fun StartGameTab(modifier: Modifier = Modifier) {
     ResponsiveTabContent(
         icon = { PhPlayCircle() },
         text = { Subtitle("Start Game") },
@@ -89,7 +52,7 @@ private fun StartGameTab(modifier: Modifier = Modifier) {
 
 
 @Composable
-private fun SelectedTab(
+fun SelectedTab(
     selectedPlaylists: List<SimplePlaylist>,
     expandedTab: ExpandedJumpBarTab,
     modifier: Modifier = Modifier,
@@ -101,17 +64,33 @@ private fun SelectedTab(
             .padding(LyricalTheme.Spacing.MD)
             .justifyContent(JustifyContent.SpaceBetween)
             .alignItems(AlignItems.Center)
+            .borderBottom(
+                width = if (expandedTab == ExpandedJumpBarTab.Options) 1.px else 0.px,
+                style = LineStyle.Solid,
+                color = LyricalTheme.palette.divider,
+            )
     ) {
         ResponsiveTabContent(
             icon = { SelectedPlaylistPreview(selectedPlaylists) },
-            text = { Subtitle("${selectedPlaylists.size} Selected") },
+            text = {
+                Subtitle(
+                    text = "${selectedPlaylists.size} Selected",
+                    modifier = Modifier
+                        .whiteSpace(WhiteSpace.NoWrap)
+                        .textOverflow(TextOverflow.Ellipsis)
+                        .overflow(Overflow.Hidden)
+                )
+            },
             expandedInMobile = expandedTab != ExpandedJumpBarTab.Options,
         )
 
         when(expandedTab) {
             ExpandedJumpBarTab.None -> PhCaretDown(Modifier.color(LyricalTheme.palette.contentSecondary))
             ExpandedJumpBarTab.SelectedPlaylists -> PhCaretUp(Modifier.color(LyricalTheme.palette.contentSecondary))
-            ExpandedJumpBarTab.Options -> {}
+            ExpandedJumpBarTab.Options -> when(rememberBreakpoint()) {
+                Breakpoint.ZERO -> {}
+                else -> PhCaretDown(Modifier.color(LyricalTheme.palette.contentSecondary))
+            }
         }
     }
 }
@@ -120,7 +99,7 @@ private fun SelectedTab(
 private fun SelectedPlaylistPreview(selectedPlaylists: List<SimplePlaylist>, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
-            .margin(left = 12.px),
+            .margin(left = 8.px),
     ) {
         val hasOverflow = selectedPlaylists.size > 4
         selectedPlaylists.take(if (hasOverflow) 3 else 4).forEach { playlist ->
@@ -129,7 +108,7 @@ private fun SelectedPlaylistPreview(selectedPlaylists: List<SimplePlaylist>, mod
                 desc = "Cover of ${playlist.name}",
                 modifier = Modifier
                     .margin(left = -(12.px))
-                    .border(2.px, LineStyle.Solid, LyricalTheme.palette.backgroundCard)
+                    .border(LyricalTheme.Spacing.XXS, LineStyle.Solid, LyricalTheme.palette.backgroundCard)
                     .borderRadius(8.px)
                     .size(LyricalTheme.Size.Playlist.CoverSm),
             )
@@ -140,9 +119,9 @@ private fun SelectedPlaylistPreview(selectedPlaylists: List<SimplePlaylist>, mod
                     .margin(left = -(12.px))
                     .alignItems(AlignItems.Center)
                     .justifyContent(JustifyContent.Center)
-                    .backdropFilter(blur(2.px))
+                    .backdropFilter(blur(LyricalTheme.Spacing.XXS))
                     .backgroundColor(LyricalTheme.palette.overlayDark)
-                    .border(2.px, LineStyle.Solid, LyricalTheme.palette.backgroundCard)
+                    .border(LyricalTheme.Spacing.XXS, LineStyle.Solid, LyricalTheme.palette.backgroundCard)
                     .borderRadius(8.px)
                     .size(LyricalTheme.Size.Playlist.CoverSm)
             ) {
@@ -167,7 +146,7 @@ private fun SelectedPlaylistPreview(selectedPlaylists: List<SimplePlaylist>, mod
 }
 
 @Composable
-private fun OptionsTab(expandedTab: ExpandedJumpBarTab, modifier: Modifier = Modifier) {
+fun OptionsTab(expandedTab: ExpandedJumpBarTab, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .then(JumpBarTabStyle.toModifier(DefaultJumpBarTabVariant))
@@ -175,13 +154,24 @@ private fun OptionsTab(expandedTab: ExpandedJumpBarTab, modifier: Modifier = Mod
             .padding(LyricalTheme.Spacing.MD)
             .justifyContent(JustifyContent.SpaceBetween)
             .alignItems(AlignItems.Center)
+            .borderBottom(
+                width = if (expandedTab == ExpandedJumpBarTab.SelectedPlaylists) 1.px else 0.px,
+                style = LineStyle.Solid,
+                color = LyricalTheme.palette.divider,
+            )
     ) {
         ResponsiveTabContent(
             icon = { PhFadersHorizontal() },
             text = { Subtitle("Options") },
             expandedInMobile = expandedTab == ExpandedJumpBarTab.Options,
         )
-        if (expandedTab == ExpandedJumpBarTab.Options) PhCaretUp(Modifier.color(LyricalTheme.palette.contentSecondary))
+        when {
+            expandedTab == ExpandedJumpBarTab.Options -> PhCaretUp(Modifier.color(LyricalTheme.palette.contentSecondary))
+            else -> when(rememberBreakpoint()) {
+                Breakpoint.ZERO -> {}
+                else -> PhCaretDown(Modifier.color(LyricalTheme.palette.contentSecondary))
+            }
+        }
     }
 }
 

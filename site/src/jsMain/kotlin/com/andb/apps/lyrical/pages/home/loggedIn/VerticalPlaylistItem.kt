@@ -67,13 +67,14 @@ fun HorizontalPlaylistItem(
     Row(
         modifier = modifier
             .alignItems(AlignItems.Center)
-            .gap(LyricalTheme.Spacing.LG)
+            .gap(LyricalTheme.Spacing.MD)
     ) {
         Image(
             src = playlist.images.firstOrNull()?.url ?: "",
             desc = "Cover of ${playlist.name}",
             modifier = Modifier
                 .size(LyricalTheme.Size.Playlist.CoverMd)
+                .borderRadius(LyricalTheme.Radii.XS)
         )
         Column(Modifier.fillMaxWidth()) {
             Subtitle(playlist.name)

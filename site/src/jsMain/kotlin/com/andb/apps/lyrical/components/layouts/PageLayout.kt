@@ -1,6 +1,7 @@
 package com.andb.apps.lyrical.components.layouts
 
 import androidx.compose.runtime.*
+import com.andb.apps.lyrical.theme.LyricalTheme
 import com.varabyte.kobweb.compose.css.*
 import com.varabyte.kobweb.compose.foundation.layout.Box
 import com.varabyte.kobweb.compose.foundation.layout.Column
@@ -21,6 +22,8 @@ import org.jetbrains.compose.web.dom.*
 val PageLayoutStyle by ComponentStyle {
     base {
         Modifier
+            .overflow { y(Overflow.Scroll) }
+            .backgroundColor(LyricalTheme.paletteFrom(colorMode).background)
             .width(100.vw)
             .height(100.vh)
             .padding(24.px)

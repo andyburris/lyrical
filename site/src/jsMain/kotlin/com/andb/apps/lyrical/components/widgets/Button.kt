@@ -71,7 +71,7 @@ fun Button(
             .then(ButtonStyle.toModifier(colorVariant, enabledVariant))
             .then(OutsetShadowStyle.toModifier())
             .height(LyricalTheme.Size.Button.LG)
-            .borderRadius(LyricalTheme.Radii.LG)
+            .borderRadius(LyricalTheme.Radii.MD)
             .padding(topBottom = LyricalTheme.Spacing.SM, leftRight = LyricalTheme.Spacing.LG)
             .toAttrs()
     ) {

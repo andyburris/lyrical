@@ -2,11 +2,17 @@ package com.andb.apps.lyrical.theme
 
 import androidx.compose.runtime.DisposableEffectResult
 import androidx.compose.runtime.DisposableEffectScope
+import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.boxShadow
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.attrsModifier
+import com.varabyte.kobweb.compose.ui.modifiers.cursor
+import com.varabyte.kobweb.compose.ui.modifiers.onClick
+import com.varabyte.kobweb.compose.ui.modifiers.onKeyDown
+import com.varabyte.kobweb.compose.ui.modifiers.tabIndex
 import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.silk.components.style.ComponentStyle
+import org.jetbrains.compose.web.events.SyntheticKeyboardEvent
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 
@@ -30,3 +36,13 @@ fun Modifier.onInitialized(
             onDispose { onDisposeBlock?.invoke(this, it) }
         }
     }
+
+fun Modifier.onSubmit(
+    isEnabled: Boolean = true,
+    keyMatching: (SyntheticKeyboardEvent) -> Boolean = { it.getNormalizedKey() == "Enter" },
+    block: () -> Unit,
+) = this
+    .cursor(if (isEnabled) Cursor.Pointer else Cursor.Default)
+    .tabIndex(0)
+    .onClick { if (isEnabled) block() }
+    .onKeyDown { if (keyMatching(it) && isEnabled) block() }

@@ -58,6 +58,7 @@ object LyricalTheme {
     }
 
     object Spacing {
+        val XXS @Composable get() = responsiveSize(2.px, 4.px)
         val XS @Composable get() = responsiveSize(4.px, 8.px)
         val SM @Composable get() = responsiveSize(8.px, 12.px)
         val MD @Composable get() = responsiveSize(12.px, 16.px)
@@ -74,7 +75,7 @@ object LyricalTheme {
         object Button {
             val SM @Composable get() = responsiveSize(40.px, 48.px)
             val MD @Composable get() = responsiveSize(48.px, 56.px)
-            val LG @Composable get() = responsiveSize(56.px, 64.px)
+            val LG @Composable get() = responsiveSize(48.px, 64.px)
         }
         object Playlist {
             val CoverSm @Composable get() = responsiveSize(24.px, 32.px)

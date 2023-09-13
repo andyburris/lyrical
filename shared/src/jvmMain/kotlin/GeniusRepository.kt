@@ -55,16 +55,14 @@ data class GeniusRepository(
 
 private fun JsonElement.stringifyHit() = "${this.hitTitle()} - ${this.hitArtist()}"
 private fun JsonArray.findBestHitUrl(trackName: String, allArtists: List<String>): JsonElement? =
-    this
-        .take(5)
-        .firstOrNull { allArtists.matchExactArtist(it.hitArtist()) }
-    ?: this
-        .take(5)
-        .firstOrNull { allArtists.matchArtistAnywhere(it.hitArtist()) }
-    ?: this
-        .firstOrNull { allArtists.matchExactArtist(it.hitArtist()) }
-    ?: this
-        .firstOrNull { allArtists.matchArtistAnywhere(it.hitArtist()) }
+    this.take(1).firstOrNull { allArtists.matchExactArtist(it.hitArtist()) }
+    ?: this.take(1).firstOrNull { allArtists.matchArtistAnywhere(it.hitArtist()) }
+    ?: this.take(3).firstOrNull { allArtists.matchExactArtist(it.hitArtist()) }
+    ?: this.take(3).firstOrNull { allArtists.matchArtistAnywhere(it.hitArtist()) }
+    ?: this.take(5).firstOrNull { allArtists.matchExactArtist(it.hitArtist()) }
+    ?: this.take(5).firstOrNull { allArtists.matchArtistAnywhere(it.hitArtist()) }
+    ?: this.firstOrNull { allArtists.matchExactArtist(it.hitArtist()) }
+    ?: this.firstOrNull { allArtists.matchArtistAnywhere(it.hitArtist()) }
 
 private fun List<String>.matchExactArtist(artistToMatch: String) = artistToMatch.sanitizeForCompare() in this.map { it.sanitizeForCompare() }
 private fun List<String>.matchArtistAnywhere(artistToMatch: String) = this.any { it.sanitizeForCompare() in artistToMatch.sanitizeForCompare() }

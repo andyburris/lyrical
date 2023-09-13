@@ -30,7 +30,8 @@ fun HomePage() {
 
     handleAuth { setupMachine.handleAuthAction(it) }
     LaunchedEffect(needsReauthentication.value) {
-        delay(50.milliseconds)
+        delay(500.milliseconds)
+        println("reauthenticating = ${needsReauthentication.value}")
         when (val authAction = needsReauthentication.value) {
             null -> {}
             else -> setupMachine.handleAuthAction(authAction)

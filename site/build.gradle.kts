@@ -147,3 +147,11 @@ tasks.named("compileKotlinJs") {
 tasks.named("jsSourcesJar") {
     dependsOn(generatePhosphorIconsTask)
 }
+
+tasks.named("kobwebGenFrontendMetadata") {
+    dependsOn(generatePhosphorIconsTask)
+}
+
+tasks.named("kobwebExport") {
+    dependsOn(generatePhosphorIconsTask)
+}

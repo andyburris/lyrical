@@ -11,6 +11,7 @@ import com.andb.apps.lyrical.components.widgets.Heading1
 import com.andb.apps.lyrical.components.widgets.Heading2
 import com.andb.apps.lyrical.components.widgets.Subtitle
 import com.andb.apps.lyrical.theme.LyricalTheme
+import com.andb.apps.lyrical.theme.onSubmit
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.JustifyContent
 import com.varabyte.kobweb.compose.css.Overflow
@@ -38,6 +39,7 @@ fun QuestionPage(
 ) {
     Column(
         modifier = modifier
+            .backgroundColor(LyricalTheme.palette.background)
             .width(100.vw)
             .height(100.vh),
     ){
@@ -95,7 +97,7 @@ fun QuestionPage(
                                 .justifyContent(JustifyContent.End)
                         ) {
                             GameHint.entries.filter { it !in questionScreen.question.answer.hintsUsed }.forEach { hint ->
-                                HintChip(hint, modifier = Modifier.onClick { onRequestHint.invoke(GameAction.RequestHint(hint)) })
+                                HintChip(hint, modifier = Modifier.onSubmit { onRequestHint.invoke(GameAction.RequestHint(hint)) })
                             }
                         }
                     }

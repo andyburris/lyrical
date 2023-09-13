@@ -17,7 +17,7 @@ import kotlin.random.Random
 
 fun getRepository(onReauthenticate: (AuthAction.Authenticate) -> Unit): SpotifyRepository =
     getClientAPIIfLoggedIn(onReauthenticate)
-        ?.let { SpotifyRepository.LoggedIn(it) }
+        ?.let { SpotifyRepository.LoggedIn(it, onReauthenticate) }
         ?: SpotifyRepository.LoggedOut
 
 fun getClientAPIIfLoggedIn(onAuthentication: (AuthAction.Authenticate) -> Unit): SpotifyImplicitGrantApi? {

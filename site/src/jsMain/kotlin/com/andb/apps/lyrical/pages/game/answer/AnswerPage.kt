@@ -20,6 +20,8 @@ import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.*
 import com.varabyte.kobweb.core.rememberPageContext
+import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
+import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import isRight
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.JustifyContent
@@ -63,21 +65,17 @@ fun AnswerPage(
                         .justifyContent(JustifyContent.SpaceBetween),
                 ) {
                     when(val answer = answerScreen.answer) {
-                        is GameAnswer.Answered.Correct -> Column {
+                        is GameAnswer.Answered.Correct -> Column(modifier = Modifier.flexGrow(1)) {
                             Heading1("Correct!", color = palette.contentPrimary)
                             Subtitle("+${answer.points}pts", color = palette.contentSecondary)
                         }
-                        is GameAnswer.Answered.Incorrect -> Heading1("Incorrect", color = palette.contentPrimary)
-                        is GameAnswer.Answered.Skipped -> Heading1("Skipped", color = palette.contentPrimary)
+                        is GameAnswer.Answered.Incorrect -> Heading1("Incorrect", color = palette.contentPrimary, modifier = Modifier.flexGrow(1))
+                        is GameAnswer.Answered.Skipped -> Heading1("Skipped", color = palette.contentPrimary, modifier = Modifier.flexGrow(1))
                         is GameAnswer.Unanswered -> throw Error("Should never show answer screen for an unanswered question")
                     }
-                    Button(
-                        text = if (answerScreen.questionNumber == answerScreen.game.questions.size - 1) "Summary" else "Next Question",
-                        palette = if (palette == LyricalTheme.Colors.accentPalette) LyricalTheme.palette else LyricalTheme.Colors.accentPalette,
-                        modifier = Modifier
-                            .onClick { onNext(GameAction.NextQuestion) }
-                            .onInitialized { ref -> ref.focus() },
-                    )
+                    if (rememberBreakpoint() > Breakpoint.SM) {
+                        AnswerButton(answerScreen, palette, onNext)
+                    }
 
                     Box(ref = ref {
                         it.focus()
@@ -113,5 +111,29 @@ fun AnswerPage(
                 }
             }
         }
+        if (rememberBreakpoint() <= Breakpoint.SM) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .justifyContent(com.varabyte.kobweb.compose.css.JustifyContent.End)
+            ) {
+                AnswerButton(answerScreen, palette, onNext)
+            }
+        }
     }
+}
+
+@Composable
+private fun AnswerButton(
+    answerScreen: Screen.GameScreen.Answer,
+    palette: LyricalPalette,
+    onClick: (GameAction.NextQuestion) -> Unit,
+) {
+    Button(
+        text = if (answerScreen.questionNumber == answerScreen.game.questions.size - 1) "Summary" else "Next Question",
+        palette = if (palette == LyricalTheme.Colors.accentPalette) LyricalTheme.palette else LyricalTheme.Colors.accentPalette,
+        modifier = Modifier
+            .onClick { onClick(GameAction.NextQuestion) }
+            .onInitialized { ref -> ref.focus() },
+    )
 }
