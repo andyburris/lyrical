@@ -10,7 +10,6 @@ import com.varabyte.kobweb.silk.theme.colors.getColorMode
 import org.jetbrains.compose.web.css.CSSSizeValue
 import org.jetbrains.compose.web.css.CSSUnit
 import org.jetbrains.compose.web.css.px
-import org.jetbrains.compose.web.dom.Col
 
 object LyricalTheme {
     val palette: LyricalPalette
@@ -79,8 +78,9 @@ object LyricalTheme {
         }
         object Playlist {
             val CoverSm @Composable get() = responsiveSize(24.px, 32.px)
-            val CoverMd @Composable get() = responsiveSize(40.px, 48.px)
+            val CoverHorizontal @Composable get() = responsiveSize(40.px, 48.px)
             val CoverLg @Composable get() = responsiveSize(108.px, 128.px)
+            val CoverSummary @Composable get() = responsiveSize(32.px, 48.px)
             object Placeholder {
                 val Cover @Composable get() = responsiveSize(72.px, 96.px)
             }

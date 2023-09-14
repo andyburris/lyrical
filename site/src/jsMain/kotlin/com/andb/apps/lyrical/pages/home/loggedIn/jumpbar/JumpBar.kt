@@ -47,6 +47,11 @@ fun JumpBarHorizontal(
                 modifier = Modifier
                     .borderRadius(topLeft = LyricalTheme.Radii.MD, bottomLeft = if (expandedTab == ExpandedJumpBarTab.None) LyricalTheme.Radii.MD else 0.px)
                     .then(if (expandedTab != ExpandedJumpBarTab.Options) Modifier.flexGrow(1) else Modifier)
+                    .borderBottom(
+                        width = if (expandedTab == ExpandedJumpBarTab.Options) 1.px else 0.px,
+                        style = LineStyle.Solid,
+                        color = LyricalTheme.palette.divider,
+                    )
                     .onSubmit {
                         onExpandTab(when(expandedTab) {
                             ExpandedJumpBarTab.SelectedPlaylists -> ExpandedJumpBarTab.None
@@ -59,6 +64,11 @@ fun JumpBarHorizontal(
                 modifier = Modifier
                     .borderLeft(1.px, LineStyle.Solid, LyricalTheme.palette.divider)
                     .then(if (expandedTab == ExpandedJumpBarTab.Options) Modifier.flexGrow(1) else Modifier)
+                    .borderBottom(
+                        width = if (expandedTab == ExpandedJumpBarTab.SelectedPlaylists) 1.px else 0.px,
+                        style = LineStyle.Solid,
+                        color = LyricalTheme.palette.divider,
+                    )
                     .onSubmit {
                         onExpandTab(when(expandedTab) {
                             ExpandedJumpBarTab.Options -> ExpandedJumpBarTab.None
@@ -147,7 +157,7 @@ fun JumpBarVertical(
                         })
                     }
             )
-            if (expandedTab == ExpandedJumpBarTab.SelectedPlaylists) {
+            if (expandedTab == ExpandedJumpBarTab.Options) {
                 OptionsEditor(setupState.options, onUpdateOptions = onUpdateOptions)
             }
         }

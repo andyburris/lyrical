@@ -48,7 +48,7 @@ fun GameAppBar(
                     Subtitle("Question ${gameScreen.game.currentQuestionIndex + 1}/${gameScreen.game.questions.size}")
                     if (gameScreen.game.options.showSourcePlaylist) {
                         Caption {
-                            Span(Modifier.color(palette.contentTertiary).toAttrs()) { Text("from") }
+                            Span(Modifier.color(palette.contentTertiary).toAttrs()) { Text("from ") }
                             Span(Modifier.color(palette.contentSecondary).toAttrs()) { Text(gameScreen.game.currentQuestion?.playlist?.name ?: "") }
                         }
                     }

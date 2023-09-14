@@ -1,6 +1,5 @@
 package com.andb.apps.lyrical.pages.game.answer
 
-import SourcedTrack
 import androidx.compose.runtime.Composable
 import com.adamratzman.spotify.models.Track
 import com.andb.apps.lyrical.components.widgets.Heading2
@@ -31,7 +30,7 @@ fun AnswerItem(
         Image(
             src = track.album.imageOrPlaceholder(),
             desc = "Cover art of ${track.name} from the album ${track.album} by ${track.artists.artistsToString()}",
-            modifier = Modifier.size(LyricalTheme.Size.Playlist.CoverMd),
+            modifier = Modifier.size(LyricalTheme.Size.Playlist.CoverHorizontal),
         )
         Column {
             Heading2(track.name, color = palette.contentPrimary)

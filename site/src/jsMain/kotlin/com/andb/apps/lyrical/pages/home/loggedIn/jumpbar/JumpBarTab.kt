@@ -3,6 +3,7 @@ package com.andb.apps.lyrical.pages.home.loggedIn.jumpbar
 import androidx.compose.runtime.Composable
 import com.adamratzman.spotify.models.SimplePlaylist
 import com.andb.apps.lyrical.components.widgets.Caption
+import com.andb.apps.lyrical.components.widgets.PlaylistCover
 import com.andb.apps.lyrical.components.widgets.Subtitle
 import com.andb.apps.lyrical.components.widgets.phosphor.*
 import com.andb.apps.lyrical.theme.LyricalTheme
@@ -64,11 +65,6 @@ fun SelectedTab(
             .padding(LyricalTheme.Spacing.MD)
             .justifyContent(JustifyContent.SpaceBetween)
             .alignItems(AlignItems.Center)
-            .borderBottom(
-                width = if (expandedTab == ExpandedJumpBarTab.Options) 1.px else 0.px,
-                style = LineStyle.Solid,
-                color = LyricalTheme.palette.divider,
-            )
     ) {
         ResponsiveTabContent(
             icon = { SelectedPlaylistPreview(selectedPlaylists) },
@@ -103,14 +99,12 @@ private fun SelectedPlaylistPreview(selectedPlaylists: List<SimplePlaylist>, mod
     ) {
         val hasOverflow = selectedPlaylists.size > 4
         selectedPlaylists.take(if (hasOverflow) 3 else 4).forEach { playlist ->
-            Image(
-                src = playlist.images.firstOrNull()?.url ?: "",
-                desc = "Cover of ${playlist.name}",
+            PlaylistCover(
+                playlist = playlist,
+                size = LyricalTheme.Size.Playlist.CoverSm,
                 modifier = Modifier
                     .margin(left = -(12.px))
                     .border(LyricalTheme.Spacing.XXS, LineStyle.Solid, LyricalTheme.palette.backgroundCard)
-                    .borderRadius(8.px)
-                    .size(LyricalTheme.Size.Playlist.CoverSm),
             )
         }
         if (hasOverflow) {
@@ -154,11 +148,6 @@ fun OptionsTab(expandedTab: ExpandedJumpBarTab, modifier: Modifier = Modifier) {
             .padding(LyricalTheme.Spacing.MD)
             .justifyContent(JustifyContent.SpaceBetween)
             .alignItems(AlignItems.Center)
-            .borderBottom(
-                width = if (expandedTab == ExpandedJumpBarTab.SelectedPlaylists) 1.px else 0.px,
-                style = LineStyle.Solid,
-                color = LyricalTheme.palette.divider,
-            )
     ) {
         ResponsiveTabContent(
             icon = { PhFadersHorizontal() },
