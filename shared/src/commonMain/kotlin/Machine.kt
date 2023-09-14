@@ -43,14 +43,7 @@ abstract class GameMachine(
 
     init {
         if (initialGameState is GameState.Loading) {
-            coroutineScope.launch {
-                val playlists = playlistIDs.mapNotNull { spotifyRepository.getPlaylistByURI(it) }
-                val randomTracks = playlists.getRandomSongs(spotifyRepository, options)
-                gameState.value = GameState.Loading(LoadingState.LoadingLyrics(0, options.amountOfSongs))
-                val tracksWithLyrics = lyricsRepository.getLyricsFor(randomTracks)
-                val game = Game(tracksWithLyrics.generateQuestions(options), options)
-                onLoadGame(game)
-            }
+            loadGame()
         }
     }
 
@@ -73,8 +66,36 @@ abstract class GameMachine(
                 is GameState.Loading -> throw Error("Can't request hint when gameState = $gameState")
                 is GameState.Playing -> gameState.copy(game = gameState.game.withHintUsed(action.hint), GameScreen.Question)
             }
+            is GameAction.Reload -> gameState.value = when(val gameState = gameState.value) {
+                is GameState.Loading -> when(gameState.state) {
+                    LoadingState.ErrorLoading -> {
+                        loadGame()
+                        GameState.Loading(LoadingState.LoadingSongs)
+                    }
+                    is LoadingState.LoadingLyrics, LoadingState.LoadingSongs -> throw Error("Can't reload unless in LoadingState.Error")
+                }
+                else -> throw Error("Can't reload unless in LoadingState.Error")
+            }
         }
         println("handled action, new gameState = ${gameState.value}")
+    }
+
+    private fun loadGame() {
+        CoroutineScope(Dispatchers.Default).launch {
+            runCatching {
+                val playlists = playlistIDs.mapNotNull { spotifyRepository.getPlaylistByURI(it) }
+                val randomTracks = playlists.getRandomSongs(spotifyRepository, options)
+                gameState.value = GameState.Loading(LoadingState.LoadingLyrics(0, options.amountOfSongs))
+                val tracksWithLyrics = lyricsRepository.getLyricsFor(randomTracks)
+                println("after load lyrics")
+                val game = Game(tracksWithLyrics.generateQuestions(options), options)
+                game
+            }.onSuccess {
+                onLoadGame(it)
+            }.onFailure {
+                gameState.value = GameState.Loading(LoadingState.ErrorLoading)
+            }
+        }
     }
 }
 
@@ -148,6 +169,7 @@ enum class GameScreen {
 }
 
 @Serializable sealed class LoadingState {
+    @Serializable data object ErrorLoading : LoadingState()
     @Serializable data object LoadingSongs : LoadingState()
     @Serializable data class LoadingLyrics(val amountLoaded: Int, val numberOfSongs: Int) : LoadingState() {
         val percent: Double = amountLoaded.toDouble() / numberOfSongs

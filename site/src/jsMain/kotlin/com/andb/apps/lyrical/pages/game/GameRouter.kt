@@ -27,7 +27,7 @@ fun GameRouter(
 
 
     when(screen) {
-        is Screen.GameScreen.Loading -> LoadingPage(screen, modifier)
+        is Screen.GameScreen.Loading -> LoadingPage(screen, modifier) { onGameAction(it) }
         is Screen.GameScreen.Question -> QuestionPage(
             questionScreen = screen,
             modifier = modifier,

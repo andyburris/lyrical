@@ -27,14 +27,14 @@ fun IndeterminateProgressBar(
     ) {
         AnimatedProgressBar(
             animation = ProgressBar1Keyframes.toAnimation(
-                duration = 2.1.s,
+                duration = 1.5.s,
                 timingFunction = AnimationTimingFunction.cubicBezier(0.65, 0.815, 0.735, 0.395),
                 iterationCount = AnimationIterationCount.Infinite,
             )
         )
         AnimatedProgressBar(
             animation = ProgressBar2Keyframes.toAnimation(
-                duration = 2.1.s,
+                duration = 1.5.s,
                 timingFunction = AnimationTimingFunction.cubicBezier(0.165, 0.84, 0.44, 1.0),
                 iterationCount = AnimationIterationCount.Infinite,
             )

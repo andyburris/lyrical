@@ -20,7 +20,7 @@ data class LyricsRepository(val httpClient: HttpClient = HttpClient {
             false -> "https://lyrical-backend.fly.dev/lyrics"
             true -> "http://localhost:5050/lyrics"
         }
-        val responses = httpClient.get(url) {
+        val responses: List<LyricResponse> = httpClient.get(url) {
             val lyricRequests = tracks
                 .map {
                     LyricRequest(
@@ -32,6 +32,7 @@ data class LyricsRepository(val httpClient: HttpClient = HttpClient {
             println("lyricRequests = $lyricRequests")
             header("lyricRequests", lyricRequests.encodeToString())
         }.body<List<LyricResponse>>()
+        println("recieved responses = $responses")
         return responses.mapNotNull { lyricResponse ->
             if (lyricResponse.lyrics == null) return@mapNotNull null
             TrackWithLyrics(tracks.first { it.track.uri.uri == lyricResponse.trackURI }, LyricsState.Available(lyricResponse.lyrics.filter { !it.startsWith('[') }))

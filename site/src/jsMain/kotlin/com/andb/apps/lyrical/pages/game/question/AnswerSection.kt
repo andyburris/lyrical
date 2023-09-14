@@ -11,6 +11,7 @@ import com.andb.apps.lyrical.components.widgets.phosphor.PhSkipForward
 import com.andb.apps.lyrical.theme.LyricalTheme
 import com.andb.apps.lyrical.theme.OutsetShadowStyle
 import com.andb.apps.lyrical.theme.onInitialized
+import com.andb.apps.lyrical.theme.onSubmit
 import com.varabyte.kobweb.compose.css.Height
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.foundation.layout.Row
@@ -65,10 +66,8 @@ fun AnswerSection(
         ) {
             Button(
                 text = "Answer",
-                modifier = Modifier.onClick {
-                    if (searchTerm.value.isNotBlank()) {
-                        onAnswer(searchTerm.value)
-                    }
+                modifier = Modifier.onSubmit(isEnabled = searchTerm.value.isNotBlank()) {
+                    onAnswer(searchTerm.value)
                 },
                 isEnabled = searchTerm.value.isNotBlank(),
                 palette = LyricalTheme.Colors.accentPalette,
@@ -76,7 +75,7 @@ fun AnswerSection(
             Button(
                 text = null,
                 icon = { PhSkipForward() },
-                modifier = Modifier.onClick { onSkip() }
+                modifier = Modifier.onSubmit { onSkip() }
             )
         }
     }

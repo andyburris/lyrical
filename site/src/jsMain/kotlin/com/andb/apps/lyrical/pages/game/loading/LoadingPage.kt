@@ -1,11 +1,14 @@
 package com.andb.apps.lyrical.pages.game.loading
 
+import GameAction
 import Screen
 import androidx.compose.runtime.Composable
 import com.andb.apps.lyrical.components.layouts.PageLayout
 import com.andb.apps.lyrical.components.sections.GameAppBar
+import com.andb.apps.lyrical.components.widgets.Button
 import com.andb.apps.lyrical.components.widgets.Heading2
 import com.andb.apps.lyrical.theme.LyricalTheme
+import com.andb.apps.lyrical.theme.onSubmit
 import com.varabyte.kobweb.compose.css.AnimationIterationCount
 import com.varabyte.kobweb.compose.css.CSSAnimation
 import com.varabyte.kobweb.compose.css.Overflow
@@ -23,6 +26,7 @@ import org.jetbrains.compose.web.css.AnimationTimingFunction.Companion.cubicBezi
 fun LoadingPage(
     loadingScreen: Screen.GameScreen.Loading,
     modifier: Modifier = Modifier,
+    onReload: (GameAction.Reload) -> Unit,
 ) {
     val router = rememberPageContext().router
     PageLayout("Lyrical - Loading", modifier) {
@@ -45,8 +49,12 @@ fun LoadingPage(
                 when(loadingScreen.loadingState) {
                     is LoadingState.LoadingLyrics -> Heading2("Loading lyrics...")
                     LoadingState.LoadingSongs -> Heading2("Loading songs...")
+                    LoadingState.ErrorLoading -> Heading2("Error loading")
                 }
-                IndeterminateProgressBar()
+                when(loadingScreen.loadingState) {
+                    is LoadingState.LoadingLyrics, LoadingState.LoadingSongs -> IndeterminateProgressBar()
+                    LoadingState.ErrorLoading -> Button("Try Again", modifier = Modifier.onSubmit { onReload(GameAction.Reload) })
+                }
             }
         }
     }
