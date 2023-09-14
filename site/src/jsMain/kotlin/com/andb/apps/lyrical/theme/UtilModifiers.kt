@@ -26,6 +26,16 @@ val OutsetShadowStyle by ComponentStyle {
     }
 }
 
+val InsetShadowStyle by ComponentStyle {
+    base {
+        Modifier.styleModifier {
+            this
+                .boxShadow("0px 0px 2px 0px rgba(0, 0, 0, 0.12) inset, 0px 1px 2px 0px rgba(0, 0, 0, 0.12) inset, 0px 1px 2px 0px rgba(0, 0, 0, 0.05), 0px 1px 4px 0px rgba(255, 255, 255, 0.05)")
+
+        }
+    }
+}
+
 fun Modifier.onInitialized(
     onDisposeBlock: (DisposableEffectScope.(ref: Element) -> DisposableEffectResult)? = null,
     block: DisposableEffectScope.(ref: HTMLElement) -> Unit

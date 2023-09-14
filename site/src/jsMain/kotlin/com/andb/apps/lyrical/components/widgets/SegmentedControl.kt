@@ -1,6 +1,7 @@
 package com.andb.apps.lyrical.components.widgets
 
 import androidx.compose.runtime.Composable
+import com.andb.apps.lyrical.theme.InsetShadowStyle
 import com.andb.apps.lyrical.theme.LyricalTheme
 import com.andb.apps.lyrical.theme.OutsetShadowStyle
 import com.varabyte.kobweb.compose.css.Cursor
@@ -21,6 +22,7 @@ fun <T> SegmentedControl(
 ) {
     Row(
         modifier = modifier
+            .then(InsetShadowStyle.toModifier())
             .fillMaxWidth()
             .borderRadius(LyricalTheme.Radii.Circle)
             .backgroundColor(LyricalTheme.palette.backgroundDark)

@@ -23,7 +23,6 @@ fun PlaylistGrid(
         numColumns = numColumns(2, 3, 4),
         modifier = modifier
             .fillMaxWidth()
-            .overflow(Overflow.Hidden)
             .gap(LyricalTheme.Spacing.XL),
     ) {
         when(playlists) {
@@ -34,8 +33,8 @@ fun PlaylistGrid(
                     playlist = playlist,
                     isSelected = isSelected,
                     modifier = Modifier
+                        .borderRadius(LyricalTheme.Radii.SM)
                         .fillMaxWidth()
-                        .cursor(Cursor.Pointer)
                         .onSubmit {
                             onToggle(playlist, isSelected)
                         }

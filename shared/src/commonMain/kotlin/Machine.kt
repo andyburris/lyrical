@@ -45,7 +45,7 @@ abstract class GameMachine(
         if (initialGameState is GameState.Loading) {
             coroutineScope.launch {
                 val playlists = playlistIDs.mapNotNull { spotifyRepository.getPlaylistByURI(it) }
-                val randomTracks = playlists.getRandomSongs(coroutineScope, spotifyRepository, options)
+                val randomTracks = playlists.getRandomSongs(spotifyRepository, options)
                 gameState.value = GameState.Loading(LoadingState.LoadingLyrics(0, options.amountOfSongs))
                 val tracksWithLyrics = lyricsRepository.getLyricsFor(randomTracks)
                 val game = Game(tracksWithLyrics.generateQuestions(options), options)
@@ -94,23 +94,22 @@ suspend fun List<Track>.toSourcedTracks(sourcePlaylist: SimplePlaylist): List<So
 fun Track.toSourcedTrack(sourcePlaylist: SimplePlaylist) = SourcedTrack(this, sourcePlaylist)
 
 suspend fun List<SimplePlaylist>.getRandomSongs(
-    coroutineScope: CoroutineScope,
     spotifyRepository: SpotifyRepository.LoggedIn,
     config: GameOptions,
 ): List<SourcedTrack> {
     println("getting random songs, config = $config")
     return if (config.distributePlaylistsEvenly) {
-        val amountOfSongsPerPlaylist = config.amountOfSongs.distributeInto(this.size)
-        val playlistTracks: List<List<SourcedTrack>> = this
+        val songsPerPlaylist = this.distributeEvenly(config.amountOfSongs)
+        val playlistTracks: List<Pair<SimplePlaylist, List<SourcedTrack>>> = this
             .map {
-                coroutineScope.async {
-                    spotifyRepository.getPlaylistTracks(it.uri.uri).toSourcedTracks(it)
+                CoroutineScope(Dispatchers.Default).async {
+                    it to spotifyRepository.getPlaylistTracks(it.uri.uri).toSourcedTracks(it)
                 }
             }
             .awaitAll()
         val allTracks = mutableListOf<SourcedTrack>()
-        playlistTracks.forEachIndexed { index, tracks ->
-            allTracks += (tracks - allTracks).shuffled().take(amountOfSongsPerPlaylist[index])
+        playlistTracks.forEach { (playlist, tracks) ->
+            allTracks += (tracks - allTracks.toSet()).shuffled().take(songsPerPlaylist.getValue(playlist))
         }
         allTracks.shuffled()
     } else {
@@ -122,6 +121,20 @@ suspend fun List<SimplePlaylist>.getRandomSongs(
             .shuffled()
             .take(config.amountOfSongs)
     }
+}
+
+private fun List<SimplePlaylist>.distributeEvenly(amountOfSongs: Int): Map<SimplePlaylist, Int> {
+    val amountPerPlaylist = this.zip(amountOfSongs.distributeInto(this.size))
+    val (ok, overflowed) = amountPerPlaylist.partition { (playlist, amount) -> amount <= playlist.tracks.total }
+    return when {
+        overflowed.isEmpty() -> ok.toMap()
+        ok.isEmpty() -> throw Error("Must have enough songs in playlists to make game")
+        else -> ok
+            .map { it.first }
+            .distributeEvenly(amountOfSongs - overflowed.sumOf { it.first.tracks.total }) + overflowed
+            .map { (p, _) -> p to p.tracks.total }
+    }
+
 }
 
 @Serializable

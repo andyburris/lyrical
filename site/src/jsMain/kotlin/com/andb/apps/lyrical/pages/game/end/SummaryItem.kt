@@ -140,12 +140,13 @@ private fun SummaryItemBottom(
         AnswerInfoItem(
             icon = { PhQuotes() },
             text = { Subtitle {
-                Span { Text("“${question.lyric}") }
+                Span(Modifier.color(LyricalTheme.Colors.accentPalette.contentSecondary).toAttrs()) { Text("“") }
+                Span { Text(question.lyric) }
                 if (GameHint.NextLine in question.answer.hintsUsed) {
                     Span(Modifier.color(LyricalTheme.Colors.accentPalette.contentSecondary).toAttrs()) { Text(" / ") }
                     Span { Text(question.nextLyric) }
                 }
-                Span { Text("”") }
+                Span(Modifier.color(LyricalTheme.Colors.accentPalette.contentSecondary).toAttrs()) { Text("”") }
             } },
         )
         AnswerInfoItem(
@@ -166,8 +167,9 @@ private fun SummaryItemBottom(
             is GameAnswer.Answered.Incorrect -> AnswerInfoItem(
                 icon = { PhEraser() },
                 text = { Subtitle {
-                    Span(Modifier.color(LyricalTheme.Colors.accentPalette.contentSecondary).toAttrs()) { Text("you said ") }
+                    Span(Modifier.color(LyricalTheme.Colors.accentPalette.contentSecondary).toAttrs()) { Text("you said “") }
                     Span { Text(answer.answer) }
+                    Span(Modifier.color(LyricalTheme.Colors.accentPalette.contentSecondary).toAttrs()) { Text("”") }
                 } },
             )
             else -> {}
@@ -179,7 +181,12 @@ private fun SummaryItemBottom(
                 Span {
                     val text = when {
                         question.answer.hintsUsed.isEmpty() -> "None"
-                        else -> question.answer.hintsUsed.joinToString(", ")
+                        else -> question.answer.hintsUsed.joinToString(", ") {
+                            when(it) {
+                                GameHint.Artist -> "Artist"
+                                GameHint.NextLine -> "Next Line"
+                            }
+                        }
                     }
                     Text(text)
                 }

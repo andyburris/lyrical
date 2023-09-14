@@ -36,7 +36,7 @@ fun VerticalPlaylistItem(playlist: SimplePlaylist, isSelected: Boolean, modifier
             PlaylistCover(
                 playlist = playlist,
                 size = 100.percent,
-                iconSize = LyricalTheme.Size.Icon.Default,
+                iconSize = LyricalTheme.Size.Icon.Large,
                 roundCorners = false,
             )
             if (isSelected) {

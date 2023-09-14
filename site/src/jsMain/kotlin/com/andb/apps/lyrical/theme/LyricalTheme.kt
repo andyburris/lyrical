@@ -3,12 +3,14 @@ package com.andb.apps.lyrical.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import com.varabyte.kobweb.compose.ui.graphics.Color
+import com.varabyte.kobweb.silk.components.forms.SwitchSize
 import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import com.varabyte.kobweb.silk.theme.colors.ColorMode
 import com.varabyte.kobweb.silk.theme.colors.getColorMode
 import org.jetbrains.compose.web.css.CSSSizeValue
 import org.jetbrains.compose.web.css.CSSUnit
+import org.jetbrains.compose.web.css.cssRem
 import org.jetbrains.compose.web.css.px
 
 object LyricalTheme {
@@ -70,6 +72,7 @@ object LyricalTheme {
     object Size {
         object Icon {
             val Default @Composable get() = responsiveSize(24.px, 32.px)
+            val Large @Composable get() = responsiveSize(40.px, 48.px)
         }
         object Button {
             val SM @Composable get() = responsiveSize(40.px, 48.px)
@@ -85,7 +88,22 @@ object LyricalTheme {
                 val Cover @Composable get() = responsiveSize(72.px, 96.px)
             }
         }
-
+        object Switch {
+            val Track @Composable get() = responsiveSize(
+                mobile = object : SwitchSize {
+                    override val width = 48.px
+                    override val height = 24.px
+                },
+                desktop = object : SwitchSize {
+                    override val width = 56.px
+                    override val height = 32.px
+                }
+            )
+            val Thumb @Composable get() = responsiveSize(20.px, 24.px)
+        }
+        object ProgressBar {
+            val IndicatorWidth @Composable get() = responsiveSize(128.px, 256.px)
+        }
     }
 
     object Radii {
@@ -101,7 +119,7 @@ object LyricalTheme {
 }
 
 @Composable
-private fun responsiveSize(mobile: CSSSizeValue<CSSUnit.px>, desktop: CSSSizeValue<CSSUnit.px>): CSSSizeValue<CSSUnit.px> = when(rememberBreakpoint()) {
+private fun <T> responsiveSize(mobile: T, desktop: T): T = when(rememberBreakpoint()) {
     Breakpoint.ZERO -> mobile
     else -> desktop
 }

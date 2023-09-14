@@ -18,6 +18,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.*
 import com.varabyte.kobweb.silk.components.style.toModifier
 import org.jetbrains.compose.web.css.LineStyle
 import org.jetbrains.compose.web.css.px
+import kotlin.math.exp
 
 enum class ExpandedJumpBarTab { None, SelectedPlaylists, Options }
 
@@ -79,8 +80,10 @@ fun JumpBarHorizontal(
             StartGameTab(
                 modifier = Modifier
                     .borderRadius(topRight = LyricalTheme.Radii.MD, bottomRight = if (expandedTab == ExpandedJumpBarTab.None) LyricalTheme.Radii.MD else 0.px)
-                    .opacity(if (setupState.selectedPlaylists.isEmpty()) 0.3 else 1)
-                    .onSubmit(isEnabled = setupState.selectedPlaylists.isNotEmpty()) { onStartGame() }
+                    .opacity(if (setupState.selectedPlaylists.sumOf { it.tracks.total } >= setupState.options.amountOfSongs) 1 else 0.3)
+                    .onSubmit(setupState.selectedPlaylists.sumOf { it.tracks.total } >= setupState.options.amountOfSongs) {
+                        onStartGame()
+                    }
             )
         }
 
@@ -112,12 +115,9 @@ fun JumpBarVertical(
                 .then(OutsetShadowStyle.toModifier())
                 .borderRadius(LyricalTheme.Radii.MD)
                 .overflow(Overflow.Hidden)
-                .opacity(if (setupState.selectedPlaylists.isEmpty()) 0.3 else 1)
-                .cursor(if (setupState.selectedPlaylists.isEmpty()) Cursor.Default else Cursor.Pointer)
-                .onSubmit {
-                    if (setupState.selectedPlaylists.isNotEmpty()) {
-                        onStartGame()
-                    }
+                .opacity(if (setupState.selectedPlaylists.sumOf { it.tracks.total } >= setupState.options.amountOfSongs) 1 else 0.3)
+                .onSubmit(setupState.selectedPlaylists.sumOf { it.tracks.total } >= setupState.options.amountOfSongs) {
+                    onStartGame()
                 }
         )
 
@@ -127,12 +127,12 @@ fun JumpBarVertical(
                 .fillMaxWidth()
                 .then(OutsetShadowStyle.toModifier())
                 .borderRadius(LyricalTheme.Radii.MD)
-                .overflow(Overflow.Hidden)
         ) {
             SelectedTab(
                 selectedPlaylists = setupState.selectedPlaylists,
                 expandedTab = expandedTab,
                 modifier = Modifier
+                    .borderRadius(topLeft = LyricalTheme.Radii.MD, topRight = LyricalTheme.Radii.MD)
                     .fillMaxWidth()
                     .onSubmit {
                         onExpandTab(when(expandedTab) {
@@ -149,7 +149,13 @@ fun JumpBarVertical(
                 modifier = Modifier
                     .fillMaxWidth()
                     .borderTop(1.px, LineStyle.Solid, LyricalTheme.palette.divider)
-                    .then(if (expandedTab == ExpandedJumpBarTab.Options) Modifier.flexGrow(1) else Modifier)
+                    .then(when(expandedTab) {
+                        ExpandedJumpBarTab.Options -> Modifier
+                        else -> Modifier.borderRadius(
+                            bottomLeft = LyricalTheme.Radii.MD,
+                            bottomRight = LyricalTheme.Radii.MD
+                        )
+                    })
                     .onSubmit {
                         onExpandTab(when(expandedTab) {
                             ExpandedJumpBarTab.Options -> ExpandedJumpBarTab.None
