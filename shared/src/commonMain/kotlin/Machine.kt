@@ -59,7 +59,7 @@ abstract class GameMachine(
     }
 
     open fun handleAction(action: GameAction) {
-        println("handling action, current gameState = ${gameState.value}")
+//        println("handling action, current gameState = ${gameState.value}")
         when (action) {
             is GameAction.AnswerQuestion -> gameState.value = when (val gameState = gameState.value) {
                 is GameState.Loading -> throw Error("Can't answer when gameState = $gameState")
@@ -85,7 +85,7 @@ abstract class GameMachine(
                 else -> throw Error("Can't reload unless in GameState.Loading.Error")
             }
         }
-        println("handled action, new gameState = ${gameState.value}")
+//        println("handled action, new gameState = ${gameState.value}")
     }
 
     private fun loadLyrics(songs: List<SourcedTrack>) {
