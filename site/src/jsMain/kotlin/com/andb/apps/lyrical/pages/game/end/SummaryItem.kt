@@ -6,6 +6,7 @@ import GameQuestion
 import androidx.compose.runtime.Composable
 import com.adamratzman.spotify.models.SimpleAlbum
 import com.andb.apps.lyrical.components.widgets.AlbumCover
+import com.andb.apps.lyrical.components.widgets.Divider
 import com.andb.apps.lyrical.components.widgets.Heading2
 import com.andb.apps.lyrical.components.widgets.Subtitle
 import com.andb.apps.lyrical.components.widgets.phosphor.*
@@ -15,12 +16,9 @@ import com.varabyte.kobweb.compose.css.JustifyItems
 import com.varabyte.kobweb.compose.foundation.layout.Box
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.foundation.layout.Row
-import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.*
-import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.compose.ui.toAttrs
-import com.varabyte.kobweb.silk.components.layout.Divider
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.LineStyle
 import org.jetbrains.compose.web.css.px
@@ -76,7 +74,7 @@ private fun SummaryItemTop(
                 .alignItems(AlignItems.Center)
         ) {
             SummaryItemImage(questionIndex + 1, track.album, Modifier.flexShrink(0))
-            Heading2(track.name, Modifier.flexShrink(1))
+            Heading2(track.name, Modifier.flexShrink(1), color = LyricalTheme.Colors.accentPalette.contentPrimary)
         }
         Row(
             modifier = Modifier
@@ -161,7 +159,7 @@ private fun SummaryItemBottom(
             } },
         )
 
-        Divider(Modifier.fillMaxWidth().color(LyricalTheme.Colors.accentPalette.divider))
+        Divider(color = LyricalTheme.Colors.accentPalette.divider)
 
         when(val answer = question.answer) {
             is GameAnswer.Answered.Incorrect -> AnswerInfoItem(

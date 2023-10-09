@@ -23,7 +23,7 @@ import org.jetbrains.compose.web.dom.Text
 val Heading1Style by ComponentStyle {
     base {
         Modifier.fontSize(42.px)
-            .fontFamily("YoungSerif")
+            .fontFamily("Young Serif")
     }
     Breakpoint.SM {
         Modifier.fontSize(64.px)
@@ -53,7 +53,7 @@ fun Heading1(text: String, modifier: Modifier = Modifier, color: Color? = null) 
 val Heading2Style by ComponentStyle {
     base {
         Modifier.fontSize(24.px)
-            .fontFamily("YoungSerif")
+            .fontFamily("Young Serif")
     }
     Breakpoint.SM {
         Modifier.fontSize(48.px)

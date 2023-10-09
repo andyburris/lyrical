@@ -50,14 +50,14 @@ fun PlaylistCoverPlaceholder(
 
 @Composable
 fun AlbumCover(
-    album: SimpleAlbum,
+    album: SimpleAlbum?,
     size: CSSNumeric,
     iconSize: CSSNumeric = calc { size / 2 },
     cornerSize: CSSNumeric = calc { size / 4 },
     modifier: Modifier = Modifier,
     roundCorners: Boolean = true,
 ) {
-    when(val albumArt = album.images.firstOrNull()?.url) {
+    when(val albumArt = album?.images?.firstOrNull()?.url) {
         null -> AlbumCoverPlaceholder(size, roundCorners, iconSize, cornerSize, modifier)
         else -> Image(
             src = albumArt,
@@ -93,6 +93,7 @@ private fun CoverPlaceholder(
 ) {
     return Row(
         modifier = modifier
+            .aspectRatio(1)
             .alignItems(AlignItems.Center)
             .justifyContent(JustifyContent.Center)
             .size(size)

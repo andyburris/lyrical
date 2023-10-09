@@ -1,3 +1,4 @@
+import com.adamratzman.spotify.models.Track
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.coroutines.*
@@ -59,7 +60,7 @@ class BrowserHomeMachine(
         val storageState = GameStorageState(
             playlistIDs = setupState.selectedPlaylists.map { it.id },
             options = setupState.options,
-            currentState = GameState.Loading(LoadingState.LoadingSongs),
+            currentState = GameState.Loading.Songs,
         )
         localStorage[gameID] = Json.encodeToString(storageState)
         return gameID
@@ -93,8 +94,15 @@ class BrowserGameMachine(
     options = gameStorageState.options,
     initialGameState = gameStorageState.currentState,
 ) {
+    override fun onSongsLoaded(songs: List<SourcedTrack>) {
+        super.onSongsLoaded(songs)
+        saveGame()
+    }
     override fun onLoadGame(game: Game) {
         super.onLoadGame(game)
+        saveGame()
+    }
+    private fun saveGame() {
         localStorage[gameID] = Json.encodeToString(GameStorageState(playlistIDs, options, gameState.value))
     }
     override fun handleAction(action: GameAction) {

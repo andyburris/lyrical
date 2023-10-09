@@ -1,7 +1,6 @@
 package com.andb.apps.lyrical.pages.game.question
 
 import GameAction
-import GameAnswer
 import GameHint
 import UserAnswer
 import androidx.compose.runtime.Composable
@@ -11,6 +10,7 @@ import com.andb.apps.lyrical.components.widgets.Heading1
 import com.andb.apps.lyrical.components.widgets.Heading2
 import com.andb.apps.lyrical.components.widgets.Subtitle
 import com.andb.apps.lyrical.theme.LyricalTheme
+import com.andb.apps.lyrical.theme.OutsetShadowSmallStyle
 import com.andb.apps.lyrical.theme.onSubmit
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.JustifyContent
@@ -20,11 +20,8 @@ import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.*
-import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.rememberPageContext
-import com.varabyte.kobweb.silk.components.style.ComponentStyle
-import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.components.style.toModifier
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Span
@@ -104,11 +101,19 @@ fun QuestionPage(
                 }
             }
         }
-        AnswerSection(
-            onAnswer = { onAnswer(GameAction.AnswerQuestion(UserAnswer.Answer(it, questionScreen.question.answer.hintsUsed))) },
-            onSkip = { onAnswer(GameAction.AnswerQuestion(UserAnswer.Skipped(questionScreen.question.answer.hintsUsed))) },
-            modifier = AnswerSectionStyle.toModifier()
-        )
+        when(questionScreen.game.options.showSuggestions) {
+            true -> AnswerSectionWithSuggestions(
+                allSuggestions = questionScreen.game.suggestions,
+                onAnswer = { onAnswer(GameAction.AnswerQuestion(UserAnswer.Answer(it.name, questionScreen.question.answer.hintsUsed))) },
+                onSkip = { onAnswer(GameAction.AnswerQuestion(UserAnswer.Skipped(questionScreen.question.answer.hintsUsed))) },
+                modifier = AnswerSectionStyle.toModifier()
+            )
+            false -> AnswerSectionNoSuggestions(
+                onAnswer = { onAnswer(GameAction.AnswerQuestion(UserAnswer.Answer(it, questionScreen.question.answer.hintsUsed))) },
+                onSkip = { onAnswer(GameAction.AnswerQuestion(UserAnswer.Skipped(questionScreen.question.answer.hintsUsed))) },
+                modifier = AnswerSectionStyle.toModifier()
+            )
+        }
     }
 }
 
@@ -120,7 +125,8 @@ fun HintChip(
     Row(
         modifier = modifier
             .cursor(Cursor.Pointer)
-            .border(1.px, LineStyle.Solid, LyricalTheme.palette.divider)
+            .then(OutsetShadowSmallStyle.toModifier())
+//            .border(1.px, LineStyle.Solid, LyricalTheme.palette.divider)
             .backgroundColor(LyricalTheme.palette.backgroundCard)
             .padding(leftRight = LyricalTheme.Spacing.MD, topBottom = LyricalTheme.Spacing.SM)
             .borderRadius(LyricalTheme.Radii.Circle),

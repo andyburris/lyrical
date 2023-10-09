@@ -28,7 +28,7 @@ fun VerticalPlaylistItem(playlist: SimplePlaylist, isSelected: Boolean, modifier
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .minWidth(LyricalTheme.Size.Playlist.CoverLg)
+                .minWidth(LyricalTheme.Size.Playlist.CoverVertical)
                 .aspectRatio(1)
                 .borderRadius(LyricalTheme.Radii.SM)
                 .overflow(Overflow.Hidden),
@@ -72,8 +72,8 @@ fun HorizontalPlaylistItem(
         PlaylistCover(
             playlist = playlist,
             size = LyricalTheme.Size.Playlist.CoverHorizontal,
-            iconSize = LyricalTheme.Size.Icon.Default,
-            roundCorners = false,
+            iconSize = LyricalTheme.Size.Icon.Small,
+            roundCorners = true,
         )
         Column(Modifier.fillMaxWidth()) {
             Subtitle(playlist.name)

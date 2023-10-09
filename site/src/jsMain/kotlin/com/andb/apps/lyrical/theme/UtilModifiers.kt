@@ -16,11 +16,22 @@ import org.jetbrains.compose.web.events.SyntheticKeyboardEvent
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 
+const val OutsetShadowString = "0px 0px 0px 0.5px rgba(0, 0, 0, 0.12), 0px 1px 1px 0px rgba(255, 255, 255, 0.12) inset, 0px 0px 0px 1px rgba(255, 255, 255, 0.05) inset, 0px 2px 3px 0px rgba(0, 0, 0, 0.12), 0px 0px 6px 0px rgba(0, 0, 0, 0.08)"
 val OutsetShadowStyle by ComponentStyle {
     base {
         Modifier.styleModifier {
             this
-                .boxShadow("0px 0px 0px 0.5px rgba(0, 0, 0, 0.12), 0px 1px 1px 0px rgba(255, 255, 255, 0.12) inset, 0px 0px 0px 1px rgba(255, 255, 255, 0.05) inset, 0px 2px 3px 0px rgba(0, 0, 0, 0.12), 0px 0px 4px 0px rgba(0, 0, 0, 0.12)")
+                .boxShadow(OutsetShadowString)
+
+        }
+    }
+}
+
+val OutsetShadowSmallStyle by ComponentStyle {
+    base {
+        Modifier.styleModifier {
+            this
+                .boxShadow("0px 1px 1px 0px rgba(255, 255, 255, 0.12) inset, 0px 0px 0px 1px rgba(255, 255, 255, 0.05) inset, 0px 0px 0px 0.5px rgba(0, 0, 0, 0.12), 0px 1px 1.5px 0px rgba(0, 0, 0, 0.12), 0px 0px 4px 0px rgba(0, 0, 0, 0.08)")
 
         }
     }
@@ -49,10 +60,11 @@ fun Modifier.onInitialized(
 
 fun Modifier.onSubmit(
     isEnabled: Boolean = true,
+    isButton: Boolean = false,
     keyMatching: (SyntheticKeyboardEvent) -> Boolean = { it.getNormalizedKey() == "Enter" },
     block: () -> Unit,
 ) = this
     .cursor(if (isEnabled) Cursor.Pointer else Cursor.Default)
     .tabIndex(0)
     .onClick { if (isEnabled) block() }
-    .onKeyDown { if (keyMatching(it) && isEnabled) block() }
+    .then(if (!isButton) Modifier.onKeyDown { if (keyMatching(it) && isEnabled) block() } else Modifier)

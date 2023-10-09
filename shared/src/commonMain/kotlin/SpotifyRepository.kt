@@ -24,6 +24,7 @@ sealed class SpotifyRepository() {
         suspend fun getPlaylistByURL(url: String): SimplePlaylist? = handleReauth(null) { getPlaylistByURI(url.playlistURIFromURL())?.also { cachedPlaylists.add(it); cachedPlaylists.retainDistinct() } }
         suspend fun getPlaylistByURI(uri: String): SimplePlaylist? = handleReauth(null) { cachedPlaylists.find { it.uri.uri == uri } ?: api.playlists.getPlaylist(uri)?.toSimplePlaylist()?.also { cachedPlaylists.add(it); cachedPlaylists.retainDistinct() } }
         suspend fun getUserPlaylists(): List<SimplePlaylist> = handleReauth(emptyList()) { api.playlists.getClientPlaylists().getAllItems().filterNotNull().also { cachedPlaylists.addAll(it); cachedPlaylists.retainDistinct() } }
+        suspend fun getArtistTracks(artist: SimpleArtist): List<Track> = handleReauth(emptyList()) { api.artists.getArtistTopTracks(artist.id) }
 
         private suspend fun <T> handleReauth(onFail: T, block: suspend () -> T): T =
             try { block() }
@@ -31,12 +32,9 @@ sealed class SpotifyRepository() {
                 onReauthenticate(AuthAction.Authenticate(Random.nextInt().toString()))
                 onFail
             }
-
-
     }
     object LoggedOut : SpotifyRepository()
 }
-
 
 private fun MutableList<SimplePlaylist>.retainDistinct() = this.toMutableSet().toMutableList()
 

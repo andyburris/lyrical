@@ -1,11 +1,20 @@
+import com.adamratzman.spotify.models.SimpleAlbum
 import com.adamratzman.spotify.models.SimplePlaylist
 import com.adamratzman.spotify.models.Track
 import kotlinx.serialization.Serializable
 
+@Serializable data class SuggestionTrack(
+    val id: String,
+    val name: String,
+    val artists: List<String>,
+    val album: SimpleAlbum,
+)
+
 @Serializable
 data class Game(
     val questions: List<GameQuestion>,
-    val options: GameOptions
+    val options: GameOptions,
+    val suggestions: List<SuggestionTrack>,
 ) {
     val currentQuestion = questions.firstOrNull { it.answer !is GameAnswer.Answered }
     val currentQuestionIndex = questions.indexOfFirst { it.answer !is GameAnswer.Answered }
@@ -91,6 +100,7 @@ data class GameOptions(
     val timer: Int = 0,
     val showSourcePlaylist: Boolean = false,
     val distributePlaylistsEvenly: Boolean = true,
+    val showSuggestions: Boolean = false,
     val difficulty: Difficulty = Difficulty.Medium
 )
 

@@ -47,13 +47,13 @@ fun LoadingPage(
                     .justifyContent(JustifyContent.Center)
             ) {
                 when(loadingScreen.loadingState) {
-                    is LoadingState.LoadingLyrics -> Heading2("Loading lyrics...")
+                    LoadingState.LoadingLyrics -> Heading2("Loading lyrics...")
                     LoadingState.LoadingSongs -> Heading2("Loading songs...")
                     LoadingState.ErrorLoading -> Heading2("Error loading")
                 }
                 when(loadingScreen.loadingState) {
-                    is LoadingState.LoadingLyrics, LoadingState.LoadingSongs -> IndeterminateProgressBar()
-                    LoadingState.ErrorLoading -> Button("Try Again", modifier = Modifier.onSubmit { onReload(GameAction.Reload) })
+                    LoadingState.LoadingLyrics, LoadingState.LoadingSongs -> IndeterminateProgressBar()
+                    LoadingState.ErrorLoading -> Button("Try Again", modifier = Modifier.onSubmit(isButton = true) { onReload(GameAction.Reload) })
                 }
             }
         }

@@ -73,6 +73,7 @@ fun Button(
             .height(LyricalTheme.Size.Button.LG)
             .borderRadius(LyricalTheme.Radii.MD)
             .padding(topBottom = LyricalTheme.Spacing.SM, leftRight = LyricalTheme.Spacing.LG)
+            .then(if (text == null) Modifier.width(LyricalTheme.Size.Button.LG) else Modifier)
             .toAttrs()
     ) {
         Row(

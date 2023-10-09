@@ -4,6 +4,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.utils.io.core.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.encodeToString
@@ -29,7 +30,6 @@ data class LyricsRepository(val httpClient: HttpClient = HttpClient {
                         trackID = it.track.uri.uri
                     )
             }
-            println("lyricRequests = $lyricRequests")
             header("lyricRequests", lyricRequests.encodeToString())
         }.body<List<LyricResponse>>()
         println("recieved responses = $responses")

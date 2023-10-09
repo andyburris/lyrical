@@ -19,11 +19,7 @@ kobweb {
                 link(rel = "preconnect", href = "https://fonts.googleapis.com")
                 link(rel = "preconnect", href = "https://fonts.gstatic.com") { attributes["crossorigin"] = "" }
                 link(
-                    href = "https://fonts.googleapis.com/css2?family=Inter&display=swap",
-                    rel = "stylesheet"
-                )
-                link(
-                    href = "https://fonts.cdnfonts.com/css/young",
+                    href = "https://fonts.googleapis.com/css2?family=Inter&family=Young+Serif&display=swap",
                     rel = "stylesheet"
                 )
                 link(
@@ -53,7 +49,6 @@ kotlin {
                 implementation(compose.html.core)
                 implementation(libs.kobweb.core)
                 implementation(libs.kobweb.silk.core)
-                implementation(libs.kobweb.silk.icons.fa)
                 implementation(libs.kobwebx.markdown)
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
@@ -148,10 +143,12 @@ tasks.named("jsSourcesJar") {
     dependsOn(generatePhosphorIconsTask)
 }
 
-tasks.named("kobwebGenFrontendMetadata") {
+tasks.named("kobwebExport") {
     dependsOn(generatePhosphorIconsTask)
 }
 
-tasks.named("kobwebExport") {
-    dependsOn(generatePhosphorIconsTask)
+afterEvaluate {
+    tasks.named("kspKotlinJs") {
+        dependsOn(generatePhosphorIconsTask)
+    }
 }

@@ -15,7 +15,7 @@ import org.jetbrains.compose.web.css.percent
 
 @Composable
 fun HomeLoggedOut(modifier: Modifier = Modifier, onLogin: () -> Unit) {
-    LoginCard(onLogin = onLogin)
+    LoginCard(modifier = modifier, onLogin = onLogin)
 }
 
 @Composable

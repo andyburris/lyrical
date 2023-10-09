@@ -9,6 +9,7 @@ import com.varabyte.kobweb.silk.init.InitSilkContext
 import com.varabyte.kobweb.silk.SilkApp
 import com.varabyte.kobweb.silk.components.layout.Surface
 import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
+import com.varabyte.kobweb.silk.components.style.breakpoint.BreakpointSizes
 import com.varabyte.kobweb.silk.components.style.common.SmoothColorStyle
 import com.varabyte.kobweb.silk.components.style.toModifier
 import com.varabyte.kobweb.silk.theme.colors.ColorMode
@@ -35,6 +36,11 @@ fun initSilk(ctx: InitSilkContext) {
             .margin(0.px)
             .padding(0.px)
     }
+
+    ctx.theme.breakpoints = BreakpointSizes(
+        sm = 35.cssRem,
+        md = 67.cssRem,
+    )
 }
 
 @App

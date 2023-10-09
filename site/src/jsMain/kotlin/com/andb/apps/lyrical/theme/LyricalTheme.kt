@@ -8,16 +8,13 @@ import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import com.varabyte.kobweb.silk.theme.colors.ColorMode
 import com.varabyte.kobweb.silk.theme.colors.getColorMode
-import org.jetbrains.compose.web.css.CSSSizeValue
-import org.jetbrains.compose.web.css.CSSUnit
-import org.jetbrains.compose.web.css.cssRem
 import org.jetbrains.compose.web.css.px
 
 object LyricalTheme {
     val palette: LyricalPalette
         @Composable
         @ReadOnlyComposable
-        get() = Colors.palettes[getColorMode()]!!
+        get() = Colors.palettes[ColorMode.current]!!
 
     fun paletteFrom(colorMode: ColorMode) = Colors.palettes[colorMode]!!
 
@@ -25,7 +22,7 @@ object LyricalTheme {
         val windowPaletteLight = LyricalPalette(
             background = rgba("FFFFFF", 1.0),
             backgroundDark = rgba("F0F0F0", 1.0),
-            backgroundCard = rgba("FFFFFF", 1.0),
+            backgroundCard = rgba("FCFCFC", 1.0),
             contentPrimary = rgba("000000", 0.87),
             contentSecondary = rgba("000000", 0.5),
             contentTertiary = rgba("000000", 0.25),
@@ -71,6 +68,7 @@ object LyricalTheme {
 
     object Size {
         object Icon {
+            val Small @Composable get() = responsiveSize(20.px, 24.px)
             val Default @Composable get() = responsiveSize(24.px, 32.px)
             val Large @Composable get() = responsiveSize(40.px, 48.px)
         }
@@ -81,8 +79,9 @@ object LyricalTheme {
         }
         object Playlist {
             val CoverSm @Composable get() = responsiveSize(24.px, 32.px)
+            val CoverAnswerItem @Composable get() = responsiveSize(48.px, 96.px)
             val CoverHorizontal @Composable get() = responsiveSize(40.px, 48.px)
-            val CoverLg @Composable get() = responsiveSize(108.px, 128.px)
+            val CoverVertical @Composable get() = responsiveSize(108.px, 128.px)
             val CoverSummary @Composable get() = responsiveSize(32.px, 48.px)
             object Placeholder {
                 val Cover @Composable get() = responsiveSize(72.px, 96.px)
@@ -100,9 +99,6 @@ object LyricalTheme {
                 }
             )
             val Thumb @Composable get() = responsiveSize(20.px, 24.px)
-        }
-        object ProgressBar {
-            val IndicatorWidth @Composable get() = responsiveSize(128.px, 256.px)
         }
     }
 

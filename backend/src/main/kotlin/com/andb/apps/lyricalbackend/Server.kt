@@ -43,8 +43,7 @@ fun Application.applicationModule() {
 
     routing {
         get("/lyrics") {
-            val requests = (call.request.header("lyricRequests")
-                ?: throw Error("Must have a lyricRequests header")).decodeLyricRequestsFromString()
+            val requests = call.request.header("lyricRequests")?.decodeLyricRequestsFromString() ?: throw Error("Must have a lyricRequests header")
             println("recieved request, tracks = $requests")
             val lyrics = requests.map { request ->
                 CoroutineScope(Dispatchers.IO).async {

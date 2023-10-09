@@ -41,14 +41,21 @@ abstract class GameMachine(
         it.toGameScreen()
     }.stateIn(coroutineScope, SharingStarted.Eagerly, gameState.value.toGameScreen())
 
+    val suggestions = MutableStateFlow(emptyList<SuggestionTrack>())
+
     init {
         if (initialGameState is GameState.Loading) {
-            loadGame()
+            loadSongs()
         }
     }
 
     open fun onLoadGame(game: Game) {
         gameState.value = GameState.Playing(game, GameScreen.Question)
+    }
+
+    open fun onSongsLoaded(songs: List<SourcedTrack>) {
+        gameState.value = GameState.Loading.Lyrics(songs)
+        loadLyrics(songs)
     }
 
     open fun handleAction(action: GameAction) {
@@ -67,40 +74,64 @@ abstract class GameMachine(
                 is GameState.Playing -> gameState.copy(game = gameState.game.withHintUsed(action.hint), GameScreen.Question)
             }
             is GameAction.Reload -> gameState.value = when(val gameState = gameState.value) {
-                is GameState.Loading -> when(gameState.state) {
-                    LoadingState.ErrorLoading -> {
-                        loadGame()
-                        GameState.Loading(LoadingState.LoadingSongs)
-                    }
-                    is LoadingState.LoadingLyrics, LoadingState.LoadingSongs -> throw Error("Can't reload unless in LoadingState.Error")
+                is GameState.Loading.Error.Songs -> {
+                    loadSongs()
+                    GameState.Loading.Songs
                 }
-                else -> throw Error("Can't reload unless in LoadingState.Error")
+                is GameState.Loading.Error.Lyrics -> {
+                    loadLyrics(gameState.loadedSongs)
+                    GameState.Loading.Lyrics(gameState.loadedSongs)
+                }
+                else -> throw Error("Can't reload unless in GameState.Loading.Error")
             }
         }
         println("handled action, new gameState = ${gameState.value}")
     }
 
-    private fun loadGame() {
+    private fun loadLyrics(songs: List<SourcedTrack>) {
         CoroutineScope(Dispatchers.Default).launch {
             runCatching {
-                val playlists = playlistIDs.mapNotNull { spotifyRepository.getPlaylistByURI(it) }
-                val randomTracks = playlists.getRandomSongs(spotifyRepository, options)
-                gameState.value = GameState.Loading(LoadingState.LoadingLyrics(0, options.amountOfSongs))
-                val tracksWithLyrics = lyricsRepository.getLyricsFor(randomTracks)
-                println("after load lyrics")
-                val game = Game(tracksWithLyrics.generateQuestions(options), options)
+                val tracksWithLyrics = lyricsRepository.getLyricsFor(songs)
+                val game = Game(tracksWithLyrics.generateQuestions(options), options, suggestions.value)
                 game
             }.onSuccess {
                 onLoadGame(it)
             }.onFailure {
-                gameState.value = GameState.Loading(LoadingState.ErrorLoading)
+                gameState.value = GameState.Loading.Error.Lyrics(songs)
+            }
+        }
+    }
+
+    private fun loadSuggestions(allTracks: List<Track>) {
+        CoroutineScope(Dispatchers.Default).launch {
+            val searchResults = allTracks.getAllSearchResults(spotifyRepository)
+        }
+    }
+
+    private fun loadSongs() {
+        CoroutineScope(Dispatchers.Default).launch {
+            runCatching {
+                val playlists = playlistIDs.mapNotNull { spotifyRepository.getPlaylistByURI(it) }
+                val allTracks = playlists.getAllSongsFromPlaylists(spotifyRepository)
+                suggestions.value = allTracks.map { sourcedTrack -> sourcedTrack.track.let { SuggestionTrack(it.id, it.name, it.artists.map { it.name }, it.album) } }
+                val randomTracks = playlists.getRandomSongs(allTracks, options)
+                if (randomTracks.isEmpty()) throw Error("No songs loaded")
+                randomTracks
+            }.onSuccess {
+                onSongsLoaded(it)
+            }.onFailure {
+                gameState.value = GameState.Loading.Error.Songs
             }
         }
     }
 }
 
 private fun GameState.toGameScreen(): Screen.GameScreen = when(this) {
-    is GameState.Loading -> Screen.GameScreen.Loading(this.state)
+    is GameState.Loading -> Screen.GameScreen.Loading(when(this) {
+        is GameState.Loading.Error -> LoadingState.ErrorLoading
+        is GameState.Loading.Lyrics -> LoadingState.LoadingLyrics
+        GameState.Loading.Songs -> LoadingState.LoadingSongs
+    })
     is GameState.Playing -> when(this.screen) {
         GameScreen.Question -> Screen.GameScreen.Question(this.game.questions.indexOfFirst { it.answer is GameAnswer.Unanswered }, this.game)
         GameScreen.Answer -> Screen.GameScreen.Answer(this.game.questions.indexOfLast { it.answer !is GameAnswer.Unanswered }, this.game)
@@ -114,30 +145,37 @@ suspend fun List<Track>.toSourcedTracks(sourcePlaylist: SimplePlaylist): List<So
 
 fun Track.toSourcedTrack(sourcePlaylist: SimplePlaylist) = SourcedTrack(this, sourcePlaylist)
 
-suspend fun List<SimplePlaylist>.getRandomSongs(
+suspend fun List<SimplePlaylist>.getAllSongsFromPlaylists(
     spotifyRepository: SpotifyRepository.LoggedIn,
+): List<SourcedTrack> {
+    return this
+        .map {
+            CoroutineScope(Dispatchers.Default).async {
+                spotifyRepository.getPlaylistTracks(it.uri.uri).toSourcedTracks(it)
+            }
+        }
+        .awaitAll()
+        .flatten()
+}
+
+fun List<SimplePlaylist>.getRandomSongs(
+    allTracks: List<SourcedTrack>,
     config: GameOptions,
 ): List<SourcedTrack> {
     println("getting random songs, config = $config")
     return if (config.distributePlaylistsEvenly) {
-        val songsPerPlaylist = this.distributeEvenly(config.amountOfSongs)
-        val playlistTracks: List<Pair<SimplePlaylist, List<SourcedTrack>>> = this
-            .map {
-                CoroutineScope(Dispatchers.Default).async {
-                    it to spotifyRepository.getPlaylistTracks(it.uri.uri).toSourcedTracks(it)
-                }
-            }
-            .awaitAll()
-        val allTracks = mutableListOf<SourcedTrack>()
-        playlistTracks.forEach { (playlist, tracks) ->
-            allTracks += (tracks - allTracks.toSet()).shuffled().take(songsPerPlaylist.getValue(playlist))
+        val songsPerPlaylist: Map<SimplePlaylist, Int> = this.distributeEvenly(config.amountOfSongs)
+
+        val selectedTracks = mutableListOf<SourcedTrack>()
+        allTracks
+            .groupBy { it.sourcePlaylist }
+            .forEach { (playlist, tracks) ->
+            selectedTracks += (tracks - selectedTracks.toSet()).shuffled().take(songsPerPlaylist.getValue(playlist))
         }
-        allTracks.shuffled()
+        println("selectedTracks = $selectedTracks")
+        selectedTracks.shuffled()
     } else {
-        this
-            .flatMap { playlist: SimplePlaylist ->
-                spotifyRepository.getPlaylistTracks(playlist.uri.uri).toSourcedTracks(playlist)
-            }
+        allTracks
             .distinctBy { it.track }
             .shuffled()
             .take(config.amountOfSongs)
@@ -158,20 +196,32 @@ private fun List<SimplePlaylist>.distributeEvenly(amountOfSongs: Int): Map<Simpl
 
 }
 
+suspend fun List<Track>.getAllSearchResults(spotifyRepository: SpotifyRepository.LoggedIn): List<Track> {
+    return this
+        .flatMap { it.artists }
+        .distinctBy { it.id }
+        .map { artist ->
+            CoroutineScope(Dispatchers.Default).async { spotifyRepository.getArtistTracks(artist) }
+        }
+        .awaitAll()
+        .flatten()
+        .plus(this)
+        .distinctBy { it.id }
+}
+
 @Serializable
 sealed class GameState {
-    @Serializable data class Loading(val state: LoadingState) : GameState()
+    @Serializable sealed class Loading : GameState() {
+        @Serializable sealed class Error : Loading() {
+            @Serializable data object Songs : Error()
+            @Serializable data class Lyrics(val loadedSongs: List<SourcedTrack>) : Error()
+        }
+        @Serializable data object Songs : Loading()
+        @Serializable data class Lyrics(val loadedSongs: List<SourcedTrack>) : Loading()
+    }
     @Serializable data class Playing(val game: Game, val screen: GameScreen) : GameState()
 }
 
 enum class GameScreen {
     Question, Answer, End
-}
-
-@Serializable sealed class LoadingState {
-    @Serializable data object ErrorLoading : LoadingState()
-    @Serializable data object LoadingSongs : LoadingState()
-    @Serializable data class LoadingLyrics(val amountLoaded: Int, val numberOfSongs: Int) : LoadingState() {
-        val percent: Double = amountLoaded.toDouble() / numberOfSongs
-    }
 }
