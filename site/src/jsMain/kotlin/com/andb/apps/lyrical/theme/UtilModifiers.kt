@@ -12,17 +12,18 @@ import com.varabyte.kobweb.compose.ui.modifiers.onKeyDown
 import com.varabyte.kobweb.compose.ui.modifiers.tabIndex
 import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.silk.components.style.ComponentStyle
+import com.varabyte.kobweb.silk.theme.colors.ColorMode
 import org.jetbrains.compose.web.events.SyntheticKeyboardEvent
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 
-const val OutsetShadowString = "0px 0px 0px 0.5px rgba(0, 0, 0, 0.12), 0px 1px 1px 0px rgba(255, 255, 255, 0.12) inset, 0px 0px 0px 1px rgba(255, 255, 255, 0.05) inset, 0px 2px 3px 0px rgba(0, 0, 0, 0.12), 0px 0px 6px 0px rgba(0, 0, 0, 0.08)"
+const val OutsetShadowLightString = "0px 0px 0px 0.5px rgba(0, 0, 0, 0.12), 0px 1px 1px 0px rgba(255, 255, 255, 0.18) inset, 0px 0px 0px 1px rgba(255, 255, 255, 0.05) inset, 0px 1px 3px 0px rgba(0, 0, 0, 0.05), 0px 0px 2px 0px rgba(0, 0, 0, 0.12), 0px -2px 4px 0px rgba(0, 0, 0, 0.03) inset"
+const val OutsetShadowDarkString = "0px 0px 0px 0.5px rgba(0, 0, 0, 0.12), 0px 1px 1px 0px rgba(255, 255, 255, 0.12) inset, 0px 0px 0px 1px rgba(255, 255, 255, 0.05) inset, 0px 1px 4px 0px rgba(0, 0, 0, 0.08), 0px 0px 4px 0px rgba(0, 0, 0, 0.12)"
 val OutsetShadowStyle by ComponentStyle {
     base {
         Modifier.styleModifier {
             this
-                .boxShadow(OutsetShadowString)
-
+                .boxShadow(if (colorMode == ColorMode.LIGHT) OutsetShadowLightString else OutsetShadowDarkString)
         }
     }
 }

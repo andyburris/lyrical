@@ -6,6 +6,7 @@ kotlinx-coroutines = "1.7.3"
 kotlinx-serialization = "1.6.0"
 spotify-api = "4.0.2"
 ktor = "2.3.0"
+tailwind = "0.0.3"
 
 [libraries]
 kobweb-api = { module = "com.varabyte.kobweb:kobweb-api", version.ref = "kobweb" }
@@ -44,3 +45,4 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-js = { id = "org.jetbrains.kotlin.js", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor"}
+tailwind = { id = "io.github.dead8309.tailwind-kt", version.ref = "tailwind" }

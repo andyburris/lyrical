@@ -4,20 +4,20 @@ import androidx.compose.runtime.Composable
 import com.andb.apps.lyrical.theme.LyricalPalette
 import com.andb.apps.lyrical.theme.LyricalTheme
 import com.andb.apps.lyrical.theme.OutsetShadowStyle
+import com.varabyte.kobweb.compose.css.CSSTransition
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.*
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.silk.components.style.*
-import org.jetbrains.compose.web.css.AlignItems
-import org.jetbrains.compose.web.css.JustifyContent
-import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.css.*
 
 val ButtonStyle by ComponentStyle {
     base {
         Modifier
             .border(0.px)
+            .transition(CSSTransition("background", 150.ms, AnimationTimingFunction.EaseOut))
     }
 }
 

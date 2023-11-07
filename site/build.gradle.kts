@@ -1,4 +1,5 @@
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
+import kizzy.tailwind.utils.setupTailwindProject
 import kotlinx.html.link
 
 plugins {
@@ -6,6 +7,7 @@ plugins {
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kobweb.application)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.tailwind)
 }
 
 group = "com.andb.apps.lyrical"
@@ -27,6 +29,11 @@ kobweb {
                     href = "https://unpkg.com/@phosphor-icons/web@2.0.3/src/bold/style.css",
                     type = "text/css"
                 )
+                link(
+                    rel = "stylesheet",
+                    href = "https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css",
+                    type = "text/css"
+                )
             }
         }
     }
@@ -34,6 +41,7 @@ kobweb {
 
 kotlin {
     configAsKobwebApplication("lyrical")
+    setupTailwindProject()
 
     @Suppress("UNUSED_VARIABLE") // Suppress spurious warnings about sourceset variables not being used
     sourceSets {
@@ -55,6 +63,17 @@ kotlin {
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.serialization)
                 implementation(libs.spotify.api)
+                implementation(npm("uzip","0.20201231.0"))
+                implementation("io.github.dead8309:shadcn-kotlin:1.0.0")
+                implementation("dev.opensavvy.compose.lazy:lazy-layouts:0.1.2")
+                implementation(devNpm("@babel/core","7.22.5"))
+                implementation(devNpm("babel-loader","9.1.2"))
+                implementation(devNpm("@babel/preset-react","7.22.5"))
+                implementation(devNpm("@babel/preset-env","7.22.5"))
+                implementation(devNpm("@babel/preset-typescript","7.22.5"))
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+                implementation(npm("@js-joda/timezone", "2.3.0"))
+                implementation("com.juul.indexeddb:core:0.6.1")
                 implementation(project(":shared"))
             }
         }
@@ -112,7 +131,7 @@ val generatePhosphorIconsTask = tasks.register("generatePhosphorIcons") {
         fun IconStyle.toClassName(): String = when (this) {
             IconStyle.THIN -> "ph-thin"
             IconStyle.LIGHT -> "ph-light"
-            IconStyle.REGULAR -> "ph-regular"
+            IconStyle.REGULAR -> "ph"
             IconStyle.BOLD -> "ph-bold"
             IconStyle.FILL -> "ph-fill"
             IconStyle.DUOTONE -> "ph-duotone"
