@@ -73,23 +73,23 @@ val SliderStyle by ComponentStyle {
             }
     }
 
-    cssRule("::-moz-range-thumb") {
-        Modifier
-            .styleModifier {
-                boxShadow(OutsetShadowString)
-            }
-            .border(0.px)
-            .size(24.px)
-            .borderRadius(LyricalTheme.Radii.Circle)
-            .backgroundColor(LyricalTheme.Colors.accentPalette.backgroundDark)
-    }
-
-    cssRule("::-moz-range-track") {
-        Modifier
-            .height(6.px)
-            .borderRadius(LyricalTheme.Radii.Circle)
-            .backgroundColor(LyricalTheme.paletteFrom(colorMode).backgroundDark)
-    }
+//    cssRule("::-moz-range-thumb") {
+//        Modifier
+//            .styleModifier {
+//                boxShadow(OutsetShadowString)
+//            }
+//            .border(0.px)
+//            .size(24.px)
+//            .borderRadius(LyricalTheme.Radii.Circle)
+//            .backgroundColor(LyricalTheme.Colors.accentPalette.backgroundDark)
+//    }
+//
+//    cssRule("::-moz-range-track") {
+//        Modifier
+//            .height(6.px)
+//            .borderRadius(LyricalTheme.Radii.Circle)
+//            .backgroundColor(LyricalTheme.paletteFrom(colorMode).backgroundDark)
+//    }
 
     cssRule("::-webkit-slider-runnable-track") {
         Modifier
